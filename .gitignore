@@ -1,0 +1,11 @@
+.idea
+.vscode
+.osp/
+
+# Sensitive configuration files (contain email addresses, API and reCAPTCHA secret keys)
+config.php
+config.local.php
+
+# Log files
+*.log
+send-mail.log

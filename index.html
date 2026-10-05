@@ -2075,6 +2075,26 @@
       border: 1px solid var(--green-primary);
     }
 
+    .form-alert.error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #f87171;
+    }
+
+    .recaptcha-wrapper {
+      margin-bottom: 22px;
+      display: flex;
+      justify-content: flex-start;
+      min-height: 78px;
+    }
+
+    @media (max-width: 480px) {
+      .recaptcha-wrapper {
+        transform: scale(0.88);
+        transform-origin: 0 0;
+      }
+    }
+
     /* ==========================================================================
        FOOTER
        ========================================================================== */
@@ -3258,30 +3278,32 @@
             ✓ Thank you! Your application has been received. Our recruiter will call you shortly at the provided number.
           </div>
 
-          <form id="driverApplyForm">
+          <div class="form-alert error" id="formErrorAlert"></div>
+
+          <form id="driverApplyForm" action="send-mail.php" method="POST">
             <div class="form-grid">
               <!-- Name -->
               <div class="form-group">
                 <label for="driverName" class="form-label" data-i18n="lbl_name">Full Name *</label>
-                <input type="text" id="driverName" class="form-input" placeholder="e.g. John Miller" data-i18n-ph="ph_name" required />
+                <input type="text" id="driverName" name="name" class="form-input" placeholder="e.g. John Miller" data-i18n-ph="ph_name" required />
               </div>
 
               <!-- Phone -->
               <div class="form-group">
                 <label for="driverPhone" class="form-label" data-i18n="lbl_phone">Phone Number *</label>
-                <input type="tel" id="driverPhone" class="form-input" placeholder="e.g. (445) 000-00-00" data-i18n-ph="ph_phone" required />
+                <input type="tel" id="driverPhone" name="phone" class="form-input" placeholder="e.g. (445) 000-00-00" data-i18n-ph="ph_phone" required />
               </div>
 
               <!-- Email -->
               <div class="form-group">
                 <label for="driverEmail" class="form-label" data-i18n="lbl_email">Email Address *</label>
-                <input type="email" id="driverEmail" class="form-input" placeholder="e.g. driver@example.com" data-i18n-ph="ph_email" required />
+                <input type="email" id="driverEmail" name="email" class="form-input" placeholder="e.g. driver@example.com" data-i18n-ph="ph_email" required />
               </div>
 
               <!-- Role -->
               <div class="form-group">
                 <label for="driverRole" class="form-label" data-i18n="lbl_role">Applying For *</label>
-                <select id="driverRole" class="form-select" required>
+                <select id="driverRole" name="role" class="form-select" required>
                   <option value="Company Driver (CDL-A Dry Van)" data-i18n="opt_role_cd">Company Driver (CDL-A Dry Van)</option>
                   <option value="Owner-Operator" data-i18n="opt_role_oo">Owner-Operator (Dry Van)</option>
                 </select>
@@ -3290,7 +3312,7 @@
               <!-- Experience -->
               <div class="form-group">
                 <label for="driverExp" class="form-label" data-i18n="lbl_exp">CDL-A OTR Experience *</label>
-                <select id="driverExp" class="form-select" required>
+                <select id="driverExp" name="exp" class="form-select" required>
                   <option value="1-2 years" data-i18n="opt_exp_1_2">1 – 2 years</option>
                   <option value="3-5 years" data-i18n="opt_exp_3_5">3 – 5 years</option>
                   <option value="5+ years" data-i18n="opt_exp_5plus">5+ years</option>
@@ -3301,24 +3323,29 @@
               <!-- CDL State -->
               <div class="form-group">
                 <label for="driverState" class="form-label" data-i18n="lbl_state">CDL State of Issue *</label>
-                <input type="text" id="driverState" class="form-input" placeholder="e.g. PA, NJ, OH, IL..." data-i18n-ph="ph_state" required />
+                <input type="text" id="driverState" name="state" class="form-input" placeholder="e.g. PA, NJ, OH, IL..." data-i18n-ph="ph_state" required />
               </div>
 
               <!-- Message -->
               <div class="form-group full-width">
                 <label for="driverNotes" class="form-label" data-i18n="lbl_notes">Comments or Truck Details (if Owner-Operator)</label>
-                <textarea id="driverNotes" class="form-textarea" placeholder="Tell us about your driving background, availability date, or equipment..." data-i18n-ph="ph_notes"></textarea>
+                <textarea id="driverNotes" name="notes" class="form-textarea" placeholder="Tell us about your driving background, availability date, or equipment..." data-i18n-ph="ph_notes"></textarea>
               </div>
             </div>
 
             <div class="form-checkbox-row">
-              <input type="checkbox" id="driverConsent" required checked />
+              <input type="checkbox" id="driverConsent" name="consent" required checked />
               <label for="driverConsent" data-i18n="lbl_consent">
                 I hold a valid Class A CDL and certify that all submitted information is accurate. I agree to receive recruiting communications via phone or SMS.
               </label>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.05rem; padding: 15px;" data-i18n="btn_submit">
+            <!-- reCAPTCHA v2 Checkbox Container -->
+            <div class="recaptcha-wrapper" id="recaptchaWrapper">
+              <div id="recaptchaWidget" class="g-recaptcha"></div>
+            </div>
+
+            <button type="submit" id="submitApplyBtn" class="btn btn-primary" style="width: 100%; font-size: 1.05rem; padding: 15px;" data-i18n="btn_submit">
               Submit Driver Application
             </button>
           </form>
@@ -3463,6 +3490,28 @@
     // MULTILINGUAL LOCALIZATION ENGINE (EN, UK, RU)
     // =========================================================================
     const i18nData = {"en": {"top_badge": "Now Hiring: CDL-A Drivers & Owner-Operators", "nav_company": "Company Drivers", "nav_owner": "Owner-Operators", "nav_transparency": "Transparency", "nav_requirements": "Requirements", "nav_terminal": "Terminal", "nav_apply": "Apply Now", "mob_nav_company": "Company Drivers (CDL-A)", "mob_nav_owner": "Owner-Operators", "mob_nav_transparency": "100% Transparency", "mob_nav_requirements": "Driver Requirements", "mob_nav_terminal": "Levittown Terminal", "mob_nav_apply": "Contact & Application", "mob_call": "Call (445) 444-02-04", "hero_p1_title": "$2,500 / Wk Guarantee", "hero_p1_desc": "Guaranteed minimum weekly earnings for peace of mind.", "hero_p2_title": "32% of Gross Pay", "hero_p2_desc": "Average weekly truck gross starts from $8,000+.", "hero_p3_title": "0% Hidden Deposits", "hero_p3_desc": "No escrow deposits, no setup fees, zero unfair deductions.", "hero_p4_title": "100% Transparency", "hero_p4_desc": "Original broker Rate Confirmations and open factoring provided.", "cd_tag": "Company Drivers Program", "cd_title": "CDL-A Dry Van OTR Drivers", "cd_desc": "Enjoy stability, respect, and high earning power. At HILS Trucking LLC, we treat our drivers as true partners with honest weekly settlements and top-tier equipment.", "p1_title": "$2,500/Wk Guarantee or 32% Gross", "p1_text": "Never worry about slow weeks. You get a solid $2,500 guaranteed safety net every week. When your gross exceeds $7,800, your 32% cut pays you even more (average driver gross is $8,000+ per week).", "p1_badge": "Average Pay: $2,500 – $3,200+/week", "p2_title": "0% Deposits & No Hidden Fees", "p2_text": "We do not hold your money hostage. Zero escrow deposits, zero administrative deductions, and zero mystery charges. What you earn is what you take home on direct deposit.", "p2_badge": "Direct Deposit Every Friday", "p3_title": "100% Rate Transparency", "p3_text": "Complete honesty on every load. We forward the original broker Rate Confirmation (RC) and show open factoring statements. You always know exactly what the broker pays.", "p3_badge": "Original Broker RC Provided", "p4_title": "Driver & Dispatch Teamwork", "p4_text": "No forced dispatch! We collaborate directly with our drivers. We provide direct access to DAT Power load board so you can participate in choosing lanes and loads that suit you.", "p4_badge": "DAT Load Board Access", "p5_title": "TA & Petro Fuel Cards", "p5_text": "Convenient fueling across the nationwide TA and Petro network with fleet fuel cards, ensuring smooth stops, driver shower points, and hassle-free OTR travel.", "p5_badge": "Nationwide Fuel Network", "p6_title": "Flexible Schedule & Home Restarts", "p6_text": "We value your family time and work-life balance. Flexible schedules designed around your lifestyle, with planned home 34-hour restarts to keep you refreshed.", "p6_badge": "Home Restarts Guaranteed", "eq_title": "Top-Notch Equipment You Can Rely On", "eq_text": "Your comfort and safety on the road are our highest priority. We assign late-model, meticulously maintained tractors and dry van trailers backed by our in-house maintenance shop in Levittown, PA.", "eq_btn": "Reserve Your Truck", "spec_tractors": "Tractors", "spec_trailers": "Trailers", "spec_cabin": "Cabin Amenities", "spec_cabin_val": "Inverter, Refrigerator, Sleeper Cab", "spec_maint": "Maintenance", "spec_maint_val": "Company Yard & Shop in Levittown, PA", "oo_tag": "Owner-Operators Program", "oo_title": "Partner with HILS Trucking LLC", "oo_desc": "Run your trucking business with complete autonomy, genuine 100% transparency, and top-tier gross retention. Full details available in our comprehensive <strong>Owner Operators</strong> program guide.", "ss_badge": "Special Owner-Operator Onboarding", "ss_title": "Smooth Start — Graduated Dispatch Services", "ss_desc": "We understand that transitioning to a new company comes with initial expenses and stress. That's why we created a special tiered dispatch schedule so you can start comfortably, keep more of your gross from Day 1, and ramp up your earnings with peace of mind:", "ss_m1": "1st Month", "ss_m1_svc": "Dispatch Services", "ss_m1_txt": "Just 6% to offset your onboarding expenses and maximize your starting net cash flow.", "ss_m1_badge": "Keep 94% Gross", "ss_m2": "2nd Month", "ss_m2_svc": "Dispatch Services", "ss_m2_txt": "Gentle step-up as you establish your preferred freight lanes and regular schedule.", "ss_m2_badge": "Keep 92% Gross", "ss_m3": "3rd Month", "ss_m3_svc": "Dispatch Services", "ss_m3_txt": "Steady progression as your fleet volume and broker relationships hit full speed.", "ss_m3_badge": "Keep 90% Gross", "ss_m4": "Month 4 & Beyond", "ss_m4_svc": "Standard Fee", "ss_m4_txt": "Standard ongoing rate with full 24/7 dedicated dispatch, open factoring, and no forced loads.", "ss_m4_badge": "Standard Rate", "ss_footer_info": "<strong>100% Rate Confirmation Transparency:</strong> Every broker rate con is delivered directly to you unaltered. Zero shaving, zero hidden administrative deductions.", "ss_footer_btn": "Start with 6% Dispatch", "lead_title": "The Most Transparent Carrier in the Industry", "lead_desc": "Tired of carriers taking hidden cuts off your rate confirmations, charging mysterious factoring fees, or forcing you into bad loads? At HILS Trucking LLC, we operate with open books and a true partner mindset.", "lead_banner_title": "100% Rate Confirmation & Open Factoring", "lead_banner_desc": "Every single load comes with the original broker Rate Con. Open factoring portal access so you verify every single dollar. Zero shaving.", "hl_title": "Owner-Operator Highlights", "hl_1": "<strong>Smooth Start Incentive:</strong> Just 6% dispatch fee in Month 1 (graduating to 12%)", "hl_2": "<strong>Top Gross Retention</strong> with prompt weekly settlements", "hl_3": "<strong>No Forced Dispatch</strong> — you choose your freight and home time", "hl_4": "<strong>Fleet Fuel Card Discounts</strong> via TA & Petro nationwide", "hl_5": "<strong>Full-Service Yard & Shop</strong> in Levittown, PA (7800 Bristol Pike)", "hl_6": "<strong>Trailer Rentals & Insurance</strong> options available", "f1_title": "Original Rate Confirmations", "f1_text": "Every load rate confirmation is delivered straight to you directly from the broker. No edited documents, no shaved percentages.", "f2_title": "Open Factoring Statements", "f2_text": "Direct weekly payouts with 100% itemized transparency. Monitor all deposits, factoring invoices, and fuel deductions in clear reports.", "f3_title": "Dedicated 24/7 Dispatch", "f3_text": "Work hand-in-hand with dispatchers who negotiate top rates. Take advantage of our <strong>Smooth Start program (starting at just 6%)</strong>, or choose your own loads using DAT load boards.", "f4_title": "In-House Shop Discounts", "f4_text": "Access our certified maintenance garage at 7800 Bristol Pike, Levittown, PA for discounted labor, preventative maintenance, and tire service.", "comp_tag": "Why Drivers Choose Us", "comp_title": "Transparency Comparison", "comp_desc": "Compare our honest, driver-first approach against standard industry carrier practices.", "th_feature": "Feature / Policy", "th_hils": "HILS Trucking LLC", "th_other": "Standard Carriers", "tr1_feature": "Rate Confirmation", "tr1_hils": "<span class=\"check-icon\">✓</span> 100% Unaltered Original Broker RC", "tr1_other": "<span class=\"cross-icon\">✕</span> Often hidden or re-typed", "tr2_feature": "Factoring Statements", "tr2_hils": "<span class=\"check-icon\">✓</span> Open Factoring Portal Access", "tr2_other": "<span class=\"cross-icon\">✕</span> Closed / Internal numbers only", "tr3_feature": "Owner-Op Dispatch Services", "tr3_hils": "<span class=\"check-icon\">✓</span> <strong>Smooth Start:</strong> 6% (M1) → 8% (M2) → 10% (M3) → 12% Standard", "tr3_other": "<span class=\"cross-icon\">✕</span> Flat 12% – 15% from Day 1", "tr4_feature": "Minimum Pay Safety Net", "tr4_hils": "<span class=\"check-icon\">✓</span> $2,500/Wk Guarantee for Company Drivers", "tr4_other": "<span class=\"cross-icon\">✕</span> No guarantee / CPM only", "tr5_feature": "Escrow & Setup Deposits", "tr5_hils": "<span class=\"check-icon\">✓</span> $0 Deposits / Zero Deductions", "tr5_other": "<span class=\"cross-icon\">✕</span> $1,500 – $3,000 escrow held", "tr6_feature": "Load Selection", "tr6_hils": "<span class=\"check-icon\">✓</span> DAT Board Access & Collaborative Booking", "tr6_other": "<span class=\"cross-icon\">✕</span> Forced dispatch with no input", "tr7_feature": "Terminal & Maintenance Shop", "tr7_hils": "<span class=\"check-icon\">✓</span> In-House Yard & Shop in Levittown, PA", "tr7_other": "<span class=\"cross-icon\">✕</span> Third-party shops only", "tr8_feature": "Multilingual Driver Support", "tr8_hils": "<span class=\"check-icon\">✓</span> 24/7 English, Ukrainian & Russian Support", "tr8_other": "<span class=\"cross-icon\">✕</span> Limited hours or English only", "req_tag": "Qualifications", "req_title": "Driver Requirements", "req_desc": "We maintain high standards to protect our safety rating and ensure a smooth, professional driving experience.", "cd_req_title": "Company Drivers (CDL-A)", "cd_req_1": "<strong>Valid CDL Class A license</strong> issued in the United States.", "cd_req_2": "<strong>Minimum 1+ years</strong> of verifiable Class A OTR driving experience.", "cd_req_3": "<strong>Clean MVR record</strong> — no major moving violations, suspensions, or DUIs within the past 5 years.", "cd_req_4": "<strong>Current Medical Card (DOT Physical)</strong> in good standing.", "cd_req_5": "Ability to pass pre-employment DOT drug screening & Clearinghouse check.", "cd_req_6": "Responsible attitude toward equipment care and safety regulations.", "oo_req_title": "Owner-Operators", "oo_req_1": "<strong>Valid CDL Class A license</strong> & verifiable OTR experience.", "oo_req_2": "<strong>Tractor in good working condition</strong> passing current annual DOT inspection.", "oo_req_3": "ELD-compliant equipment installed (or compatible hardware).", "oo_req_4": "Clean safety history and adherence to FMCSA driving hours.", "oo_req_5": "Dry Van trailer available, or rent our late-model 2023+ Utility trailers.", "oo_req_6": "Valid DOT Medical Card & Clearinghouse compliance.", "term_tag": "Terminal & Maintenance Yard", "term_title": "Levittown, PA Yard & In-House Shop", "term_f1": "Secure truck & trailer parking yard with 24/7 access.", "term_f2": "Full in-house maintenance shop for fast repairs, PMs & tire care.", "term_f3": "Strategic East Coast location right off I-95 & PA Turnpike.", "term_maps_btn": "Open in Google Maps", "term_dir_btn": "Get Driving Directions", "contact_tag": "Get In Touch", "contact_title": "Ready to Roll With Us?", "contact_desc": "Join a company that respects your time, values your dedication, and pays with 100% financial transparency. Call, text, or apply online today!", "recruiting_hotline": "Recruiting Hotline", "direct_email": "Direct Email", "terminal_yard_label": "Terminal & Yard", "msg_support": "Instant Messaging Support (24/7):", "form_title": "Fast Driver Application", "form_subtitle": "Fill out the quick form below. Our recruiting team will review your info and get back to you within 24 hours.", "form_success": "✓ Thank you! Your application has been received. Our recruiter will call you shortly at the provided number.", "lbl_name": "Full Name *", "ph_name": "e.g. John Miller", "lbl_phone": "Phone Number *", "ph_phone": "e.g. (445) 000-00-00", "lbl_email": "Email Address *", "ph_email": "e.g. driver@example.com", "lbl_role": "Applying For *", "opt_role_cd": "Company Driver (CDL-A Dry Van)", "opt_role_oo": "Owner-Operator (Dry Van)", "lbl_exp": "CDL-A OTR Experience *", "opt_exp_1_2": "1 – 2 years", "opt_exp_3_5": "3 – 5 years", "opt_exp_5plus": "5+ years", "opt_exp_under1": "Under 1 year", "lbl_state": "CDL State of Issue *", "ph_state": "e.g. PA, NJ, OH, IL...", "lbl_notes": "Comments or Truck Details (if Owner-Operator)", "ph_notes": "Tell us about your driving background, availability date, or equipment...", "lbl_consent": "I hold a valid Class A CDL and certify that all submitted information is accurate. I agree to receive recruiting communications via phone or SMS.", "btn_submit": "Submit Driver Application", "footer_desc": "HILS Trucking LLC is a licensed interstate motor carrier dedicated to safety, high earning power, and 100% financial transparency for CDL-A drivers and owner-operators across the United States.", "footer_nav": "Navigation", "nav_overview": "Overview", "footer_programs": "Programs", "prog_guarantee": "Guaranteed $2,500/Wk", "prog_gross": "32% of Gross Payout", "prog_oo": "Owner-Operator Partnerships", "prog_transparency": "100% Rate Con Transparency", "prog_shop": "In-House Maintenance Shop", "footer_contact": "Contact Information", "footer_rights": "© 2026 HILS TRUCKING LLC. All rights reserved. Equal Opportunity Employer.", "float_call": "📞 Call (445) 444-02-04", "mob_apply": "Apply Now"}, "uk": {"top_badge": "Набір водіїв: CDL-A Company Drivers та Owner-Operators", "nav_company": "Company Drivers", "nav_owner": "Owner-Operators", "nav_transparency": "Прозорість", "nav_requirements": "Вимоги", "nav_terminal": "Термінал", "nav_apply": "Надіслати заявку", "mob_nav_company": "Company Drivers (CDL-A)", "mob_nav_owner": "Owner-Operators", "mob_nav_transparency": "100% Прозорість", "mob_nav_requirements": "Вимоги до водіїв", "mob_nav_terminal": "Трак-ярд у Levittown", "mob_nav_apply": "Контакти та Заявка", "mob_call": "Call (445) 444-02-04", "hero_p1_title": "Гарантія $2,500 / тижд.", "hero_p1_desc": "Гарантований щотижневий мінімальний заробіток для вашого спокою.", "hero_p2_title": "32% від Гроссу", "hero_p2_desc": "Середній щотижневий гросс трака від $8,000+.", "hero_p3_title": "0% Прихованих депозитів", "hero_p3_desc": "Без ескроу, без комісій за оформлення, нуль несправедливих відрахувань.", "hero_p4_title": "100% Прозорість", "hero_p4_desc": "Оригінальні брокерські Rate Confirmations та відкритий факторинг.", "cd_tag": "Програма для Company Drivers", "cd_title": "CDL-A Dry Van OTR Водії", "cd_desc": "Ми віримо, що водії повинні отримувати максимальну винагороду за свій час у рейсі. Обирайте фіксовану щотижневу гарантію безпеки або високий відсоток від загального гроссу:", "p1_title": "Гарантія $2,500/тижд. або 32% Гроссу", "p1_text": "Заробляйте 32% від загального гроссу трака або будьте впевнені з гарантованою ставкою $2,500 на тиждень (що більше).", "p1_badge": "Середній дохід: $2,500 – $3,200+/тиждень", "p2_title": "0% Депозитів та жодних прихованих зборів", "p2_text": "Ми не утримуємо жодних ескроу депозитів чи зборів за підключення. Все зароблене надходить прямо на ваш рахунок щоп'ятниці.", "p2_badge": "Прямий депозит щоп'ятниці", "p3_title": "100% Прозорість рейт-конфірмейшнів", "p3_text": "Повна фінансова прозорість: ви бачите оригінальні Rate Confirmations безпосередньо від брокерів та відкритий факторинг.", "p3_badge": "Оригінальні брокерські Rate Con", "p4_title": "Командна робота диспетчера та водія", "p4_text": "Досвідчені диспетчери, які не просто призначають вантажі, а підбирають найкращі маршрути разом із вами через дошки DAT.", "p4_badge": "Доступ до платформи DAT", "p5_title": "Паливні картки TA & Petro", "p5_text": "Знижки на пальне по всій території США, виділені акаунти для швидких заправок та легка звітність без головного болю.", "p5_badge": "Мережа заправок по всій країні", "p6_title": "Гнучкий графік та відпочинок вдома", "p6_text": "Зручний графік роботи з гарантованим поверненням додому для повноцінного відпочинку (home restarts). Повага до вашого особистого часу.", "p6_badge": "Гарантований відпочинок удома", "eq_title": "Першокласне обладнання, на яке можна покластися", "eq_text": "Наш автопарк складається з сучасних, регулярно обслуговуваних траків та трейлерів, щоб ви проводили час за кермом, а не на ремонті.", "eq_btn": "Забронювати свій трак", "spec_tractors": "Траки", "spec_trailers": "Трейлери", "spec_cabin": "Зручності в кабіні", "spec_cabin_val": "Інвертор, холодильник, спальне місце", "spec_maint": "Техобслуговування", "spec_maint_val": "Власний ярд та ремонтний цех у Levittown, PA", "oo_tag": "Програма для Owner-Operators", "oo_title": "Партнерство з HILS Trucking LLC", "oo_desc": "Максимізуйте свій прибуток із найчеснішим перевізником. Повний доступ до брокерських Rate Con, відкритий факторинг та унікальна ступенева диспетчерська програма Smooth Start:", "ss_badge": "Спеціальна програма адаптації Owner-Operator", "ss_title": "Smooth Start — Ступеневі диспетчерські послуги", "ss_desc": "Ми розуміємо, що перехід до нової компанії супроводжується витратами та стресом. Тому ми створили спеціальний графік диспетчерської плати, щоб ви комфортно стартували, залишали собі більше гроссу з першого дня і спокійно нарощували дохід:", "ss_m1": "1-й місяць", "ss_m1_svc": "Диспетчерські послуги", "ss_m1_txt": "Лише 6%, щоб покрити початкові витрати та максимізувати чистий дохід на старті.", "ss_m1_badge": "Залишайте 94% Гроссу", "ss_m2": "2-й місяць", "ss_m2_svc": "Диспетчерські послуги", "ss_m2_txt": "М'який перехід, поки ви налаштовуєте бажані лінії маршрутів та зручний графік.", "ss_m2_badge": "Залишайте 92% Гроссу", "ss_m3": "3-й місяць", "ss_m3_svc": "Диспетчерські послуги", "ss_m3_txt": "Впевнений розвиток, коли обсяг рейсів та зв'язки з брокерами виходять на повну потужність.", "ss_m3_badge": "Залишайте 90% Гроссу", "ss_m4": "4-й місяць і далі", "ss_m4_svc": "Стандартна комісія", "ss_m4_txt": "Постійна стандартна ставка з цілодобовою персональною диспетчеризацією, відкритим факторингом і без примусових рейсів.", "ss_m4_badge": "Стандартна ставка", "ss_footer_info": "<strong>100% Прозорість Rate Confirmation:</strong> Кожен рейт-конфірмейшн передається вам безпосередньо від брокера без змін. Нуль прихованих адміністративних утримань.", "ss_footer_btn": "Розпочати з 6% диспетчеризації", "lead_title": "Найпрозоріший перевізник в індустрії", "lead_desc": "Втомилися від компаній, які занижують суми в рейт-конфірмейшнах, нараховують незрозумілі комісії за факторинг або примушують брати невигідні вантажі? У HILS Trucking LLC ми працюємо відкрито і як справжні партнери.", "lead_banner_title": "100% Rate Confirmation & Відкритий факторинг", "lead_banner_desc": "Кожен вантаж супроводжується оригінальним брокерським Rate Con. Доступ до порталу факторингу для перевірки кожного долара. Жодних урізань.", "hl_title": "Переваги для Owner-Operators", "hl_1": "<strong>Програма Smooth Start:</strong> Лише 6% диспетчерська плата в 1-й місяць (з поступовим переходом до 12%)", "hl_2": "<strong>Максимальне збереження гроссу</strong> зі швидкими щотижневими виплатами", "hl_3": "<strong>Без примусового диспетчингу</strong> — ви самі обираєте вантажі та час для відпочинку вдома", "hl_4": "<strong>Знижки на пальне</strong> за картками TA & Petro по всій країні", "hl_5": "<strong>Власний трак-ярд та ремонтний цех</strong> у Levittown, PA (7800 Bristol Pike)", "hl_6": "<strong>Оренда трейлерів та страхування</strong> за вигідними умовами", "f1_title": "Оригінальні Rate Confirmations", "f1_text": "Підтвердження ставки на кожен рейс передається безпосередньо від брокера. Жодних відредагованих документів чи прихованих відсотків.", "f2_title": "Відкриті звіти факторингу", "f2_text": "Прямі щотижневі виплати зі 100% деталізацією. Контролюйте всі надходження, інвойси факторингу та паливні витрати у зрозумілих звітах.", "f3_title": "Цілодобова підтримка 24/7", "f3_text": "Працюйте пліч-о-пліч із диспетчерами, які торгуються за найкращі рейси. Скористайтеся нашою програмою <strong>Smooth Start (від 6%)</strong> або обирайте вантажі самостійно на DAT.", "f4_title": "Знижки у власному трак-сервісі", "f4_text": "Користуйтеся послугами нашого сертифікованого гаража за адресою 7800 Bristol Pike, Levittown, PA зі знижками на роботи, техогляд та шиномонтаж.", "comp_tag": "Чому водії обирають нас", "comp_title": "Порівняння прозорості", "comp_desc": "Порівняйте наш чесний підхід, орієнтований на водія, зі стандартною практикою перевізників на ринку.", "th_feature": "Умова / Політика", "th_hils": "HILS Trucking LLC", "th_other": "Звичайні компанії", "tr1_feature": "Rate Confirmation", "tr1_hils": "<span class=\"check-icon\">✓</span> 100% Незмінений оригінальний Rate Con від брокера", "tr1_other": "<span class=\"cross-icon\">✕</span> Часто приховують або переписують", "tr2_feature": "Звіти факторингу", "tr2_hils": "<span class=\"check-icon\">✓</span> Відкритий доступ до кабінету факторингу", "tr2_other": "<span class=\"cross-icon\">✕</span> Закриті / Лише внутрішні цифри", "tr3_feature": "Диспетчерські для Owner-Op", "tr3_hils": "<span class=\"check-icon\">✓</span> <strong>Smooth Start:</strong> 6% (М1) → 8% (М2) → 10% (М3) → 12% Стандарт", "tr3_other": "<span class=\"cross-icon\">✕</span> Фіксовані 12% – 15% з першого дня", "tr4_feature": "Гарантований мінімум", "tr4_hils": "<span class=\"check-icon\">✓</span> Гарантія $2,500/тижд. для Company Drivers", "tr4_other": "<span class=\"cross-icon\">✕</span> Без гарантій / Лише оплата за милю (CPM)", "tr5_feature": "Депозити та Ескроу", "tr5_hils": "<span class=\"check-icon\">✓</span> $0 Депозитів / Нуль прихованих утримань", "tr5_other": "<span class=\"cross-icon\">✕</span> Утримання $1,500 – $3,000 в ескроу", "tr6_feature": "Вибір рейсів", "tr6_hils": "<span class=\"check-icon\">✓</span> Доступ до дошки DAT та спільне бронювання", "tr6_other": "<span class=\"cross-icon\">✕</span> Примусовий диспетчинг без права вибору", "tr7_feature": "Трак-ярд та ремонтний цех", "tr7_hils": "<span class=\"check-icon\">✓</span> Власний ярд та майстерня в Levittown, PA", "tr7_other": "<span class=\"cross-icon\">✕</span> Лише сторонні дорогі сервіси", "tr8_feature": "Багатомовна підтримка", "tr8_hils": "<span class=\"check-icon\">✓</span> 24/7 підтримка англійською, українською та російською", "tr8_other": "<span class=\"cross-icon\">✕</span> Обмежений час або лише англійська", "req_tag": "Кваліфікація", "req_title": "Вимоги до водіїв", "req_desc": "Ми підтримуємо високі стандарти для захисту нашого safety rating та забезпечення комфортної та професійної співпраці.", "cd_req_title": "Company Drivers (CDL-A)", "cd_req_1": "<strong>Дійсне посвідчення CDL Class A</strong>, видане в США.", "cd_req_2": "<strong>Мінімум 1+ рік</strong> підтвердженого досвіду водіння Class A OTR.", "cd_req_3": "<strong>Чиста історія водіння (MVR)</strong> — без серйозних порушень, призупинень або DUI за останні 5 років.", "cd_req_4": "<strong>Дійсна медична картка (DOT Physical)</strong>.", "cd_req_5": "Здатність пройти обов'язковий DOT тест на наркотики та перевірку Clearinghouse.", "cd_req_6": "Відповідальне ставлення до обладнання та дотримання правил безпеки.", "oo_req_title": "Owner-Operators", "oo_req_1": "<strong>Дійсне посвідчення CDL Class A</strong> та підтверджений досвід OTR.", "oo_req_2": "<strong>Трак у відмінному стані</strong>, що пройшов річний DOT техогляд.", "oo_req_3": "Встановлене ELD-обладнання (або сумісний пристрій).", "oo_req_4": "Безпечна історія водіння та дотримання норм годин роботи FMCSA.", "oo_req_5": "Власний Dry Van трейлер або оренда наших сучасних трейлерів Utility 2023+.", "oo_req_6": "Дійсна картка DOT Medical Card та відповідність базі Clearinghouse.", "term_tag": "Трак-ярд та сервісний цех", "term_title": "Ярд та майстерня в Levittown, PA", "term_f1": "Охоронювана парковка для траків і трейлерів із цілодобовим доступом 24/7.", "term_f2": "Повноцінний ремонтний цех: швидкий ремонт, техогляд (PM) та шиномонтаж.", "term_f3": "Зручна локація на Східному узбережжі: виїзд на траси I-95 та PA Turnpike.", "term_maps_btn": "Відкрити в Google Maps", "term_dir_btn": "Маршрут до терміналу", "contact_tag": "Зв'яжіться з нами", "contact_title": "Готові до співпраці?", "contact_desc": "Приєднуйтесь до компанії, яка поважає ваш час, цінує вашу працю та платить зі 100% фінансовою прозорістю. Зателефонуйте, напишіть або подайте заявку онлайн прямо зараз!", "recruiting_hotline": "Гаряча лінія рекрутингу", "direct_email": "Прямий Email", "terminal_yard_label": "Трак-ярд та офіс", "msg_support": "Підтримка в месенджерах (24/7):", "form_title": "Швидка заявка водія", "form_subtitle": "Заповніть коротку форму нижче. Наша команда рекрутингу розгляне вашу інформацію та зв'яжеться з вами протягом 24 годин.", "form_success": "✓ Дякуємо! Вашу заявку отримано. Наш рекрутер зателефонує вам найближчим часом за вказаним номером.", "lbl_name": "Повне ім'я *", "ph_name": "напр. Іван Коваленко", "lbl_phone": "Номер телефону *", "ph_phone": "напр. (445) 000-00-00", "lbl_email": "Електронна пошта *", "ph_email": "напр. driver@example.com", "lbl_role": "Посада *", "opt_role_cd": "Company Driver (CDL-A Dry Van)", "opt_role_oo": "Owner-Operator (Dry Van)", "lbl_exp": "Досвід CDL-A OTR *", "opt_exp_1_2": "1 – 2 роки", "opt_exp_3_5": "3 – 5 років", "opt_exp_5plus": "5+ років", "opt_exp_under1": "Менше 1 року", "lbl_state": "Штат видачі CDL *", "ph_state": "напр. PA, NJ, OH, IL...", "lbl_notes": "Коментарі або деталі трака (для Owner-Operator)", "ph_notes": "Розкажіть про ваш водійський досвід, бажану дату виїзду або обладнання...", "lbl_consent": "Я маю дійсне посвідчення Class A CDL та підтверджую достовірність поданих даних. Я погоджуюся на отримання повідомлень щодо працевлаштування телефоном або через SMS.", "btn_submit": "Надіслати заявку", "footer_desc": "HILS Trucking LLC — ліцензований перевізник у США, що гарантує безпеку, високий дохід та 100% фінансову прозорість для CDL-A водіїв та Owner-Operators.", "footer_nav": "Навігація", "nav_overview": "Огляд", "footer_programs": "Програми", "prog_guarantee": "Гарантія $2,500/тиждень", "prog_gross": "32% від Гроссу", "prog_oo": "Партнерство для Owner-Operators", "prog_transparency": "100% Прозорість Rate Con", "prog_shop": "Власний ремонтний сервіс", "footer_contact": "Контактна інформація", "footer_rights": "© 2026 HILS TRUCKING LLC. Всі права захищено. Equal Opportunity Employer.", "float_call": "📞 Зателефонувати (445) 444-02-04", "mob_apply": "Надіслати заявку"}, "ru": {"top_badge": "Набор водителей: CDL-A Company Drivers и Owner-Operators", "nav_company": "Company Drivers", "nav_owner": "Owner-Operators", "nav_transparency": "Прозрачность", "nav_requirements": "Требования", "nav_terminal": "Терминал", "nav_apply": "Подать заявку", "mob_nav_company": "Company Drivers (CDL-A)", "mob_nav_owner": "Owner-Operators", "mob_nav_transparency": "100% Прозрачность", "mob_nav_requirements": "Требования к водителям", "mob_nav_terminal": "Трак-ярд в Levittown", "mob_nav_apply": "Контакты и Заявка", "mob_call": "Call (445) 444-02-04", "hero_p1_title": "Гарантия $2,500 / нед.", "hero_p1_desc": "Гарантированный еженедельный минимальный заработок для вашей уверенности.", "hero_p2_title": "32% от Гросса", "hero_p2_desc": "Средний еженедельный гросс трака от $8,000+.", "hero_p3_title": "0% Скрытых депозитов", "hero_p3_desc": "Без эскроу депозитов, без сборов за подключение, ноль несправедливых вычетов.", "hero_p4_title": "100% Прозрачность", "hero_p4_desc": "Оригинальные брокерские Rate Confirmations и открытый факторинг.", "cd_tag": "Программа для Company Drivers", "cd_title": "CDL-A Dry Van OTR Водители", "cd_desc": "Мы уверены, что водители должны получать максимальную оплату за своё время в рейсе. Выбирайте фиксированную недельную гарантию или высокий процент от общего гросса:", "p1_title": "Гарантия $2,500/нед. или 32% Гросса", "p1_text": "Зарабатывайте 32% от общего гросса трака или будьте уверены с гарантированной ставкой $2,500 в неделю (что больше).", "p1_badge": "Средний доход: $2,500 – $3,200+/неделя", "p2_title": "0% Депозитов и никаких скрытых сборов", "p2_text": "Мы не удерживаем эскроу депозитов или сборов за оформление. Все заработанные деньги поступают напрямую на ваш счёт каждую пятницу.", "p2_badge": "Прямой депозит каждую пятницу", "p3_title": "100% Прозрачность рейт-конфирмаций", "p3_text": "Полная финансовая прозрачность: вы видите оригинальные Rate Confirmations напрямую от брокеров и открытые отчёты факторинга.", "p3_badge": "Оригинальные брокерские Rate Con", "p4_title": "Командная работа диспетчера и водителя", "p4_text": "Опытные диспетчеры, которые не просто дают грузы, а подбирают лучшие маршруты вместе с вами через платформу DAT.", "p4_badge": "Доступ к платформе DAT", "p5_title": "Топливные карты TA & Petro", "p5_text": "Скидки на топливо по всей территории США, выделенные аккаунты для быстрых заправок и простая отчётность без лишних хлопот.", "p5_badge": "Сеть заправок по всей стране", "p6_title": "Гибкий график и отдых дома", "p6_text": "Удобный график с гарантированным возвращением домой для полноценного отдыха (home restarts). Уважение к вашему личному времени.", "p6_badge": "Гарантированный отдых дома", "eq_title": "Надёжная техника в идеальном состоянии", "eq_text": "Наш автопарк состоит из современных, регулярно обслуживаемых траков и трейлеров, чтобы вы зарабатывали на дороге, а не простаивали на ремонте.", "eq_btn": "Забронировать свой трак", "spec_tractors": "Траки", "spec_trailers": "Трейлеры", "spec_cabin": "Удобства в кабине", "spec_cabin_val": "Инвертор, холодильник, спальное место", "spec_maint": "Техобслуживание", "spec_maint_val": "Собственный ярд и ремонтная мастерская в Levittown, PA", "oo_tag": "Программа для Owner-Operators", "oo_title": "Партнёрство с HILS Trucking LLC", "oo_desc": "Максимизируйте свой доход с самым честным перевозчиком. Полный доступ к брокерским Rate Con, открытый факторинг и уникальная ступенчатая диспетчерская программа Smooth Start:", "ss_badge": "Специальная программа адаптации Owner-Operator", "ss_title": "Smooth Start — Ступенчатые диспетчерские услуги", "ss_desc": "Мы понимаем, что переход в новую компанию связан с расходами и стрессом. Поэтому мы создали специальную шкалу диспетчерских комиссий, чтобы вы комфортно стартовали, оставляли себе больше гросса с 1-го дня и спокойно наращивали заработок:", "ss_m1": "1-й месяц", "ss_m1_svc": "Диспетчерские услуги", "ss_m1_txt": "Всего 6%, чтобы снизить начальные расходы и максимизировать чистую прибыль со старта.", "ss_m1_badge": "Оставляйте 94% Гросса", "ss_m2": "2-й месяц", "ss_m2_svc": "Диспетчерские услуги", "ss_m2_txt": "Мягкий шаг вперёд, пока вы определяете удобные маршруты и рабочий график.", "ss_m2_badge": "Оставляйте 92% Гросса", "ss_m3": "3-й месяц", "ss_m3_svc": "Диспетчерские услуги", "ss_m3_txt": "Уверенный рост, когда объём рейсов и работа с брокерами выходят на полную мощность.", "ss_m3_badge": "Оставляйте 90% Гросса", "ss_m4": "4-й месяц и далее", "ss_m4_svc": "Стандартная комиссия", "ss_m4_txt": "Постоянная стандартная ставка с круглосуточной личной диспетчеризацией, открытым факторингом и без принудительных рейсов.", "ss_m4_badge": "Стандартная ставка", "ss_footer_info": "<strong>100% Прозрачность Rate Confirmation:</strong> Каждая брокерская рейт-конфирмация передаётся вам напрямую без изменений. Ноль скрытых административных удержаний.", "ss_footer_btn": "Начать с 6% диспетчеризации", "lead_title": "Самый прозрачный перевозчик в индустрии", "lead_desc": "Устали от компаний, урезающих суммы в рейт-конфирмациях, взимающих непонятные комиссии за факторинг или принуждающих к невыгодным рейсам? В HILS Trucking LLC мы работаем открыто и как настоящие партнёры.", "lead_banner_title": "100% Rate Confirmation & Открытый факторинг", "lead_banner_desc": "Каждый рейс подтверждается оригинальным брокерским Rate Con. Доступ к порталу факторинга для проверки каждого доллара. Никаких урезаний.", "hl_title": "Преимущества для Owner-Operators", "hl_1": "<strong>Программа Smooth Start:</strong> Всего 6% диспетчерская комиссия в 1-й месяц (с переходом до 12%)", "hl_2": "<strong>Максимальное удержание гросса</strong> с быстрыми еженедельными расчётами", "hl_3": "<strong>Без принудительного диспетчинга</strong> — вы сами выбираете грузы и время отдыха дома", "hl_4": "<strong>Скидки на топливо</strong> по картам TA & Petro по всей стране", "hl_5": "<strong>Собственный трак-ярд и ремонтный цех</strong> в Levittown, PA (7800 Bristol Pike)", "hl_6": "<strong>Аренда трейлеров и страхование</strong> на выгодных условиях", "f1_title": "Оригинальные Rate Confirmations", "f1_text": "Подтверждение ставки на каждый рейс предоставляется напрямую от брокера. Никаких отредактированных документов или урезанных процентов.", "f2_title": "Открытые отчёты факторинга", "f2_text": "Прямые еженедельные выплаты со 100% детализацией. Контролируйте все поступления, инвойсы факторинга и расходы на топливо в прозрачных отчётах.", "f3_title": "Круглосуточная диспетчерская поддержка 24/7", "f3_text": "Работайте бок о бок с диспетчерами, которые торгуются за максимальные ставки. Воспользуйтесь нашей программой <strong>Smooth Start (от 6%)</strong> или выбирайте грузы сами через DAT.", "f4_title": "Скидки в собственной мастерской", "f4_text": "Обслуживайте свой трак в нашем сертифицированном сервисе по адресу 7800 Bristol Pike, Levittown, PA со скидками на работы, ТО и шиномонтаж.", "comp_tag": "Почему водители выбирают нас", "comp_title": "Сравнение прозрачности", "comp_desc": "Сравните наш честный подход, ориентированный на водителя, с обычной практикой перевозчиков на рынке.", "th_feature": "Условие / Политика", "th_hils": "HILS Trucking LLC", "th_other": "Обычные компании", "tr1_feature": "Rate Confirmation", "tr1_hils": "<span class=\"check-icon\">✓</span> 100% Неизменённый оригинальный Rate Con от брокера", "tr1_other": "<span class=\"cross-icon\">✕</span> Часто скрывают или переписывают", "tr2_feature": "Отчёты факторинга", "tr2_hils": "<span class=\"check-icon\">✓</span> Открытый доступ к кабинету факторинга", "tr2_other": "<span class=\"cross-icon\">✕</span> Закрытые / Только внутренние цифры", "tr3_feature": "Диспетчерские для Owner-Op", "tr3_hils": "<span class=\"check-icon\">✓</span> <strong>Smooth Start:</strong> 6% (М1) → 8% (М2) → 10% (М3) → 12% Стандарт", "tr3_other": "<span class=\"cross-icon\">✕</span> Фиксированные 12% – 15% с первого дня", "tr4_feature": "Гарантированный минимум", "tr4_hils": "<span class=\"check-icon\">✓</span> Гарантия $2,500/нед. для Company Drivers", "tr4_other": "<span class=\"cross-icon\">✕</span> Без гарантий / Только оплата за милю (CPM)", "tr5_feature": "Депозиты и Эскроу", "tr5_hils": "<span class=\"check-icon\">✓</span> $0 Депозитов / Ноль скрытых удержаний", "tr5_other": "<span class=\"cross-icon\">✕</span> Удержание $1,500 – $3,000 в эскроу", "tr6_feature": "Выбор рейсов", "tr6_hils": "<span class=\"check-icon\">✓</span> Доступ к доске DAT и совместный выбор грузов", "tr6_other": "<span class=\"cross-icon\">✕</span> Принудительный диспетчинг без права выбора", "tr7_feature": "Трак-ярд и ремонтный цех", "tr7_hils": "<span class=\"check-icon\">✓</span> Собственный ярд и мастерская в Levittown, PA", "tr7_other": "<span class=\"cross-icon\">✕</span> Только сторонние дорогие сервисы", "tr8_feature": "Многоязычная поддержка", "tr8_hils": "<span class=\"check-icon\">✓</span> 24/7 поддержка на английском, украинском и русском", "tr8_other": "<span class=\"cross-icon\">✕</span> Ограниченные часы или только английский", "req_tag": "Квалификация", "req_title": "Требования к водителям", "req_desc": "Мы поддерживаем высокие стандарты безопасности для защиты нашего safety rating и обеспечения комфортного и профессионального сотрудничества.", "cd_req_title": "Company Drivers (CDL-A)", "cd_req_1": "<strong>Действующие права CDL Class A</strong>, выданные в США.", "cd_req_2": "<strong>Минимум 1+ год</strong> подтверждённого опыта вождения Class A OTR.", "cd_req_3": "<strong>Чистая история вождения (MVR)</strong> — без серьёзных нарушений, приостановок или DUI за последние 5 лет.", "cd_req_4": "<strong>Действующая медицинская карта (DOT Physical)</strong>.", "cd_req_5": "Способность пройти обязательный тест DOT на наркотики и проверку Clearinghouse.", "cd_req_6": "Ответственное отношение к оборудованию и соблюдение правил безопасности.", "oo_req_title": "Owner-Operators", "oo_req_1": "<strong>Действующие права CDL Class A</strong> и подтверждённый опыт OTR.", "oo_req_2": "<strong>Трак в отличном состоянии</strong>, прошедший ежегодный техосмотр DOT.", "oo_req_3": "Установленное оборудование ELD (или совместимое устройство).", "oo_req_4": "Безопасная история вождения и соблюдение норм часов работы FMCSA.", "oo_req_5": "Собственный Dry Van трейлер или аренда наших современных трейлеров Utility 2023+.", "oo_req_6": "Действующая карта DOT Medical Card и соответствие базе Clearinghouse.", "term_tag": "Трак-ярд и ремонтный сервис", "term_title": "Ярд и мастерская в Levittown, PA", "term_f1": "Охраняемая парковка для траков и трейлеров с круглосуточным доступом 24/7.", "term_f2": "Собственная ремонтная мастерская: быстрый ремонт, техосмотр (PM) и шиномонтаж.", "term_f3": "Стратегическое расположение на Восточном побережье возле трасс I-95 и PA Turnpike.", "term_maps_btn": "Открыть в Google Maps", "term_dir_btn": "Маршрут к терминалу", "contact_tag": "Свяжитесь с нами", "contact_title": "Готовы начать сотрудничество?", "contact_desc": "Присоединяйтесь к компании, которая уважает ваше время, ценит ваш труд и платит со 100% финансовой прозрачностью. Позвоните, напишите или отправьте заявку онлайн прямо сейчас!", "recruiting_hotline": "Горячая линия рекрутинга", "direct_email": "Прямой Email", "terminal_yard_label": "Трак-ярд и офис", "msg_support": "Поддержка в мессенджерах (24/7):", "form_title": "Быстрая заявка водителя", "form_subtitle": "Заполните короткую форму ниже. Наша команда рекрутинга рассмотрит ваши данные и свяжется с вами в течение 24 часов.", "form_success": "✓ Спасибо! Ваша заявка получена. Наш рекрутер позвонит вам в ближайшее время по указанному номеру.", "lbl_name": "Полное имя *", "ph_name": "напр. Иван Коваленко", "lbl_phone": "Номер телефона *", "ph_phone": "напр. (445) 000-00-00", "lbl_email": "Электронная почта *", "ph_email": "напр. driver@example.com", "lbl_role": "Должность *", "opt_role_cd": "Company Driver (CDL-A Dry Van)", "opt_role_oo": "Owner-Operator (Dry Van)", "lbl_exp": "Опыт CDL-A OTR *", "opt_exp_1_2": "1 – 2 года", "opt_exp_3_5": "3 – 5 лет", "opt_exp_5plus": "5+ лет", "opt_exp_under1": "Менее 1 года", "lbl_state": "Штат выдачи CDL *", "ph_state": "напр. PA, NJ, OH, IL...", "lbl_notes": "Комментарии или детали трака (для Owner-Operator)", "ph_notes": "Расскажите о вашем опыте вождения, желаемой дате старта или оборудовании...", "lbl_consent": "Я имею действующие права Class A CDL и подтверждаю достоверность предоставленной информации. Я согласен получать сообщения по трудоустройству по телефону или SMS.", "btn_submit": "Отправить заявку", "footer_desc": "HILS Trucking LLC — лицензированный перевозчик в США, гарантирующий безопасность, высокий доход и 100% финансовую прозрачность для CDL-A водителей и Owner-Operators.", "footer_nav": "Навигация", "nav_overview": "Обзор", "footer_programs": "Программы", "prog_guarantee": "Гарантия $2,500/неделя", "prog_gross": "32% от Гросса", "prog_oo": "Партнёрство для Owner-Operators", "prog_transparency": "100% Прозрачность Rate Con", "prog_shop": "Собственная ремонтная мастерская", "footer_contact": "Контактная информация", "footer_rights": "© 2026 HILS TRUCKING LLC. Все права защищены. Equal Opportunity Employer.", "float_call": "📞 Позвонить (445) 444-02-04", "mob_apply": "Отправить заявку"}};
+
+    // Form submission & reCAPTCHA feedback translations
+    const formI18n = {
+      en: {
+        form_error: "✕ An error occurred while submitting your application. Please check your details or call us directly.",
+        form_recaptcha_error: "✕ Please complete the «I'm not a robot» reCAPTCHA verification.",
+        btn_submitting: "Submitting Application..."
+      },
+      uk: {
+        form_error: "✕ Виникла помилка під час надсилання заявки. Будь ласка, перевірте дані або зателефонуйте нам.",
+        form_recaptcha_error: "✕ Будь ласка, пройдіть перевірку reCAPTCHA «Я не робот».",
+        btn_submitting: "Надсилання заявки..."
+      },
+      ru: {
+        form_error: "✕ Произошла ошибка при отправке заявки. Пожалуйста, проверьте данные или свяжитесь с нами напрямую.",
+        form_recaptcha_error: "✕ Пожалуйста, подтвердите проверку reCAPTCHA «Я не робот».",
+        btn_submitting: "Отправка заявки..."
+      }
+    };
+    Object.keys(formI18n).forEach(l => {
+      if (i18nData[l]) Object.assign(i18nData[l], formI18n[l]);
+    });
 
     function detectLanguage() {
       try {
@@ -3686,58 +3735,190 @@
       }
     });
 
-    // Application Form Submission
+    // =========================================================================
+    // APPLICATION FORM SUBMISSION & GOOGLE reCAPTCHA v2
+    // =========================================================================
     const driverApplyForm = document.getElementById('driverApplyForm');
     const formSuccessAlert = document.getElementById('formSuccessAlert');
+    const formErrorAlert = document.getElementById('formErrorAlert');
+    const submitApplyBtn = document.getElementById('submitApplyBtn');
+
+    let recaptchaWidgetId = null;
+    let recaptchaSettings = { enabled: true, siteKey: '' };
+
+    // Function to render the Google reCAPTCHA v2 widget
+    function renderHilsRecaptcha() {
+      const container = document.getElementById('recaptchaWidget');
+      if (container && window.grecaptcha && typeof window.grecaptcha.render === 'function' && recaptchaWidgetId === null) {
+        if (recaptchaSettings.siteKey) {
+          try {
+            recaptchaWidgetId = window.grecaptcha.render(container, {
+              sitekey: recaptchaSettings.siteKey,
+              theme: 'light'
+            });
+          } catch (err) {
+            console.warn('reCAPTCHA render notice:', err);
+          }
+        }
+      }
+    }
+
+    // Callback invoked when Google reCAPTCHA api.js loads
+    window.onHilsRecaptchaLoaded = function() {
+      renderHilsRecaptcha();
+    };
+
+    // Load reCAPTCHA config from backend (send-mail.php?action=config)
+    function fetchRecaptchaConfig() {
+      fetch('send-mail.php?action=config')
+        .then(res => res.json())
+        .then(data => {
+          if (!data || !data.success) return;
+          recaptchaSettings.enabled = !!data.recaptcha_enabled;
+          recaptchaSettings.siteKey = data.recaptcha_site_key || '';
+
+          const wrapper = document.getElementById('recaptchaWrapper');
+          if (!recaptchaSettings.enabled) {
+            if (wrapper) wrapper.style.display = 'none';
+            return;
+          }
+
+          if (recaptchaSettings.siteKey) {
+            if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
+              renderHilsRecaptcha();
+            } else if (!document.getElementById('recaptchaApiScript')) {
+              const script = document.createElement('script');
+              script.id = 'recaptchaApiScript';
+              const curLang = (typeof activeLanguage !== 'undefined' ? activeLanguage : detectLanguage()) || 'en';
+              script.src = 'https://www.google.com/recaptcha/api.js?onload=onHilsRecaptchaLoaded&render=explicit&hl=' + encodeURIComponent(curLang);
+              script.async = true;
+              script.defer = true;
+              document.head.appendChild(script);
+            }
+          }
+        })
+        .catch(err => {
+          console.warn('Config fetch notice (send-mail.php):', err);
+        });
+    }
+
+    // Initialize reCAPTCHA on page load
+    fetchRecaptchaConfig();
 
     if (driverApplyForm) {
       driverApplyForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        const name = document.getElementById('driverName').value.trim();
-        const phone = document.getElementById('driverPhone').value.trim();
-        const email = document.getElementById('driverEmail').value.trim();
-        const role = document.getElementById('driverRole').value;
-        const exp = document.getElementById('driverExp').value;
-        const state = document.getElementById('driverState').value.trim();
-        const notes = document.getElementById('driverNotes').value.trim();
+        const curLang = (typeof activeLanguage !== 'undefined' ? activeLanguage : detectLanguage()) || 'en';
 
-        // Show instant success alert
-        formSuccessAlert.style.display = 'block';
-        formSuccessAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        // Clear previous alerts
+        if (formSuccessAlert) formSuccessAlert.style.display = 'none';
+        if (formErrorAlert) formErrorAlert.style.display = 'none';
 
-        // Prepare email mailto fallback trigger
-        const subject = encodeURIComponent(`Driver Application: ${name} (${role})`);
-        const body = encodeURIComponent(
-          `HILS Trucking LLC Application:
+        // Verify reCAPTCHA on frontend if enabled
+        let recaptchaToken = '';
+        if (recaptchaSettings.enabled) {
+          if (typeof window.grecaptcha !== 'undefined') {
+            if (recaptchaWidgetId !== null) {
+              recaptchaToken = window.grecaptcha.getResponse(recaptchaWidgetId);
+            } else {
+              recaptchaToken = window.grecaptcha.getResponse();
+            }
+          }
 
-` +
-          `Name: ${name}
-` +
-          `Phone: ${phone}
-` +
-          `Email: ${email}
-` +
-          `Position: ${role}
-` +
-          `Experience: ${exp}
-` +
-          `CDL State: ${state}
-` +
-          `Notes: ${notes}
+          if (!recaptchaToken) {
+            const recaptchaMsg = (i18nData[curLang] && i18nData[curLang].form_recaptcha_error)
+              ? i18nData[curLang].form_recaptcha_error
+              : "✕ Please complete the «I'm not a robot» reCAPTCHA verification.";
+            if (formErrorAlert) {
+              formErrorAlert.textContent = recaptchaMsg;
+              formErrorAlert.style.display = 'block';
+              formErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            return;
+          }
+        }
 
-` +
-          `Submitted via HILS Trucking Vacancy Landing Page.`
-        );
+        // Disable submit button & show loading state
+        if (submitApplyBtn) {
+          submitApplyBtn.disabled = true;
+          submitApplyBtn.dataset.origText = submitApplyBtn.textContent;
+          const loadingText = (i18nData[curLang] && i18nData[curLang].btn_submitting)
+            ? i18nData[curLang].btn_submitting
+            : 'Submitting Application...';
+          submitApplyBtn.textContent = loadingText;
+        }
 
-        // Optionally open mail client in background
-        const mailtoUri = `mailto:info@hilstrucking.com?subject=${subject}&body=${body}`;
-        console.log('Application ready:', mailtoUri);
+        // Build form data
+        const formData = new FormData(driverApplyForm);
+        if (recaptchaToken) {
+          formData.set('g-recaptcha-response', recaptchaToken);
+        }
 
-        // Reset inputs after 2.5s
-        setTimeout(() => {
-          driverApplyForm.reset();
-        }, 2000);
+        fetch('send-mail.php', {
+          method: 'POST',
+          body: formData
+        })
+        .then(async res => {
+          const json = await res.json().catch(() => null);
+          return { ok: res.ok, status: res.status, data: json };
+        })
+        .then(result => {
+          if (result.ok && result.data && result.data.success) {
+            if (formSuccessAlert) {
+              formSuccessAlert.style.display = 'block';
+              formSuccessAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            driverApplyForm.reset();
+            if (typeof window.grecaptcha !== 'undefined' && recaptchaWidgetId !== null) {
+              window.grecaptcha.reset(recaptchaWidgetId);
+            }
+          } else {
+            let errorText = '';
+            if (result.data && result.data.message) {
+              errorText = '✕ ' + result.data.message;
+            } else if (i18nData[curLang] && i18nData[curLang].form_error) {
+              errorText = i18nData[curLang].form_error;
+            } else {
+              errorText = '✕ Failed to submit application. Please try again or contact us directly.';
+            }
+
+            if (formErrorAlert) {
+              formErrorAlert.textContent = errorText;
+              formErrorAlert.style.display = 'block';
+              formErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            if (typeof window.grecaptcha !== 'undefined' && recaptchaWidgetId !== null) {
+              window.grecaptcha.reset(recaptchaWidgetId);
+            }
+          }
+        })
+        .catch(err => {
+          console.error('Submission network error:', err);
+          const errorText = (i18nData[curLang] && i18nData[curLang].form_error)
+            ? i18nData[curLang].form_error
+            : '✕ Network error occurred. Please try again or contact us directly.';
+
+          if (formErrorAlert) {
+            formErrorAlert.textContent = errorText;
+            formErrorAlert.style.display = 'block';
+            formErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+
+          if (typeof window.grecaptcha !== 'undefined' && recaptchaWidgetId !== null) {
+            window.grecaptcha.reset(recaptchaWidgetId);
+          }
+        })
+        .finally(() => {
+          if (submitApplyBtn) {
+            submitApplyBtn.disabled = false;
+            const defaultText = (i18nData[curLang] && i18nData[curLang].btn_submit)
+              ? i18nData[curLang].btn_submit
+              : (submitApplyBtn.dataset.origText || 'Submit Driver Application');
+            submitApplyBtn.textContent = defaultText;
+          }
+        });
       });
     }
 
