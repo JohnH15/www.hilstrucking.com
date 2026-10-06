@@ -3340,14 +3340,21 @@
               </label>
             </div>
 
-            <!-- reCAPTCHA v2 Checkbox Container -->
-            <div class="recaptcha-wrapper" id="recaptchaWrapper">
+            <!-- reCAPTCHA Container (used for v2 Checkbox) -->
+            <div class="recaptcha-wrapper" id="recaptchaWrapper" style="display: none;">
               <div id="recaptchaWidget" class="g-recaptcha"></div>
             </div>
 
             <button type="submit" id="submitApplyBtn" class="btn btn-primary" style="width: 100%; font-size: 1.05rem; padding: 15px;" data-i18n="btn_submit">
               Submit Driver Application
             </button>
+
+            <!-- reCAPTCHA v3 Notice -->
+            <div id="recaptchaNotice" style="display: none; font-size: 0.78rem; color: var(--slate-500); text-align: center; margin-top: 10px; line-height: 1.4;">
+              Protected by reCAPTCHA &bull;
+              <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Privacy</a> &amp;
+              <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Terms</a>
+            </div>
           </form>
         </div>
       </div>
@@ -3736,7 +3743,7 @@
     });
 
     // =========================================================================
-    // APPLICATION FORM SUBMISSION & GOOGLE reCAPTCHA v2
+    // APPLICATION FORM SUBMISSION & GOOGLE reCAPTCHA (v3 & v2)
     // =========================================================================
     const driverApplyForm = document.getElementById('driverApplyForm');
     const formSuccessAlert = document.getElementById('formSuccessAlert');
@@ -3744,10 +3751,10 @@
     const submitApplyBtn = document.getElementById('submitApplyBtn');
 
     let recaptchaWidgetId = null;
-    let recaptchaSettings = { enabled: true, siteKey: '' };
+    let recaptchaSettings = { enabled: true, version: 'v3', siteKey: '' };
 
-    // Function to render the Google reCAPTCHA v2 widget
-    function renderHilsRecaptcha() {
+    // Function to render the Google reCAPTCHA v2 widget (if v2 configured)
+    function renderHilsRecaptchaV2() {
       const container = document.getElementById('recaptchaWidget');
       if (container && window.grecaptcha && typeof window.grecaptcha.render === 'function' && recaptchaWidgetId === null) {
         if (recaptchaSettings.siteKey) {
@@ -3757,7 +3764,7 @@
               theme: 'light'
             });
           } catch (err) {
-            console.warn('reCAPTCHA render notice:', err);
+            console.warn('reCAPTCHA v2 render notice:', err);
           }
         }
       }
@@ -3765,7 +3772,9 @@
 
     // Callback invoked when Google reCAPTCHA api.js loads
     window.onHilsRecaptchaLoaded = function() {
-      renderHilsRecaptcha();
+      if (recaptchaSettings.version === 'v2') {
+        renderHilsRecaptchaV2();
+      }
     };
 
     // Load reCAPTCHA config from backend (send-mail.php?action=config)
@@ -3775,25 +3784,47 @@
         .then(data => {
           if (!data || !data.success) return;
           recaptchaSettings.enabled = !!data.recaptcha_enabled;
+          recaptchaSettings.version = (data.recaptcha_version || 'v3').toLowerCase();
           recaptchaSettings.siteKey = data.recaptcha_site_key || '';
 
           const wrapper = document.getElementById('recaptchaWrapper');
+          const notice = document.getElementById('recaptchaNotice');
+
           if (!recaptchaSettings.enabled) {
             if (wrapper) wrapper.style.display = 'none';
+            if (notice) notice.style.display = 'none';
             return;
           }
 
-          if (recaptchaSettings.siteKey) {
-            if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
-              renderHilsRecaptcha();
-            } else if (!document.getElementById('recaptchaApiScript')) {
+          if (recaptchaSettings.version === 'v3') {
+            if (wrapper) wrapper.style.display = 'none';
+            if (notice) notice.style.display = 'block';
+
+            if (recaptchaSettings.siteKey && !document.getElementById('recaptchaApiScript')) {
               const script = document.createElement('script');
               script.id = 'recaptchaApiScript';
-              const curLang = (typeof activeLanguage !== 'undefined' ? activeLanguage : detectLanguage()) || 'en';
-              script.src = 'https://www.google.com/recaptcha/api.js?onload=onHilsRecaptchaLoaded&render=explicit&hl=' + encodeURIComponent(curLang);
+              script.src = 'https://www.google.com/recaptcha/api.js?render=' + encodeURIComponent(recaptchaSettings.siteKey);
               script.async = true;
               script.defer = true;
               document.head.appendChild(script);
+            }
+          } else {
+            // v2 Checkbox mode
+            if (wrapper) wrapper.style.display = 'flex';
+            if (notice) notice.style.display = 'none';
+
+            if (recaptchaSettings.siteKey) {
+              if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
+                renderHilsRecaptchaV2();
+              } else if (!document.getElementById('recaptchaApiScript')) {
+                const script = document.createElement('script');
+                script.id = 'recaptchaApiScript';
+                const curLang = (typeof activeLanguage !== 'undefined' ? activeLanguage : detectLanguage()) || 'en';
+                script.src = 'https://www.google.com/recaptcha/api.js?onload=onHilsRecaptchaLoaded&render=explicit&hl=' + encodeURIComponent(curLang);
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+              }
             }
           }
         })
@@ -3802,8 +3833,94 @@
         });
     }
 
-    // Initialize reCAPTCHA on page load
+    // Initialize reCAPTCHA config on page load
     fetchRecaptchaConfig();
+
+    function setSubmitBtnLoading(loading) {
+      if (!submitApplyBtn) return;
+      const curLang = (typeof activeLanguage !== 'undefined' ? activeLanguage : detectLanguage()) || 'en';
+      if (loading) {
+        submitApplyBtn.disabled = true;
+        submitApplyBtn.dataset.origText = submitApplyBtn.textContent;
+        const loadingText = (i18nData[curLang] && i18nData[curLang].btn_submitting)
+          ? i18nData[curLang].btn_submitting
+          : 'Submitting Application...';
+        submitApplyBtn.textContent = loadingText;
+      } else {
+        submitApplyBtn.disabled = false;
+        const defaultText = (i18nData[curLang] && i18nData[curLang].btn_submit)
+          ? i18nData[curLang].btn_submit
+          : (submitApplyBtn.dataset.origText || 'Submit Driver Application');
+        submitApplyBtn.textContent = defaultText;
+      }
+    }
+
+    function executeSubmitWithToken(token) {
+      const curLang = (typeof activeLanguage !== 'undefined' ? activeLanguage : detectLanguage()) || 'en';
+      const formData = new FormData(driverApplyForm);
+      if (token) {
+        formData.set('g-recaptcha-response', token);
+      }
+
+      fetch('send-mail.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(async res => {
+        const json = await res.json().catch(() => null);
+        return { ok: res.ok, status: res.status, data: json };
+      })
+      .then(result => {
+        if (result.ok && result.data && result.data.success) {
+          if (formSuccessAlert) {
+            formSuccessAlert.style.display = 'block';
+            formSuccessAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          driverApplyForm.reset();
+          if (typeof window.grecaptcha !== 'undefined' && recaptchaWidgetId !== null) {
+            window.grecaptcha.reset(recaptchaWidgetId);
+          }
+        } else {
+          let errorText = '';
+          if (result.data && result.data.message) {
+            errorText = '✕ ' + result.data.message;
+          } else if (i18nData[curLang] && i18nData[curLang].form_error) {
+            errorText = i18nData[curLang].form_error;
+          } else {
+            errorText = '✕ Failed to submit application. Please try again or contact us directly.';
+          }
+
+          if (formErrorAlert) {
+            formErrorAlert.textContent = errorText;
+            formErrorAlert.style.display = 'block';
+            formErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+
+          if (typeof window.grecaptcha !== 'undefined' && recaptchaWidgetId !== null) {
+            window.grecaptcha.reset(recaptchaWidgetId);
+          }
+        }
+      })
+      .catch(err => {
+        console.error('Submission network error:', err);
+        const errorText = (i18nData[curLang] && i18nData[curLang].form_error)
+          ? i18nData[curLang].form_error
+          : '✕ Network error occurred. Please try again or contact us directly.';
+
+        if (formErrorAlert) {
+          formErrorAlert.textContent = errorText;
+          formErrorAlert.style.display = 'block';
+          formErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        if (typeof window.grecaptcha !== 'undefined' && recaptchaWidgetId !== null) {
+          window.grecaptcha.reset(recaptchaWidgetId);
+        }
+      })
+      .finally(() => {
+        setSubmitBtnLoading(false);
+      });
+    }
 
     if (driverApplyForm) {
       driverApplyForm.addEventListener('submit', function(e) {
@@ -3815,112 +3932,64 @@
         if (formSuccessAlert) formSuccessAlert.style.display = 'none';
         if (formErrorAlert) formErrorAlert.style.display = 'none';
 
-        // Verify reCAPTCHA on frontend if enabled
-        let recaptchaToken = '';
-        if (recaptchaSettings.enabled) {
-          if (typeof window.grecaptcha !== 'undefined') {
-            if (recaptchaWidgetId !== null) {
-              recaptchaToken = window.grecaptcha.getResponse(recaptchaWidgetId);
-            } else {
-              recaptchaToken = window.grecaptcha.getResponse();
-            }
-          }
+        setSubmitBtnLoading(true);
 
-          if (!recaptchaToken) {
-            const recaptchaMsg = (i18nData[curLang] && i18nData[curLang].form_recaptcha_error)
-              ? i18nData[curLang].form_recaptcha_error
-              : "✕ Please complete the «I'm not a robot» reCAPTCHA verification.";
-            if (formErrorAlert) {
-              formErrorAlert.textContent = recaptchaMsg;
-              formErrorAlert.style.display = 'block';
-              formErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (recaptchaSettings.enabled && recaptchaSettings.siteKey) {
+          if (recaptchaSettings.version === 'v3') {
+            if (window.grecaptcha && typeof window.grecaptcha.ready === 'function') {
+              window.grecaptcha.ready(function() {
+                try {
+                  window.grecaptcha.execute(recaptchaSettings.siteKey, { action: 'submit_application' })
+                    .then(function(token) {
+                      executeSubmitWithToken(token);
+                    })
+                    .catch(function(err) {
+                      console.warn('reCAPTCHA v3 execution failed:', err);
+                      executeSubmitWithToken('');
+                    });
+                } catch (ex) {
+                  console.warn('reCAPTCHA v3 execute exception:', ex);
+                  executeSubmitWithToken('');
+                }
+              });
+              return;
+            } else {
+              executeSubmitWithToken('');
+              return;
             }
+          } else if (recaptchaSettings.version === 'v2') {
+            let v2Token = '';
+            if (typeof window.grecaptcha !== 'undefined') {
+              if (recaptchaWidgetId !== null) {
+                v2Token = window.grecaptcha.getResponse(recaptchaWidgetId);
+              } else {
+                v2Token = window.grecaptcha.getResponse();
+              }
+            }
+
+            if (!v2Token) {
+              setSubmitBtnLoading(false);
+              const recaptchaMsg = (i18nData[curLang] && i18nData[curLang].form_recaptcha_error)
+                ? i18nData[curLang].form_recaptcha_error
+                : "✕ Please complete the «I'm not a robot» reCAPTCHA verification.";
+              if (formErrorAlert) {
+                formErrorAlert.textContent = recaptchaMsg;
+                formErrorAlert.style.display = 'block';
+                formErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }
+              return;
+            }
+
+            executeSubmitWithToken(v2Token);
             return;
           }
         }
 
-        // Disable submit button & show loading state
-        if (submitApplyBtn) {
-          submitApplyBtn.disabled = true;
-          submitApplyBtn.dataset.origText = submitApplyBtn.textContent;
-          const loadingText = (i18nData[curLang] && i18nData[curLang].btn_submitting)
-            ? i18nData[curLang].btn_submitting
-            : 'Submitting Application...';
-          submitApplyBtn.textContent = loadingText;
-        }
-
-        // Build form data
-        const formData = new FormData(driverApplyForm);
-        if (recaptchaToken) {
-          formData.set('g-recaptcha-response', recaptchaToken);
-        }
-
-        fetch('send-mail.php', {
-          method: 'POST',
-          body: formData
-        })
-        .then(async res => {
-          const json = await res.json().catch(() => null);
-          return { ok: res.ok, status: res.status, data: json };
-        })
-        .then(result => {
-          if (result.ok && result.data && result.data.success) {
-            if (formSuccessAlert) {
-              formSuccessAlert.style.display = 'block';
-              formSuccessAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-            driverApplyForm.reset();
-            if (typeof window.grecaptcha !== 'undefined' && recaptchaWidgetId !== null) {
-              window.grecaptcha.reset(recaptchaWidgetId);
-            }
-          } else {
-            let errorText = '';
-            if (result.data && result.data.message) {
-              errorText = '✕ ' + result.data.message;
-            } else if (i18nData[curLang] && i18nData[curLang].form_error) {
-              errorText = i18nData[curLang].form_error;
-            } else {
-              errorText = '✕ Failed to submit application. Please try again or contact us directly.';
-            }
-
-            if (formErrorAlert) {
-              formErrorAlert.textContent = errorText;
-              formErrorAlert.style.display = 'block';
-              formErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-
-            if (typeof window.grecaptcha !== 'undefined' && recaptchaWidgetId !== null) {
-              window.grecaptcha.reset(recaptchaWidgetId);
-            }
-          }
-        })
-        .catch(err => {
-          console.error('Submission network error:', err);
-          const errorText = (i18nData[curLang] && i18nData[curLang].form_error)
-            ? i18nData[curLang].form_error
-            : '✕ Network error occurred. Please try again or contact us directly.';
-
-          if (formErrorAlert) {
-            formErrorAlert.textContent = errorText;
-            formErrorAlert.style.display = 'block';
-            formErrorAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
-
-          if (typeof window.grecaptcha !== 'undefined' && recaptchaWidgetId !== null) {
-            window.grecaptcha.reset(recaptchaWidgetId);
-          }
-        })
-        .finally(() => {
-          if (submitApplyBtn) {
-            submitApplyBtn.disabled = false;
-            const defaultText = (i18nData[curLang] && i18nData[curLang].btn_submit)
-              ? i18nData[curLang].btn_submit
-              : (submitApplyBtn.dataset.origText || 'Submit Driver Application');
-            submitApplyBtn.textContent = defaultText;
-          }
-        });
+        // If reCAPTCHA is disabled or no site key
+        executeSubmitWithToken('');
       });
     }
+
 
     // Header scroll background elevation
     window.addEventListener('scroll', () => {

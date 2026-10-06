@@ -28,24 +28,29 @@ return [
     'subject_prefix' => '[HILS Trucking Application]',
 
     // -------------------------------------------------------------------------
-    // 2. Google reCAPTCHA v2 (Checkbox "I'm not a robot")
+    // 2. Google reCAPTCHA (v3 Invisible or v2 Checkbox)
     // -------------------------------------------------------------------------
     // Register your domain and get keys here:
     // https://www.google.com/recaptcha/admin
     //
-    // The default keys below are official Google test keys:
-    // - Always pass verification
-    // - Show a "Test mode" badge
-    // - Perfect for local testing on localhost / .local domains
+    // Supports both:
+    // - 'v3': Invisible background verification (no user checkbox, frictionless)
+    // - 'v2': "I'm not a robot" checkbox
     'recaptcha' => [
         // Set to false if you wish to temporarily disable verification (e.g. for offline dev)
         'enabled'    => true,
 
-        // Public Site Key (passed to the frontend widget)
-        'site_key'   => '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+        // Version: 'v3' (recommended) or 'v2'
+        'version'    => 'v3',
+
+        // Public Site Key (passed to the frontend)
+        'site_key'   => 'YOUR_RECAPTCHA_SITE_KEY',
 
         // Secret Key (kept private on server to verify tokens with Google)
-        'secret_key' => '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe',
+        'secret_key' => 'YOUR_RECAPTCHA_SECRET_KEY',
+
+        // Minimum score required for v3 (between 0.0 and 1.0; 0.5 is standard)
+        'min_score'  => 0.5,
     ],
 
     // -------------------------------------------------------------------------

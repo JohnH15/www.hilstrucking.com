@@ -71,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         jsonResponse([
             'success'            => true,
             'recaptcha_enabled'  => !empty($config['recaptcha']['enabled']),
+            'recaptcha_version'  => strtolower($config['recaptcha']['version'] ?? 'v3'),
             'recaptcha_site_key' => $config['recaptcha']['site_key'] ?? '',
         ]);
     }
@@ -117,8 +118,10 @@ if (empty($input)) {
 // -----------------------------------------------------------------------------
 // 4. Verify Google reCAPTCHA
 // -----------------------------------------------------------------------------
-$recaptchaEnabled = !empty($config['recaptcha']['enabled']);
-$recaptchaSecret  = trim($config['recaptcha']['secret_key'] ?? '');
+$recaptchaEnabled  = !empty($config['recaptcha']['enabled']);
+$recaptchaVersion  = strtolower($config['recaptcha']['version'] ?? 'v3');
+$recaptchaSecret   = trim($config['recaptcha']['secret_key'] ?? '');
+$recaptchaMinScore = (float)($config['recaptcha']['min_score'] ?? 0.5);
 
 if ($recaptchaEnabled) {
     $recaptchaToken = trim($input['g-recaptcha-response'] ?? $input['recaptcha_token'] ?? '');
@@ -128,7 +131,7 @@ if ($recaptchaEnabled) {
         jsonResponse([
             'success'    => false,
             'error_code' => 'recaptcha_missing',
-            'message'    => 'Please verify that you are not a robot by completing the reCAPTCHA.',
+            'message'    => 'Security verification token is missing. Please refresh and try again.',
         ], 400);
     }
 
@@ -188,6 +191,22 @@ if ($recaptchaEnabled) {
             'message'     => 'reCAPTCHA verification failed. Please try again.',
             'debug_codes' => $errorCodes,
         ], 400);
+    }
+
+    // For reCAPTCHA v3, also verify the score
+    if ($recaptchaVersion === 'v3' && isset($verifyData['score'])) {
+        $score = (float)$verifyData['score'];
+        $action = $verifyData['action'] ?? 'unknown';
+        logMessage("RECAPTCHA v3 passed: score={$score}, action={$action}", $config);
+
+        if ($score < $recaptchaMinScore) {
+            logMessage("RECAPTCHA REJECTED: score {$score} is lower than required min_score {$recaptchaMinScore}", $config);
+            jsonResponse([
+                'success'    => false,
+                'error_code' => 'recaptcha_low_score',
+                'message'    => 'Verification score is too low. Please refresh and try again.',
+            ], 400);
+        }
     }
 }
 
