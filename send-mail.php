@@ -593,8 +593,13 @@ function sendViaWhatsApp(array $data, array $config): bool
 
     $phoneNumberId = trim($waConfig['phone_number_id'] ?? '');
     $accessToken   = trim($waConfig['access_token'] ?? '');
-    $recipient     = preg_replace('/[^0-9]/', '', (string)($waConfig['recipient_phone'] ?? ''));
-    $apiVersion    = trim($waConfig['api_version'] ?? 'v21.0');
+    // Remove non-numeric characters
+    $recipient = preg_replace('/[^0-9]/', '', (string)($waConfig['recipient_phone'] ?? ''));
+
+    // If 10 digits provided (standard US area code + number), prepend country code '1'
+    if (strlen($recipient) === 10) {
+        $recipient = '1' . $recipient;
+    }
 
     if (empty($phoneNumberId) || empty($accessToken) || empty($recipient)) {
         logMessage('WHATSAPP ERROR: Missing phone_number_id, access_token, or recipient_phone.', $config);
@@ -618,7 +623,6 @@ function sendViaWhatsApp(array $data, array $config): bool
 
         $payload = [
             'messaging_product' => 'whatsapp',
-            'recipient_type'    => 'individual',
             'to'                => $recipient,
             'type'              => 'template',
             'template'          => [
@@ -652,7 +656,6 @@ function sendViaWhatsApp(array $data, array $config): bool
 
         $payload = [
             'messaging_product' => 'whatsapp',
-            'recipient_type'    => 'individual',
             'to'                => $recipient,
             'type'              => 'text',
             'text'              => [
@@ -696,8 +699,11 @@ function sendViaWhatsApp(array $data, array $config): bool
         logMessage("WHATSAPP SUCCESS: Notification sent to {$recipient} (Message ID: {$msgId}).", $config);
         return true;
     } else {
-        $errMsg = $respData['error']['message'] ?? $response;
-        logMessage("WHATSAPP API ERROR ({$httpCode}): {$errMsg}", $config);
+        $errMsg = $respData['error']['message'] ?? 'Unknown error';
+        $details = $respData['error']['error_data']['details'] ?? ($respData['error']['error_user_msg'] ?? '');
+        $subcode = isset($respData['error']['error_subcode']) ? " [Subcode: {$respData['error']['error_subcode']}]" : '';
+        $fullErr = $errMsg . ($details ? " - {$details}" : '') . $subcode;
+        logMessage("WHATSAPP API ERROR ({$httpCode}): {$fullErr} | Full response: {$response}", $config);
         return false;
     }
 }
