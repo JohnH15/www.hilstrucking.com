@@ -582,7 +582,128 @@ function sendViaSmtp(string $to, string $subject, string $data, array $headers, 
 }
 
 // -----------------------------------------------------------------------------
-// 9. Dispatch Email
+// 8b. Meta WhatsApp Business Cloud API Delivery
+// -----------------------------------------------------------------------------
+function sendViaWhatsApp(array $data, array $config): bool
+{
+    $waConfig = $config['whatsapp'] ?? [];
+    if (empty($waConfig['enabled'])) {
+        return false;
+    }
+
+    $phoneNumberId = trim($waConfig['phone_number_id'] ?? '');
+    $accessToken   = trim($waConfig['access_token'] ?? '');
+    $recipient     = preg_replace('/[^0-9]/', '', (string)($waConfig['recipient_phone'] ?? ''));
+    $apiVersion    = trim($waConfig['api_version'] ?? 'v21.0');
+
+    if (empty($phoneNumberId) || empty($accessToken) || empty($recipient)) {
+        logMessage('WHATSAPP ERROR: Missing phone_number_id, access_token, or recipient_phone.', $config);
+        return false;
+    }
+
+    $url = "https://graph.facebook.com/{$apiVersion}/{$phoneNumberId}/messages";
+
+    $name  = $data['name'] ?? 'Not specified';
+    $phone = $data['phone'] ?? 'Not specified';
+    $email = $data['email'] ?? 'Not specified';
+    $role  = $data['role'] ?? 'Not specified';
+    $exp   = $data['exp'] ?? 'Not specified';
+    $state = $data['state'] ?? 'Not specified';
+    $notes = !empty($data['notes']) ? $data['notes'] : 'None';
+    $date  = date('F j, Y, g:i a T');
+
+    if (!empty($waConfig['use_template']) && !empty($waConfig['template_name'])) {
+        $templateName = $waConfig['template_name'];
+        $templateLang = $waConfig['template_lang'] ?? 'en_US';
+
+        $payload = [
+            'messaging_product' => 'whatsapp',
+            'recipient_type'    => 'individual',
+            'to'                => $recipient,
+            'type'              => 'template',
+            'template'          => [
+                'name'     => $templateName,
+                'language' => [
+                    'code' => $templateLang,
+                ],
+                'components' => [
+                    [
+                        'type'       => 'body',
+                        'parameters' => [
+                            ['type' => 'text', 'text' => $name],
+                            ['type' => 'text', 'text' => $phone],
+                            ['type' => 'text', 'text' => $role],
+                            ['type' => 'text', 'text' => $state],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    } else {
+        $msgBody  = "🚛 *New Driver Application — HILS Trucking*\n\n";
+        $msgBody .= "👤 *Name:* {$name}\n";
+        $msgBody .= "📞 *Phone:* {$phone}\n";
+        $msgBody .= "✉️ *Email:* {$email}\n";
+        $msgBody .= "🎯 *Role:* {$role}\n";
+        $msgBody .= "⏱️ *CDL-A Exp:* {$exp}\n";
+        $msgBody .= "📍 *State:* {$state}\n";
+        $msgBody .= "📝 *Notes:* {$notes}\n";
+        $msgBody .= "🕒 *Date:* {$date}";
+
+        $payload = [
+            'messaging_product' => 'whatsapp',
+            'recipient_type'    => 'individual',
+            'to'                => $recipient,
+            'type'              => 'text',
+            'text'              => [
+                'preview_url' => false,
+                'body'        => $msgBody,
+            ],
+        ];
+    }
+
+    $jsonPayload = json_encode($payload, JSON_UNESCAPED_UNICODE);
+
+    if (!function_exists('curl_init')) {
+        logMessage('WHATSAPP ERROR: cURL extension is not installed/enabled in PHP.', $config);
+        return false;
+    }
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 12);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $accessToken,
+        'Content-Type: application/json',
+    ]);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlErr  = curl_error($ch);
+    curl_close($ch);
+
+    if ($response === false || !empty($curlErr)) {
+        logMessage("WHATSAPP CURL ERROR: {$curlErr}", $config);
+        return false;
+    }
+
+    $respData = json_decode($response, true);
+    if ($httpCode >= 200 && $httpCode < 300) {
+        $msgId = $respData['messages'][0]['id'] ?? 'unknown';
+        logMessage("WHATSAPP SUCCESS: Notification sent to {$recipient} (Message ID: {$msgId}).", $config);
+        return true;
+    } else {
+        $errMsg = $respData['error']['message'] ?? $response;
+        logMessage("WHATSAPP API ERROR ({$httpCode}): {$errMsg}", $config);
+        return false;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 9. Dispatch Email & Notifications
 // -----------------------------------------------------------------------------
 $mailSent = false;
 
@@ -595,6 +716,19 @@ if (!empty($config['smtp']['enabled'])) {
 
 if ($mailSent) {
     logMessage("SUCCESS: Driver application from [{$name}] <{$email}> ({$phone}) sent to <{$toEmail}>.", $config);
+
+    // Also dispatch to WhatsApp Business if enabled
+    if (!empty($config['whatsapp']['enabled'])) {
+        sendViaWhatsApp([
+            'name'  => $name,
+            'phone' => $phone,
+            'email' => $email,
+            'role'  => $role,
+            'exp'   => $exp,
+            'state' => $state,
+            'notes' => $notes,
+        ], $config);
+    }
 
     jsonResponse([
         'success' => true,

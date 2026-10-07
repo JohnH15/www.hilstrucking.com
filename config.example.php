@@ -68,7 +68,33 @@ return [
     ],
 
     // -------------------------------------------------------------------------
-    // 4. Logging
+    // 4. Meta WhatsApp Business Cloud API
+    // -------------------------------------------------------------------------
+    // Official WhatsApp Business Platform / Cloud API (via developers.facebook.com)
+    'whatsapp' => [
+        // Set to true to send instant lead notifications to WhatsApp
+        'enabled'         => false,
+
+        // Phone Number ID from Meta WhatsApp API dashboard
+        'phone_number_id' => 'YOUR_PHONE_NUMBER_ID',
+
+        // System User Access Token (with whatsapp_business_messaging permission)
+        'access_token'    => 'YOUR_META_ACCESS_TOKEN',
+
+        // Recipient phone number (digits only with country code, e.g. 14454440204)
+        'recipient_phone' => '14454440204',
+
+        // Meta Graph API version
+        'api_version'     => 'v21.0',
+
+        // Optional: use approved WhatsApp template instead of direct text message
+        'use_template'    => false,
+        'template_name'   => '',
+        'template_lang'   => 'en_US',
+    ],
+
+    // -------------------------------------------------------------------------
+    // 5. Logging
     // -------------------------------------------------------------------------
     'logging' => [
         'enabled'  => true,
