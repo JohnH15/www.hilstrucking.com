@@ -623,7 +623,8 @@ function sendViaWhatsApp(array $data, array $config): bool
 
         $payload = [
             'messaging_product' => 'whatsapp',
-            'to'                => $recipient,
+            'recipient_type'    => 'individual',
+            'to'                => (string)$recipient,
             'type'              => 'template',
             'template'          => [
                 'name'     => $templateName,
@@ -634,10 +635,10 @@ function sendViaWhatsApp(array $data, array $config): bool
                     [
                         'type'       => 'body',
                         'parameters' => [
-                            ['type' => 'text', 'text' => $name],
-                            ['type' => 'text', 'text' => $phone],
-                            ['type' => 'text', 'text' => $role],
-                            ['type' => 'text', 'text' => $state],
+                            ['type' => 'text', 'text' => (string)$name],
+                            ['type' => 'text', 'text' => (string)$phone],
+                            ['type' => 'text', 'text' => (string)$role],
+                            ['type' => 'text', 'text' => (string)$state],
                         ],
                     ],
                 ],
@@ -656,16 +657,18 @@ function sendViaWhatsApp(array $data, array $config): bool
 
         $payload = [
             'messaging_product' => 'whatsapp',
-            'to'                => $recipient,
+            'recipient_type'    => 'individual',
+            'to'                => (string)$recipient,
             'type'              => 'text',
             'text'              => [
-                'preview_url' => false,
-                'body'        => $msgBody,
+                'body' => $msgBody,
             ],
         ];
     }
 
     $jsonPayload = json_encode($payload, JSON_UNESCAPED_UNICODE);
+
+    logMessage("WHATSAPP ATTEMPT: Sending to [{$recipient}] via Phone ID [{$phoneNumberId}].", $config);
 
     if (!function_exists('curl_init')) {
         logMessage('WHATSAPP ERROR: cURL extension is not installed/enabled in PHP.', $config);
