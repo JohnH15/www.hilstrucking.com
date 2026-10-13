@@ -313,6 +313,11 @@ $eEmail = htmlspecialchars($email, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $eRole  = htmlspecialchars($role, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $eExp   = htmlspecialchars($exp, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $eState = htmlspecialchars($state, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$waDigits = preg_replace('/[^0-9]/', '', $phone);
+if (strlen($waDigits) === 10) { $waDigits = '1' . $waDigits; }
+$langNames = ['en' => 'English', 'ru' => 'Russian', 'uk' => 'Ukrainian'];
+$eLang   = htmlspecialchars($langNames[$leadLang] ?? ($leadLang ?: 'n/a'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$eSource = htmlspecialchars($leadSource ?: 'n/a', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $eNotes = !empty($notes) ? nl2br(htmlspecialchars($notes, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')) : '<em>None provided</em>';
 
 // 6a. HTML Email Body
@@ -372,7 +377,7 @@ $htmlBody = <<<HTML
                 <tr>
                   <td style="padding:10px 14px; background:#f8fafc; color:#64748b; font-weight:600; border-radius:8px 0 0 8px;">Phone Number:</td>
                   <td style="padding:10px 14px; background:#f8fafc; color:#004b9b; font-weight:700; font-size:15px; border-radius:0 8px 8px 0;">
-                    <a href="tel:{$ePhone}" style="color:#004b9b; text-decoration:none;">{$ePhone}</a>
+                    <a href="tel:{$ePhone}" style="color:#004aad; text-decoration:none;">{$ePhone}</a>
                   </td>
                 </tr>
                 <tr>
@@ -400,6 +405,14 @@ $htmlBody = <<<HTML
                   <td style="padding:10px 14px; background:#f8fafc; color:#0f172a; font-weight:600; border-radius:0 8px 8px 0;">{$smsConsentLabel}</td>
                 </tr>
                 <tr>
+                  <td style="padding:10px 14px; background:#f8fafc; color:#64748b; font-weight:600; border-radius:8px 0 0 8px;">Site language:</td>
+                  <td style="padding:10px 14px; background:#f8fafc; color:#0f172a; font-weight:600; border-radius:0 8px 8px 0;">{$eLang}</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 14px; background:#f8fafc; color:#64748b; font-weight:600; border-radius:8px 0 0 8px;">Source:</td>
+                  <td style="padding:10px 14px; background:#f8fafc; color:#0f172a; font-weight:600; border-radius:0 8px 8px 0;">{$eSource}</td>
+                </tr>
+                <tr>
                   <td valign="top" style="padding:10px 14px; background:#f8fafc; color:#64748b; font-weight:600; border-radius:8px 0 0 8px;">Comments / Equipment:</td>
                   <td style="padding:10px 14px; background:#f8fafc; color:#334155; line-height:1.5; border-radius:0 8px 8px 0;">{$eNotes}</td>
                 </tr>
@@ -410,11 +423,14 @@ $htmlBody = <<<HTML
           <!-- Quick Action Buttons -->
           <tr>
             <td style="padding:12px 32px 24px 32px;" align="center">
-              <a href="tel:{$ePhone}" style="display:inline-block; padding:12px 24px; background:#00a859; color:#ffffff; text-decoration:none; font-weight:700; font-size:14px; border-radius:8px; margin-right:10px; box-shadow:0 3px 10px rgba(0,168,89,0.3);">
-                &phone; Call Applicant
+              <a href="tel:{$ePhone}" style="display:inline-block; padding:12px 22px; background:#00bf63; color:#071e3d; text-decoration:none; font-weight:700; font-size:14px; border-radius:8px; margin:0 6px 8px 0;">
+                &#128222; Call
               </a>
-              <a href="mailto:{$eEmail}?subject=Regarding%20your%20HILS%20Trucking%20Application" style="display:inline-block; padding:12px 24px; background:#004b9b; color:#ffffff; text-decoration:none; font-weight:700; font-size:14px; border-radius:8px; box-shadow:0 3px 10px rgba(0,75,155,0.3);">
-                &#9993; Reply via Email
+              <a href="https://wa.me/{$waDigits}" style="display:inline-block; padding:12px 22px; background:#25d366; color:#071e3d; text-decoration:none; font-weight:700; font-size:14px; border-radius:8px; margin:0 6px 8px 0;">
+                &#128172; WhatsApp
+              </a>
+              <a href="mailto:{$eEmail}?subject=Regarding%20your%20HILS%20Trucking%20Application" style="display:inline-block; padding:12px 22px; background:#004aad; color:#ffffff; text-decoration:none; font-weight:700; font-size:14px; border-radius:8px; margin:0 0 8px 0;">
+                &#9993; Email
               </a>
             </td>
           </tr>
@@ -449,6 +465,8 @@ Position Applying:    {$role}
 CDL-A Experience:     {$exp}
 CDL State of Issue:   {$state}
 Calls/SMS consent:    {$smsConsentLabel}
+Site language:        {$leadLang}
+Source:               {$leadSource}
 
 Comments / Equipment:
 {$notes}
