@@ -240,6 +240,10 @@ $exp     = cleanString($input['exp'] ?? $input['driverExp'] ?? '', 80);
 $state   = cleanString($input['state'] ?? $input['driverState'] ?? '', 50);
 $notes   = cleanString($input['notes'] ?? $input['driverNotes'] ?? '', 3000);
 $consent = isset($input['consent']) || isset($input['driverConsent']);
+// Optional TCPA consent to recruiting calls / SMS (unchecked by default on the site); recorded with time, IP and the exact wording shown
+$smsConsent = !empty($input['sms_consent']);
+$smsConsentText = cleanString($input['sms_consent_text'] ?? '', 600);
+$smsConsentLabel = $smsConsent ? 'YES' : 'NO';
 
 $errors = [];
 
@@ -390,6 +394,10 @@ $htmlBody = <<<HTML
                   <td style="padding:10px 14px; background:#f8fafc; color:#0f172a; font-weight:600; border-radius:0 8px 8px 0;">{$eState}</td>
                 </tr>
                 <tr>
+                  <td style="padding:10px 14px; background:#f8fafc; color:#64748b; font-weight:600; border-radius:8px 0 0 8px;">Calls/SMS consent:</td>
+                  <td style="padding:10px 14px; background:#f8fafc; color:#0f172a; font-weight:600; border-radius:0 8px 8px 0;">{$smsConsentLabel}</td>
+                </tr>
+                <tr>
                   <td valign="top" style="padding:10px 14px; background:#f8fafc; color:#64748b; font-weight:600; border-radius:8px 0 0 8px;">Comments / Equipment:</td>
                   <td style="padding:10px 14px; background:#f8fafc; color:#334155; line-height:1.5; border-radius:0 8px 8px 0;">{$eNotes}</td>
                 </tr>
@@ -438,6 +446,7 @@ Email Address:        {$email}
 Position Applying:    {$role}
 CDL-A Experience:     {$exp}
 CDL State of Issue:   {$state}
+Calls/SMS consent:    {$smsConsentLabel}
 
 Comments / Equipment:
 {$notes}
@@ -725,6 +734,7 @@ if (!empty($config['smtp']['enabled'])) {
 
 if ($mailSent) {
     logMessage("SUCCESS: Driver application from [{$name}] <{$email}> ({$phone}) sent to <{$toEmail}>.", $config);
+    logMessage("CONSENT: phone {$phone} | CDL certification: YES | calls/SMS consent: {$smsConsentLabel}" . ($smsConsent ? " | text shown: {$smsConsentText}" : ''), $config);
 
     // Also dispatch to WhatsApp Business if enabled
     if (!empty($config['whatsapp']['enabled'])) {
