@@ -244,6 +244,8 @@ $consent = isset($input['consent']) || isset($input['driverConsent']);
 $smsConsent = !empty($input['sms_consent']);
 $smsConsentText = cleanString($input['sms_consent_text'] ?? '', 600);
 $smsConsentLabel = $smsConsent ? 'YES' : 'NO';
+$leadLang   = cleanString($input['lang'] ?? '', 10);
+$leadSource = cleanString($input['source'] ?? '', 200);
 
 $errors = [];
 
@@ -721,8 +723,57 @@ function sendViaWhatsApp(array $data, array $config): bool
 }
 
 // -----------------------------------------------------------------------------
+// 8b. Google Sheets lead log (optional, configured in config.php -> google_sheets)
+// -----------------------------------------------------------------------------
+function sendToGoogleSheet(array $row, array $config): bool
+{
+    $c = $config['google_sheets'] ?? [];
+    if (empty($c['enabled']) || empty($c['webhook_url']) || empty($c['token'])) {
+        return false;
+    }
+    if (!function_exists('curl_init')) {
+        logMessage('SHEETS ERROR: cURL is not available on this server.', $config);
+        return false;
+    }
+    $row['token'] = $c['token'];
+    $ch = curl_init($c['webhook_url']);
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => json_encode($row, JSON_UNESCAPED_UNICODE),
+        CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_TIMEOUT        => 12,
+    ]);
+    $resp = curl_exec($ch);
+    $err  = curl_error($ch);
+    $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    $ok = !$err && $code < 400 && strpos((string) $resp, '"ok":true') !== false;
+    if ($ok) {
+        logMessage("SHEETS: lead saved ({$row['phone']}).", $config);
+    } else {
+        logMessage("SHEETS ERROR ({$code}): {$err} " . substr((string) $resp, 0, 300), $config);
+    }
+    return $ok;
+}
+
+// -----------------------------------------------------------------------------
 // 9. Dispatch Email & Notifications
 // -----------------------------------------------------------------------------
+$sheetSaved = sendToGoogleSheet([
+    'name'        => $name,
+    'phone'       => $phone,
+    'email'       => $email,
+    'role'        => $role,
+    'exp'         => $exp,
+    'state'       => $state,
+    'notes'       => $notes,
+    'sms_consent' => $smsConsentLabel,
+    'lang'        => $leadLang,
+    'source'      => $leadSource,
+], $config);
+
 $mailSent = false;
 
 if (!empty($config['smtp']['enabled'])) {
@@ -732,7 +783,11 @@ if (!empty($config['smtp']['enabled'])) {
     $mailSent = @mail($toEmail, $encodedSubject, $mimeMessage, $headersString);
 }
 
-if ($mailSent) {
+if (!$mailSent && $sheetSaved) {
+    logMessage("MAIL ERROR (lead kept in Google Sheet): failed to send email to <{$toEmail}>.", $config);
+}
+
+if ($mailSent || $sheetSaved) {
     logMessage("SUCCESS: Driver application from [{$name}] <{$email}> ({$phone}) sent to <{$toEmail}>.", $config);
     logMessage("CONSENT: phone {$phone} | CDL certification: YES | calls/SMS consent: {$smsConsentLabel}" . ($smsConsent ? " | text shown: {$smsConsentText}" : ''), $config);
 
@@ -759,6 +814,6 @@ if ($mailSent) {
     jsonResponse([
         'success'    => false,
         'error_code' => 'mail_send_failed',
-        'message'    => 'Unable to send notification email. Please call us directly at (445) 444-02-04 or reach out via WhatsApp/Telegram.',
+        'message'    => 'Unable to send notification email. Please call us directly at (445) 444-0204 or reach out via WhatsApp/Telegram.',
     ], 500);
 }

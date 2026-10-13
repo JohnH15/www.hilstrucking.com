@@ -94,6 +94,17 @@ return [
     ],
 
     // -------------------------------------------------------------------------
+    // 5b. Google Sheets lead log (optional)
+    // -------------------------------------------------------------------------
+    // Every application is also added as a row to a Google Sheet.
+    // webhook_url = the Apps Script Web App URL, token = the same secret as in the script.
+    'google_sheets' => [
+        'enabled'     => false,
+        'webhook_url' => '',
+        'token'       => '',
+    ],
+
+    // -------------------------------------------------------------------------
     // 5. Logging
     // -------------------------------------------------------------------------
     'logging' => [

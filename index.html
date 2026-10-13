@@ -4426,6 +4426,38 @@
       const sync = () => { t.value = l.textContent.replace(/\s+/g, ' ').trim(); };
       f.addEventListener('submit', sync, true); sync();
     })();
+    // WhatsApp links open with a ready message (language + section aware)
+    (function () {
+      const MSG = {"generic": {"en": "Hi HILS Trucking! I'm on hilstrucking.com and I'd like to learn more about driving with you.", "uk": "Вітаю, HILS Trucking! Я з сайту hilstrucking.com, хочу дізнатися більше про роботу у вас.", "ru": "Здравствуйте, HILS Trucking! Я с сайта hilstrucking.com, хочу узнать подробнее о работе у вас."}, "oo": {"en": "Hi HILS Trucking! I'm an owner-operator (from hilstrucking.com) and I'm interested in the Smooth Start program.", "uk": "Вітаю, HILS Trucking! Я owner-operator, пишу з сайту hilstrucking.com, цікавить програма Smooth Start.", "ru": "Здравствуйте, HILS Trucking! Я owner-operator, пишу с сайта hilstrucking.com, интересует программа Smooth Start."}, "cd": {"en": "Hi HILS Trucking! I'm a CDL-A driver (from hilstrucking.com) interested in the company driver position.", "uk": "Вітаю, HILS Trucking! Я водій CDL-A, пишу з сайту hilstrucking.com, цікавить робота Company Driver.", "ru": "Здравствуйте, HILS Trucking! Я водитель CDL-A, пишу с сайта hilstrucking.com, интересует работа Company Driver."}, "faq": {"en": "Hi HILS Trucking! I have a question that isn't in the FAQ on hilstrucking.com:", "uk": "Вітаю, HILS Trucking! У мене питання, якого немає в FAQ на hilstrucking.com:", "ru": "Здравствуйте, HILS Trucking! У меня вопрос, которого нет в FAQ на hilstrucking.com:"}};
+      function ctx(a) {
+        if (a.closest('#owner-operators')) return 'oo';
+        if (a.closest('#company-drivers')) return 'cd';
+        if (a.closest('#faq')) return 'faq';
+        return 'generic';
+      }
+      function update() {
+        const l = MSG.generic[document.documentElement.lang] ? document.documentElement.lang : 'en';
+        document.querySelectorAll('a[href^="https://wa.me/14454440204"]').forEach(a => {
+          a.href = 'https://wa.me/14454440204?text=' + encodeURIComponent(MSG[ctx(a)][l]);
+        });
+      }
+      update();
+      document.addEventListener('click', e => { if (e.target.closest('.lang-switch-btn')) setTimeout(update, 0); });
+      new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+    })();
+
+    // lead source + language travel with the form (for the lead table)
+    (function () {
+      const f = document.getElementById('driverApplyForm'); if (!f) return;
+      const q = new URLSearchParams(location.search);
+      let src = q.get('utm_source') ? [q.get('utm_source'), q.get('utm_medium'), q.get('utm_campaign')].filter(Boolean).join(' / ')
+              : q.get('gclid') ? 'google ads' : q.get('fbclid') ? 'facebook' : '';
+      try { if (src) sessionStorage.setItem('hils_src', src); else src = sessionStorage.getItem('hils_src') || ''; } catch (e) {}
+      if (!src) { try { src = document.referrer ? new URL(document.referrer).hostname : 'direct'; } catch (e) { src = 'direct'; } }
+      const add = (n, v) => { const i = document.createElement('input'); i.type = 'hidden'; i.name = n; i.value = v; f.appendChild(i); return i; };
+      const langInput = add('lang', 'en'); add('source', src);
+      f.addEventListener('submit', () => { langInput.value = document.documentElement.lang || 'en'; }, true);
+    })();
   </script>
 </body>
 </html>
