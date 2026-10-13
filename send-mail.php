@@ -500,96 +500,94 @@ $headersString = implode("\r\n", $headers);
 // -----------------------------------------------------------------------------
 // 8. SMTP Delivery Function (fallback / optional direct transport)
 // -----------------------------------------------------------------------------
-function sendViaSmtp(string $to, string $subject, string $data, array $headers, array $smtpConfig): bool
+function sendViaSmtp(string $to, string $subject, string $data, array $headers, array $smtpConfig, array $config = []): bool
 {
-    $host = $smtpConfig['host'] ?? 'localhost';
-    $port = (int)($smtpConfig['port'] ?? 587);
-    $secure = strtolower($smtpConfig['secure'] ?? 'tls');
-    $timeout = 15;
+    $host    = trim($smtpConfig['host'] ?? 'localhost');
+    $port    = (int)($smtpConfig['port'] ?? 587);
+    $secure  = strtolower($smtpConfig['secure'] ?? 'tls');
+    $user    = trim((string)($smtpConfig['username'] ?? ''));
+    $pass    = str_replace(' ', '', (string)($smtpConfig['password'] ?? ''));   // app passwords are shown with spaces
+    $timeout = 20;
+    $log = function (string $msg) use ($config) { logMessage('SMTP: ' . $msg, $config); };
 
-    $prefix = '';
-    if ($secure === 'ssl') {
-        $prefix = 'ssl://';
-    }
+    // try the configured port first, then the other standard one (587 STARTTLS <-> 465 SSL)
+    $attempts = [[$port, $secure]];
+    $attempts[] = ($secure === 'ssl') ? [587, 'tls'] : [465, 'ssl'];
 
-    $socket = @stream_socket_client($prefix . $host . ':' . $port, $errno, $errstr, $timeout);
-    if (!$socket) {
-        return false;
-    }
+    foreach ($attempts as [$p, $sec]) {
+        $ctx = stream_context_create(['ssl' => ['peer_name' => $host, 'SNI_enabled' => true, 'verify_peer' => true, 'verify_peer_name' => true]]);
+        $remote = ($sec === 'ssl' ? 'ssl://' : 'tcp://') . $host . ':' . $p;
+        $socket = @stream_socket_client($remote, $errno, $errstr, $timeout, STREAM_CLIENT_CONNECT, $ctx);
+        if (!$socket) {
+            $log("cannot connect to {$remote} ({$errno} {$errstr})");
+            continue;
+        }
+        stream_set_timeout($socket, $timeout);
 
-    $readResponse = function() use ($socket) {
-        $response = '';
-        while ($line = fgets($socket, 512)) {
-            $response .= $line;
-            if (isset($line[3]) && $line[3] === ' ') {
-                break;
+        $read = function () use ($socket) {
+            $resp = '';
+            while (($line = fgets($socket, 1024)) !== false) {
+                $resp .= $line;
+                if (isset($line[3]) && $line[3] === ' ') break;
             }
-        }
-        return $response;
-    };
-
-    $sendCommand = function(string $cmd) use ($socket, $readResponse) {
-        fputs($socket, $cmd . "\r\n");
-        return $readResponse();
-    };
-
-    $greeting = $readResponse();
-    if (substr($greeting, 0, 3) !== '220') {
-        fclose($socket);
-        return false;
-    }
-
-    $sendCommand("EHLO " . (gethostname() ?: 'localhost'));
-
-    // If STARTTLS requested on non-SSL socket
-    if ($secure === 'tls') {
-        $tlsResp = $sendCommand("STARTTLS");
-        if (substr($tlsResp, 0, 3) === '220') {
-            stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
-            $sendCommand("EHLO " . (gethostname() ?: 'localhost'));
-        }
-    }
-
-    // Authenticate if required
-    if (!empty($smtpConfig['auth']) && !empty($smtpConfig['username'])) {
-        $authResp = $sendCommand("AUTH LOGIN");
-        if (substr($authResp, 0, 3) !== '334') {
-            fclose($socket);
+            return $resp;
+        };
+        $cmd = function (string $c) use ($socket, $read) { fwrite($socket, $c . "\r\n"); return $read(); };
+        $fail = function (string $step, string $resp) use ($socket, $log, $remote) {
+            $log("{$step} failed on {$remote}: " . trim(preg_replace('/\s+/', ' ', $resp)));
+            @fwrite($socket, "QUIT\r\n"); fclose($socket);
             return false;
+        };
+
+        $r = $read();
+        if (strpos($r, '220') !== 0) { $fail('greeting', $r); continue; }
+        $ehloHost = 'hilstrucking.com';
+        $r = $cmd("EHLO {$ehloHost}");
+        if (strpos($r, '250') !== 0) { $fail('EHLO', $r); continue; }
+
+        if ($sec === 'tls') {
+            $r = $cmd('STARTTLS');
+            if (strpos($r, '220') !== 0) { $fail('STARTTLS', $r); continue; }
+            $method = STREAM_CRYPTO_METHOD_TLS_CLIENT;
+            if (defined('STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT')) $method |= STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+            if (defined('STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT')) $method |= STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT;
+            if (!@stream_socket_enable_crypto($socket, true, $method)) { $fail('TLS handshake', 'crypto could not be enabled'); continue; }
+            $r = $cmd("EHLO {$ehloHost}");
+            if (strpos($r, '250') !== 0) { $fail('EHLO after TLS', $r); continue; }
         }
-        $sendCommand(base64_encode($smtpConfig['username']));
-        $pwdResp = $sendCommand(base64_encode($smtpConfig['password'] ?? ''));
-        if (substr($pwdResp, 0, 3) !== '235') {
-            fclose($socket);
-            return false;
+
+        if (!empty($smtpConfig['auth']) && $user !== '') {
+            $r = $cmd('AUTH LOGIN');
+            if (strpos($r, '334') !== 0) { $fail('AUTH LOGIN', $r); continue; }
+            $r = $cmd(base64_encode($user));
+            if (strpos($r, '334') !== 0) { $fail('username', $r); continue; }
+            $r = $cmd(base64_encode($pass));
+            if (strpos($r, '235') !== 0) { $fail('password (check the 16-letter app password)', $r); return false; }
         }
-    }
 
-    $from = $smtpConfig['username'] ?? 'no-reply@hilstrucking.com';
-    $sendCommand("MAIL FROM:<{$from}>");
-    $rcptResp = $sendCommand("RCPT TO:<{$to}>");
-    if (substr($rcptResp, 0, 3) !== '250') {
+        $from = $user !== '' ? $user : 'no-reply@hilstrucking.com';
+        $r = $cmd("MAIL FROM:<{$from}>");
+        if (strpos($r, '250') !== 0) { $fail('MAIL FROM', $r); return false; }
+        $r = $cmd("RCPT TO:<{$to}>");
+        if (strpos($r, '250') !== 0) { $fail('RCPT TO', $r); return false; }
+        $r = $cmd('DATA');
+        if (strpos($r, '354') !== 0) { $fail('DATA', $r); return false; }
+
+        $hdr  = 'Date: ' . date('r') . "\r\n";
+        $hdr .= 'Message-ID: <' . bin2hex(random_bytes(12)) . '@hilstrucking.com>' . "\r\n";
+        $hdr .= "To: <{$to}>\r\n";
+        $hdr .= "Subject: {$subject}\r\n";
+        $hdr .= implode("\r\n", $headers) . "\r\n\r\n";
+        $body = preg_replace('/^\./m', '..', str_replace(["\r\n", "\n"], ["\n", "\r\n"], $data));   // dot-stuffing
+        fwrite($socket, $hdr . $body . "\r\n.\r\n");
+        $r = $read();
+        @fwrite($socket, "QUIT\r\n");
         fclose($socket);
-        return false;
+        if (strpos($r, '250') !== 0) { $log("message rejected on {$remote}: " . trim($r)); return false; }
+        $log("message accepted by {$remote}");
+        return true;
     }
-
-    $dataResp = $sendCommand("DATA");
-    if (substr($dataResp, 0, 3) !== '354') {
-        fclose($socket);
-        return false;
-    }
-
-    $rawEmail  = "To: <{$to}>\r\n";
-    $rawEmail .= "Subject: {$subject}\r\n";
-    $rawEmail .= implode("\r\n", $headers) . "\r\n\r\n";
-    $rawEmail .= $data . "\r\n.\r\n";
-
-    fputs($socket, $rawEmail);
-    $sendResp = $readResponse();
-    $sendCommand("QUIT");
-    fclose($socket);
-
-    return substr($sendResp, 0, 3) === '250';
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -777,7 +775,7 @@ $sheetSaved = sendToGoogleSheet([
 $mailSent = false;
 
 if (!empty($config['smtp']['enabled'])) {
-    $mailSent = sendViaSmtp($toEmail, $encodedSubject, $mimeMessage, $headers, $config['smtp']);
+    $mailSent = sendViaSmtp($toEmail, $encodedSubject, $mimeMessage, $headers, $config['smtp'], $config);
 } else {
     // Standard PHP mail()
     $mailSent = @mail($toEmail, $encodedSubject, $mimeMessage, $headersString);
