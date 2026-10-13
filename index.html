@@ -3461,7 +3461,7 @@
             <iframe 
               class="terminal-map-iframe"
               title="HILS Trucking LLC Terminal &amp; Maintenance Yard"
-              src="https://maps.google.com/maps?q=7800+Bristol+Pike,+Levittown,+PA+19057&amp;t=&amp;z=15&amp;ie=UTF8&amp;iwloc=&amp;output=embed"
+              data-src="https://maps.google.com/maps?q=7800+Bristol+Pike,+Levittown,+PA+19057&t=&z=15&ie=UTF8&iwloc=&output=embed"
               width="100%" 
               height="100%" 
               style="border:0;" 
@@ -4458,6 +4458,19 @@
       const add = (n, v) => { const i = document.createElement('input'); i.type = 'hidden'; i.name = n; i.value = v; f.appendChild(i); return i; };
       const langInput = add('lang', 'en'); add('source', src);
       f.addEventListener('submit', () => { langInput.value = document.documentElement.lang || 'en'; }, true);
+    })();
+    // map labels in the site language
+    (function () {
+      const f = document.querySelector('.terminal-map-iframe'); if (!f) return;
+      const base = f.getAttribute('data-src');
+      let cur = '';
+      function sync() {
+        const l = ({ en: 'en', uk: 'uk', ru: 'ru' })[document.documentElement.lang] || 'en';
+        if (l === cur) return; cur = l;
+        f.src = base + '&hl=' + l;
+      }
+      sync();
+      new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
     })();
   </script>
 </body>
