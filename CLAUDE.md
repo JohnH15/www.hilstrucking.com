@@ -44,10 +44,12 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
 - С заглавной на всех языках: **Owner-Operator(s)**, **Company Driver(s)**. В RU/UA с заглавной **Водитель / Водій** во всех формах
   (кроме «водіння»). В английском обычное «drivers» посреди фразы строчное. URL и якоря (`owner-operators.html`, `#owner-operators`) строчные.
 - В рекрутинге «Приглашаем», не «нанимаем».
-- Owner-Operator не «сотрудник»: в форме «Формат сотрудничества», варианты «Company Driver (трак компании)» / «Owner-Operator (свой трак)».
+- Ни Company Driver, ни Owner-Operator не «сотрудник» (оба по 1099): не писать «сотрудник», «трудоустройство», «работодатель», W-2. В форме «Формат сотрудничества», варианты «Company Driver (трак компании)» / «Owner-Operator (свой трак)».
 - Чтобы термины не переносились: `Owner&#8209;Operators`, `CDL&#8209;A`, `OTR&nbsp;CDL&#8209;A` там, где это важно.
 
 ## Факты, которые нельзя менять без Ивана
+- **Форма сотрудничества:** и Company Drivers, и Owner-Operators работают по **1099** (independent contractor), не W-2. Налоги из оплаты не удерживаем,
+  в начале года форма 1099-NEC. На сайте: FAQ `#faq-1099` (группа General), JobPosting на обеих страницах `CONTRACTOR`.
 - **Company Drivers (только Dry Van):** $2,500 в неделю гарантия или 32% от gross, что больше. Gross обычно $8,000-14,000 в неделю.
   Оплата каждую пятницу за прошлую неделю, direct deposit, стейтмент. Без депозитов, escrow, сборов; ELD и страховку у Водителя не удерживаем.
   DAT по желанию $59/мес + налог PA. Техника: Freightliner Cascadia 2021+, Utility 53' dry van 2023+, APU, холодильник, микроволновка, инвертор,
@@ -69,7 +71,7 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
   В заявке также `lang`, `source` (utm/fbclid/gclid/referrer) и согласие на SMS (с текстом, который видел человек).
   Галочки согласия по умолчанию **не отмечены** (TCPA). Уведомления в WhatsApp выключены до подключения отдельного номера к WhatsApp Cloud API.
 - **SEO:** Search Console подтвержден через DNS TXT (запись `google-site-verification=F1rVg3…` в Namecheap не удалять). JobPosting на главной
-  (Company Driver, с зарплатой) и на OO-странице (CONTRACTOR, **без baseSalary намеренно**: предупреждение в Search Console игнорируем).
+  (Company Driver, CONTRACTOR (1099), с зарплатой) и на OO-странице (CONTRACTOR, **без baseSalary намеренно**: предупреждение в Search Console игнорируем).
   Organization с MC и USDOT, FAQPage, часы в contactPoint. Title и description содержат MC-1755680.
 - **Буклеты:** карусель из 10 слайдов в разделах Company Drivers и Owner-Operators, слайды и PDF меняются по языку сайта, кнопка «Поделиться»
   (на телефоне системное меню, на компьютере WhatsApp / Telegram / Facebook / копировать ссылку; ссылка с `utm_source=share&utm_medium=booklet`).
