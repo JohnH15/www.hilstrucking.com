@@ -35,7 +35,11 @@
       return 'en';
     }
     // English pages send a visitor to their language version (search engines browse in English and stay here)
-    if (PAGE_LANG === 'en' && preferredLanguage() !== 'en') location.replace(langUrl(preferredLanguage()));
+    if (PAGE_LANG === 'en' && preferredLanguage() !== 'en') {
+      // keep the real referrer for the lead source: after the redirect it would be this page
+      try { sessionStorage.setItem('hils_ref', document.referrer); } catch (e) {}
+      location.replace(langUrl(preferredLanguage()));
+    }
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Owner-Operator Jobs: Dispatch from 6% | HILS Trucking LLC (MC-1755680)</title>
@@ -4452,7 +4456,11 @@
       let src = q.get('utm_source') ? [q.get('utm_source'), q.get('utm_medium'), q.get('utm_campaign')].filter(Boolean).join(' / ')
               : q.get('gclid') ? 'google ads' : q.get('fbclid') ? 'facebook' : '';
       try { if (src) sessionStorage.setItem('hils_src', src); else src = sessionStorage.getItem('hils_src') || ''; } catch (e) {}
-      if (!src) { try { src = document.referrer ? new URL(document.referrer).hostname : 'direct'; } catch (e) { src = 'direct'; } }
+      if (!src) {
+        let ref = document.referrer;
+        try { const saved = sessionStorage.getItem('hils_ref'); if (saved !== null) { ref = saved; sessionStorage.removeItem('hils_ref'); } } catch (e) {}
+        try { src = ref ? new URL(ref).hostname : 'direct'; } catch (e) { src = 'direct'; }
+      }
       const add = (n, v) => { const i = document.createElement('input'); i.type = 'hidden'; i.name = n; i.value = v; f.appendChild(i); return i; };
       const langInput = add('lang', 'en'); add('source', src);
       f.addEventListener('submit', () => { langInput.value = document.documentElement.lang || 'en'; }, true);
