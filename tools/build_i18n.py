@@ -235,17 +235,33 @@ PRIVACY_META = {
 }
 
 
+PRIVACY_SRC = ROOT / 'tools' / 'privacy.src.html'
+
+
 def build_privacy(lang, errors):
-    """ua/privacy.html and ru/privacy.html: only that language's text, own title/description/canonical."""
+    """privacy.html, ua/privacy.html and ru/privacy.html from tools/privacy.src.html: only that language's text."""
+    out = PRIVACY_SRC.read_text(encoding='utf-8')
+    if lang == 'en':
+        # English stays at the root with its own title and relative paths; only the other articles go
+        return finish_privacy(out, lang, ROOT / 'privacy.html', errors)
     folder, html_lang, _ = LANGS[lang]
-    out = (ROOT / 'privacy.html').read_text(encoding='utf-8')
     title, desc = PRIVACY_META[lang]
     url = f'{SITE}{folder}/privacy.html'
     out = replace_once(out, r'<html lang="en" data-page-lang="en">', f'<html lang="{html_lang}" data-page-lang="{lang}">', 'privacy <html>')
     out = replace_once(out, r'<title>[^<]*</title>', f'<title>{html.escape(title, quote=False)}</title>', 'privacy title')
     out = replace_once(out, r'<meta name="description"[^>]*>', lambda m: set_attr(m.group(0), 'content', desc), 'privacy description')
     out = replace_once(out, r'<link rel="canonical"[^>]*>', lambda m: set_attr(m.group(0), 'href', url), 'privacy canonical')
-    # keep only this language's article, visible
+    out = re.sub(r'(["(])assets/', r'\1/assets/', out)
+    out = out.replace('href="/"', f'href="/{folder}/"')
+    if re.search(r'["(]assets/', out):
+        errors.append(f'privacy [{lang}]: relative asset path left')
+    if lang == 'ru' and re.search('[ёЁ]', out):
+        errors.append('privacy [ru]: letter ё')
+    return finish_privacy(out, lang, ROOT / folder / 'privacy.html', errors)
+
+
+def finish_privacy(out, lang, dest, errors):
+    """Keep only this language's article, visible, and write the page."""
     for other in ['en', 'uk', 'ru']:
         if other == lang:
             out, n = re.subn(rf'(<article class="doc" lang="{other}" data-lang="{other}") hidden>', r'\1>', out)
@@ -253,13 +269,8 @@ def build_privacy(lang, errors):
             out, n = re.subn(rf'\s*<article class="doc" lang="{other}" data-lang="{other}"( hidden)?>.*?</article>', '', out, flags=re.S)
             if n != 1:
                 errors.append(f'privacy [{lang}]: article {other} not found')
-    out = re.sub(r'(["(])assets/', r'\1/assets/', out)
-    out = out.replace('href="/"', f'href="/{folder}/"')
-    if re.search(r'["(]assets/', out):
-        errors.append(f'privacy [{lang}]: relative asset path left')
-    if lang == 'ru' and re.search('[ёЁ]', out):
-        errors.append('privacy [ru]: letter ё')
-    dest = ROOT / folder / 'privacy.html'
+    if out.count('<article class="doc"') != 1:
+        errors.append(f'privacy [{lang}]: expected exactly one article')
     dest.parent.mkdir(exist_ok=True)
     dest.write_text(out, encoding='utf-8')
     return dest
@@ -268,15 +279,16 @@ def build_privacy(lang, errors):
 def main():
     errors, built = [], []
     # Browsers only look for <meta charset> in the first 1024 bytes; later and Cyrillic turns into mojibake
-    for name in PAGES + ['privacy.html']:
-        head = (ROOT / name).read_bytes()[:1024]
+    for path in [ROOT / name for name in PAGES] + [PRIVACY_SRC]:
+        head = path.read_bytes()[:1024]
+        name = path.relative_to(ROOT)
         if b'<meta charset="UTF-8"' not in head:
             errors.append(f'{name}: <meta charset="UTF-8" /> must be within the first 1024 bytes')
     for page in PAGES:
         for lang in LANGS:
             dest, n = build(page, lang, errors)
             built.append(f'{dest.relative_to(ROOT)} ({n} texts)')
-    for lang in LANGS:
+    for lang in ['en', *LANGS]:
         built.append(str(build_privacy(lang, errors).relative_to(ROOT)))
     print('build_i18n: ' + ', '.join(built))
     if errors:

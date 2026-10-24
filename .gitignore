@@ -12,3 +12,4 @@ send-mail.log
 # Built by tools/build_i18n.py during deploy
 /ru/
 /ua/
+/privacy.html

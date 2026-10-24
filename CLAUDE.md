@@ -22,11 +22,11 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
 | `index.html` | Главная. Один файл: HTML + CSS + JS + все тексты на 3 языках |
 | `owner-operators.html` | Отдельная страница для Owner-Operators. Сделана из `index.html`: без раздела Company Drivers, свой hero, свои 4 карточки, FAQ только General + Owner-Operators, в форме заранее выбран Owner-Operator, своя разметка JobPosting (CONTRACTOR) |
 | `owner-operators/index.html` | Переадресация `/owner-operators` → `/owner-operators.html` (адрес напечатан на буклете, не удалять) |
-| `ru/`, `ua/` | **Не править и не коммитить.** Русская и украинская версии `index.html`, `owner-operators.html` и `privacy.html` (`/ru/`, `/ua/`). Их собирает `tools/build_i18n.py` из исходников при каждой публикации (шаг в `deploy.yml`) |
+| `ru/`, `ua/` | **Не править и не коммитить.** Русская и украинская версии `index.html`, `owner-operators.html` и политики (`/ru/`, `/ua/`). Их собирает `tools/build_i18n.py` из исходников при каждой публикации (шаг в `deploy.yml`) |
 | `tools/build_i18n.py` | Сборка `/ru/` и `/ua/`: тексты из `i18nData` прямо в HTML, свои title/description/og (словарь `META` в скрипте), FAQPage на языке страницы, JobPosting только на EN. Падает с ошибкой, если что-то не так |
 | `404.html` | Своя страница «не найдено» (EN/UA/RU по языку посетителя), подключена в `.htaccess` (`ErrorDocument 404`) |
 | `health.php` | Проверка формы без отправки заявки: config.php грузится, настройки reCAPTCHA/Sheets/Telegram заполнены, Apps Script отвечает, бот Telegram жив. JSON true/false, без секретов. С `?notify=1` при сбое пишет в Telegram (не чаще раза в 6 часов). Запускается каждый день из `.github/workflows/health.yml`; при сбое GitHub шлет письмо владельцу репозитория |
-| `privacy.html` | Политика конфиденциальности, EN/UA/RU (переключатель внутри страницы) |
+| `tools/privacy.src.html` | Исходник политики конфиденциальности: три статьи EN/UA/RU. Править здесь. `tools/build_i18n.py` собирает из него `/privacy.html`, `/ua/privacy.html`, `/ru/privacy.html`, в каждой только свой язык. Корневой `privacy.html` тоже собранный: не править и не коммитить |
 | `send-mail.php` | Обработчик формы: reCAPTCHA v3 → Google Sheets → бот Telegram (`telegram` в config.php) → письмо через Gmail SMTP → (WhatsApp выключен) → журнал. Перед публикацией GitHub проверяет синтаксис PHP |
 | `config.example.php` | Шаблон настроек (реальный `config.php` только на сервере) |
 | `.htaccess` | Переадресация www/http → `https://hilstrucking.com`, закрытые служебные файлы, заголовки безопасности. Своего `.htaccess` на сервере не было (23.10.2026) |

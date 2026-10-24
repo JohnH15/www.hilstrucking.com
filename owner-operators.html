@@ -4105,6 +4105,40 @@
       }
     };
 
+    // reCAPTCHA v3 script, loaded once on demand
+    let recaptchaV3Loading = null;
+    function loadRecaptchaV3() {
+      if (recaptchaV3Loading) return recaptchaV3Loading;
+      recaptchaV3Loading = new Promise(function(resolve) {
+        if (!recaptchaSettings.siteKey) { resolve(false); return; }
+        const script = document.createElement('script');
+        script.id = 'recaptchaApiScript';
+        script.src = 'https://www.google.com/recaptcha/api.js?render=' + encodeURIComponent(recaptchaSettings.siteKey);
+        script.async = true;
+        script.onload = function() { resolve(true); };
+        script.onerror = function() { resolve(false); };
+        setTimeout(function() { resolve(!!window.grecaptcha); }, 10000);
+        document.head.appendChild(script);
+      });
+      return recaptchaV3Loading;
+    }
+
+    // Start loading when the form is within ~1.5 screens or a form field gets focus
+    function watchForFormToLoadRecaptcha() {
+      const applySection = document.getElementById('apply');
+      function start() {
+        window.removeEventListener('scroll', checkNear);
+        if (driverApplyForm) driverApplyForm.removeEventListener('focusin', start);
+        loadRecaptchaV3();
+      }
+      function checkNear() {
+        if (!applySection || applySection.getBoundingClientRect().top < window.innerHeight * 2.5) start();
+      }
+      window.addEventListener('scroll', checkNear, { passive: true });
+      if (driverApplyForm) driverApplyForm.addEventListener('focusin', start);
+      checkNear();
+    }
+
     // Load reCAPTCHA config from backend (send-mail.php?action=config)
     function fetchRecaptchaConfig() {
       fetch('send-mail.php?action=config')
@@ -4128,14 +4162,8 @@
             if (wrapper) wrapper.style.display = 'none';
             if (notice) notice.style.display = 'block';
 
-            if (recaptchaSettings.siteKey && !document.getElementById('recaptchaApiScript')) {
-              const script = document.createElement('script');
-              script.id = 'recaptchaApiScript';
-              script.src = 'https://www.google.com/recaptcha/api.js?render=' + encodeURIComponent(recaptchaSettings.siteKey);
-              script.async = true;
-              script.defer = true;
-              document.head.appendChild(script);
-            }
+            // Google's script loads only when the visitor nears the form or taps a field
+            watchForFormToLoadRecaptcha();
           } else {
             // v2 Checkbox mode
             if (wrapper) wrapper.style.display = 'flex';
@@ -4269,7 +4297,12 @@
 
         if (recaptchaSettings.enabled && recaptchaSettings.siteKey) {
           if (recaptchaSettings.version === 'v3') {
-            if (window.grecaptcha && typeof window.grecaptcha.ready === 'function') {
+            // If the visitor submits before the script arrived, it loads now and the submit continues
+            loadRecaptchaV3().then(function(ok) {
+              if (!ok || !window.grecaptcha || typeof window.grecaptcha.ready !== 'function') {
+                executeSubmitWithToken('');
+                return;
+              }
               window.grecaptcha.ready(function() {
                 try {
                   window.grecaptcha.execute(recaptchaSettings.siteKey, { action: 'submit_application' })
@@ -4285,11 +4318,8 @@
                   executeSubmitWithToken('');
                 }
               });
-              return;
-            } else {
-              executeSubmitWithToken('');
-              return;
-            }
+            });
+            return;
           } else if (recaptchaSettings.version === 'v2') {
             let v2Token = '';
             if (typeof window.grecaptcha !== 'undefined') {
