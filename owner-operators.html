@@ -2681,9 +2681,10 @@
     .mm-actions { display: flex; align-items: center; gap: 8px; }
     .mm-actions .mm-round { width: 52px; height: 52px; flex: none; color: var(--blue-primary); }
     .mm-actions .btn { flex: 1; min-width: 0; height: 52px; padding: 0 16px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 1.02rem; }
-    .mm-social { display: flex; justify-content: center; gap: 12px; }
-    .mm-social .mm-round { color: var(--slate-600); }
-    .mm-social .mm-round svg { width: 21px; height: 21px; }
+    /* four equal columns across the sheet: big, well-spaced targets (same 52px as the call button) */
+    .mm-social { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); justify-items: center; padding-top: 2px; }
+    .mm-social .mm-round { width: 52px; height: 52px; color: var(--slate-600); }
+    .mm-social .mm-round svg { width: 24px; height: 24px; }
     /* old bottom bar is gone */
     .mobile-floating-bar { display: none !important; }
     @media (max-width: 1024px) { body { padding-bottom: 0 !important; } }
