@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-page-lang="en">
 <head>
+  <meta charset="UTF-8" />
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18498459696"></script>
   <script>
@@ -10,7 +11,23 @@
 
     gtag('config', 'AW-18498459696');
   </script>
-  <meta charset="UTF-8" />
+  <!-- Meta Pixel ("API HILS"): PageView, Lead on a submitted application, Contact on call / WhatsApp / Telegram taps -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1654170832994995');
+    fbq('track', 'PageView');
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href^="tel:"], a[href*="wa.me/"], a[href*="t.me/"]');
+      if (!a) return;
+      var href = a.getAttribute('href');
+      fbq('track', 'Contact', { content_name: href.indexOf('tel:') === 0 ? 'call' : href.indexOf('wa.me') > -1 ? 'whatsapp' : 'telegram' });
+    }, true);
+  </script>
+  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1654170832994995&ev=PageView&noscript=1" /></noscript>
   <script>
     // Each language has its own URL: / (en), /ua/ (uk), /ru/ (ru). The page language is <html data-page-lang>.
     var PAGE_LANG = document.documentElement.getAttribute('data-page-lang') || 'en';
@@ -4354,6 +4371,11 @@
       })
       .then(result => {
         if (result.ok && result.data && result.data.success) {
+          // Meta Pixel: a submitted application (no personal data is sent)
+          if (typeof window.fbq === 'function') {
+            const fd = new FormData(driverApplyForm);
+            fbq('track', 'Lead', { content_name: fd.get('role') || 'application', content_category: document.documentElement.lang || 'en' });
+          }
           if (formSuccessAlert) {
             formSuccessAlert.style.display = 'block';
             formSuccessAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

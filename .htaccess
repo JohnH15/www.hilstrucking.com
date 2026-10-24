@@ -1,3 +1,6 @@
+# --- HILS: pages are UTF-8 (Cyrillic on /ru/ and /ua/) ---
+AddDefaultCharset UTF-8
+
 # --- HILS: one address, https://hilstrucking.com (no www, no http) ---
 RewriteEngine On
 RewriteCond %{HTTPS} !=on [OR]

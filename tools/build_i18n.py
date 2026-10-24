@@ -222,6 +222,11 @@ def build(page, lang, errors):
 
 def main():
     errors, built = [], []
+    # Browsers only look for <meta charset> in the first 1024 bytes; later and Cyrillic turns into mojibake
+    for name in PAGES + ['privacy.html']:
+        head = (ROOT / name).read_bytes()[:1024]
+        if b'<meta charset="UTF-8"' not in head:
+            errors.append(f'{name}: <meta charset="UTF-8" /> must be within the first 1024 bytes')
     for page in PAGES:
         for lang in LANGS:
             dest, n = build(page, lang, errors)

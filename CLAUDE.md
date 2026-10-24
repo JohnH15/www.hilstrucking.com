@@ -3,6 +3,11 @@
 Сайт перевозчика **HILS TRUCKING LLC** (USDOT 4454223, MC-1755680). Цель сайта: набор
 CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общение с ним на русском.
 
+## Связь с Cowork
+- Cowork (отдельный помощник Ивана) делает рекламу Meta, буклеты и карусели. Общаемся через файл
+  `My Drive/HILS - Claude Code и Cowork.md` (Google Drive Ивана, на Mac: `~/Library/CloudStorage/GoogleDrive-gorevoi15@gmail.com/My Drive/`).
+- Перед работой с сайтом, пикселем или буклетами прочитать его, после работы дописать запись в «Журнал».
+
 ## Как публиковать
 - Ветка `main`. Каждый push в `main` запускает `.github/workflows/deploy.yml`
   (FTPS на Namecheap, `premium363.web-hosting.com`, папка `public_html`). Через ~15 секунд сайт обновлён.
