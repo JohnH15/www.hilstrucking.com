@@ -20,6 +20,7 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
 | `privacy.html` | Политика конфиденциальности, EN/UA/RU (переключатель внутри страницы) |
 | `send-mail.php` | Обработчик формы: reCAPTCHA v3 → Google Sheets → письмо через Gmail SMTP → (WhatsApp выключен) → журнал |
 | `config.example.php` | Шаблон настроек (реальный `config.php` только на сервере) |
+| `.htaccess` | Переадресация www/http → `https://hilstrucking.com`, закрытые служебные файлы, заголовки безопасности. Своего `.htaccess` на сервере не было (23.10.2026) |
 | `robots.txt`, `sitemap.xml` | SEO. При добавлении страницы добавить ее в `sitemap.xml` |
 | `assets/` | `logo.webp`, `logo-white.webp`, `truck-full.webp`, `og-image.jpg`, иконки |
 | `assets/booklets/` | Буклеты: `cd-{en,uk,ru}-01..10.webp`, `oo-{en,uk,ru}-01..10.webp`, PDF `hils-{company-drivers,owner-operators}-booklet-{en,ua,ru}.pdf` |
