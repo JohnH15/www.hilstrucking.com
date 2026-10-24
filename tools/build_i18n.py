@@ -31,28 +31,28 @@ LANGS = {'uk': ('ua', 'uk', 'uk_UA'), 'ru': ('ru', 'ru', 'ru_RU')}
 META = {
     'index.html': {
         'uk': {
-            'title': 'HILS Trucking LLC (MC-1755680) | Робота CDL-A для Водіїв і Owner-Operators, PA',
-            'description': 'HILS TRUCKING LLC, USDOT 4454223, MC-1755680, Levittown, PA. Запрошуємо CDL-A Company Drivers ($2,500 на тиждень або 32% від гросу) і Owner-Operators (диспетч від 6%). Оригінальні рейт-кони, відкритий факторинг.',
+            'title': 'Робота CDL-A: Водії та Owner-Operators | HILS MC-1755680',
+            'description': "Company Drivers: $2,500 на тиждень або 32% від гросу. Owner-Operators: диспетч від 6%. Оплата щоп'ятниці. HILS Trucking, MC-1755680, Пенсильванія.",
             'og_title': 'HILS Trucking LLC (MC-1755680): запрошуємо CDL-A Водіїв і Owner-Operators',
             'og_description': 'Гарантія $2,500 на тиждень або 32% від гросу. Оригінальні рейт-кони, відкритий факторинг, без ескроу. Levittown, PA.',
         },
         'ru': {
-            'title': 'HILS Trucking LLC (MC-1755680) | Работа CDL-A для Водителей и Owner-Operators, PA',
-            'description': 'HILS TRUCKING LLC, USDOT 4454223, MC-1755680, Levittown, PA. Приглашаем CDL-A Company Drivers ($2,500 в неделю или 32% от гросса) и Owner-Operators (диспетч от 6%). Оригинальные рейт-коны, открытый факторинг.',
+            'title': 'Работа CDL-A: Водители и Owner-Operators | HILS MC-1755680',
+            'description': 'Company Drivers: $2,500 в неделю или 32% от гросса. Owner-Operators: диспетч от 6%. Оплата каждую пятницу. HILS Trucking, MC-1755680, Пенсильвания.',
             'og_title': 'HILS Trucking LLC (MC-1755680): приглашаем CDL-A Водителей и Owner-Operators',
             'og_description': 'Гарантия $2,500 в неделю или 32% от гросса. Оригинальные рейт-коны, открытый факторинг, без эскроу. Levittown, PA.',
         },
     },
     'owner-operators.html': {
         'uk': {
-            'title': 'Робота для Owner-Operators: диспетч від 6% | HILS Trucking LLC (MC-1755680)',
-            'description': 'Програма для Owner-Operators у HILS TRUCKING LLC (MC-1755680, USDOT 4454223): Smooth Start, диспетч від 6%, оригінальні рейт-кони, відкритий факторинг, уся знижка TA/Petro на пальне. Dry Van, Flatbed, Step Deck.',
+            'title': 'Owner-Operators: диспетч від 6% | HILS MC-1755680',
+            'description': 'Smooth Start: диспетч від 6%, оригінальні рейт-кони, відкритий факторинг, уся знижка TA/Petro на пальне. Dry Van, Flatbed, Step Deck. MC-1755680.',
             'og_title': 'HILS Trucking LLC: Owner-Operators, диспетч від 6% (Smooth Start)',
             'og_description': 'Smooth Start: диспетч 6% → 12%, оригінальні рейт-кони, відкритий факторинг, уся знижка TA/Petro на пальне. MC-1755680.',
         },
         'ru': {
-            'title': 'Работа для Owner-Operators: диспетч от 6% | HILS Trucking LLC (MC-1755680)',
-            'description': 'Программа для Owner-Operators в HILS TRUCKING LLC (MC-1755680, USDOT 4454223): Smooth Start, диспетч от 6%, оригинальные рейт-коны, открытый факторинг, вся скидка TA/Petro на топливо. Dry Van, Flatbed, Step Deck.',
+            'title': 'Owner-Operators: диспетч от 6% | HILS MC-1755680',
+            'description': 'Smooth Start: диспетч от 6%, оригинальные рейт-коны, открытый факторинг, вся скидка TA/Petro на топливо. Dry Van, Flatbed, Step Deck. MC-1755680.',
             'og_title': 'HILS Trucking LLC: Owner-Operators, диспетч от 6% (Smooth Start)',
             'og_description': 'Smooth Start: диспетч 6% → 12%, оригинальные рейт-коны, открытый факторинг, вся скидка TA/Petro на топливо. MC-1755680.',
         },
@@ -160,6 +160,13 @@ def build(page, lang, errors):
             last_end = e[1]
     for start, end, value in reversed(kept):
         out = out[:start] + value + out[end:]
+
+    # 1b. Only this language's texts stay in the page code (the page never switches language in place)
+    m_data = re.search(r'(const i18nData = )(\{.*?\})(;\n)', out, re.S)
+    if not m_data:
+        errors.append(f'{page} [{lang}]: i18nData not found')
+    else:
+        out = out[:m_data.start(2)] + json.dumps({lang: data}, ensure_ascii=False) + out[m_data.end(2):]
 
     # 2. Language of the page and head tags
     url = f'{SITE}{folder}/' + ('' if page == 'index.html' else page)
