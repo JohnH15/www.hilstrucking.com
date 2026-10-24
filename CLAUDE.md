@@ -102,4 +102,4 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
 - WhatsApp: подключить номер Verizon к WhatsApp Cloud API, шаблон `new_lead_alert` (Utility, 4 параметра: имя, телефон, роль, штат),
   новый постоянный токен, включить `whatsapp` в config.php. Позже агент в WhatsApp для ответов Водителям.
 - Google Business Profile: подтверждение по видео (делает Иван).
-- Письма о заявках на info@ не приходят с 13.10.2026 (заявки идут в таблицу и в Telegram @HilsLeadsBot). Причину смотреть в `/home/hilsdetz/send-mail.log`, скорее всего пароль приложения Gmail.
+- Письма о заявках на info@ не приходят с 13.10.2026. Решение Ивана (24.10.2026): не чинить, заявки приходят в Telegram @HilsLeadsBot и в таблицу HILS Leads.
