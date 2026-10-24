@@ -1986,7 +1986,7 @@
       display: grid;
       grid-template-columns: 1fr 1.25fr;
       gap: 40px;
-      align-items: flex-start;
+      align-items: stretch; /* contact card and form are the same height */
     }
 
     .apply-info-card {
@@ -1995,9 +1995,12 @@
       border-radius: var(--radius-xl);
       padding: 44px 36px;
       box-shadow: var(--shadow-xl);
-      position: sticky;
-      top: 104px;
+      border: 1px solid var(--blue-deep); /* same 1px frame as the form card, so inner spacing matches */
+      display: flex;
+      flex-direction: column;
     }
+    /* messengers sit at the bottom, level with the end of the form */
+    .apply-info-card .apply-messengers { margin-top: auto; padding-top: 10px; }
 
     .apply-info-card h3 {
       font-family: var(--font-heading);
@@ -2872,7 +2875,7 @@
     img { -webkit-user-drag: none; }
     /* ====================== booklets ====================== */
     .booklet { margin-top: 48px; }
-    .bk-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .bk-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
     .bk-head h3 { margin: 0 0 6px; font: 700 clamp(1.3rem, 1.1rem + .8vw, 1.7rem)/1.2 var(--font-heading); color: var(--blue-deep); letter-spacing: -.01em; }
     .bk-head p { margin: 0; color: var(--slate-600); font-size: .98rem; }
     .bk-ctrl { display: flex; align-items: center; gap: 10px; flex: none; }
@@ -3593,7 +3596,7 @@
           </div>
 
           <!-- Instant Messaging Row -->
-          <div style="margin-top: 10px;">
+          <div class="apply-messengers">
             <p style="font-size: 0.86rem; color: rgba(255,255,255,0.7); margin-bottom: 10px;" data-i18n="msg_support">Instant Messaging Support (24/7):</p>
             <div class="messenger-buttons-row">
               <a href="https://wa.me/14454440204" target="_blank" rel="noopener noreferrer" class="messenger-btn btn-whatsapp" title="Chat on WhatsApp">
