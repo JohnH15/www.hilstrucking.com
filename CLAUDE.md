@@ -18,7 +18,7 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
 | `owner-operators.html` | Отдельная страница для Owner-Operators. Сделана из `index.html`: без раздела Company Drivers, свой hero, свои 4 карточки, FAQ только General + Owner-Operators, в форме заранее выбран Owner-Operator, своя разметка JobPosting (CONTRACTOR) |
 | `owner-operators/index.html` | Переадресация `/owner-operators` → `/owner-operators.html` (адрес напечатан на буклете, не удалять) |
 | `privacy.html` | Политика конфиденциальности, EN/UA/RU (переключатель внутри страницы) |
-| `send-mail.php` | Обработчик формы: reCAPTCHA v3 → Google Sheets → письмо через Gmail SMTP → (WhatsApp выключен) → журнал |
+| `send-mail.php` | Обработчик формы: reCAPTCHA v3 → Google Sheets → бот Telegram (`telegram` в config.php) → письмо через Gmail SMTP → (WhatsApp выключен) → журнал. Перед публикацией GitHub проверяет синтаксис PHP |
 | `config.example.php` | Шаблон настроек (реальный `config.php` только на сервере) |
 | `.htaccess` | Переадресация www/http → `https://hilstrucking.com`, закрытые служебные файлы, заголовки безопасности. Своего `.htaccess` на сервере не было (23.10.2026) |
 | `robots.txt`, `sitemap.xml` | SEO. При добавлении страницы добавить ее в `sitemap.xml` |
