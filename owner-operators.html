@@ -254,6 +254,7 @@
     }
 
     html {
+      background-color: var(--blue-deep); /* overscroll above the top bar and below the footer stays dark */
       scroll-behavior: smooth;
       font-size: 16px;
       -webkit-font-smoothing: antialiased;
@@ -2705,7 +2706,6 @@
     .mcb { display: none; }
     @media (max-width: 768px) {
       .contact-widget { display: none !important; }
-      body { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important; }
       .mcb { display: flex; align-items: center; gap: 8px; position: fixed; left: 0; right: 0; margin: 0 auto;
              bottom: calc(14px + env(safe-area-inset-bottom, 0px)); width: calc(100% - 28px); max-width: 420px; box-sizing: border-box;
              padding: 6px; border-radius: 999px; z-index: 1500;
