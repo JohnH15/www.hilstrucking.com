@@ -28,6 +28,28 @@ function jsonResponse(array $data, int $statusCode = 200): void
     exit;
 }
 
+// Send the JSON answer to the visitor now and keep the script running for slow follow-up work (email)
+function respondNowAndContinue(array $data): void
+{
+    ignore_user_abort(true);
+    @set_time_limit(120);
+    $body = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    http_response_code(200);
+    header('Content-Length: ' . strlen($body));
+    header('Connection: close');
+    echo $body;
+    if (function_exists('litespeed_finish_request')) {
+        litespeed_finish_request();
+    } elseif (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    } else {
+        while (ob_get_level() > 0) {
+            ob_end_flush();
+        }
+        flush();
+    }
+}
+
 // -----------------------------------------------------------------------------
 // 1. Load Configuration
 // -----------------------------------------------------------------------------
@@ -889,22 +911,23 @@ $telegramSent = sendToTelegram([
     'wa_digits'   => $waDigits,
 ], $sheetSaved, $config);
 
-$mailSent = false;
+$successMessage = 'Thank you! Your application has been successfully submitted. Our team will review your info and get back to you shortly.';
 
-if (!empty($config['smtp']['enabled'])) {
-    $mailSent = sendViaSmtp($toEmail, $encodedSubject, $mimeMessage, $headers, $config['smtp'], $config);
-} else {
+$sendMail = static function () use ($config, $toEmail, $encodedSubject, $mimeMessage, $headers, $headersString): bool {
+    if (!empty($config['smtp']['enabled'])) {
+        return sendViaSmtp($toEmail, $encodedSubject, $mimeMessage, $headers, $config['smtp'], $config);
+    }
     // Standard PHP mail()
-    $mailSent = @mail($toEmail, $encodedSubject, $mimeMessage, $headersString);
-}
+    return @mail($toEmail, $encodedSubject, $mimeMessage, $headersString);
+};
 
-if (!$mailSent && ($sheetSaved || $telegramSent)) {
-    logMessage("MAIL ERROR (lead kept in Google Sheet / Telegram): failed to send email to <{$toEmail}>.", $config);
-}
-
-if ($mailSent || $sheetSaved || $telegramSent) {
-    logMessage("SUCCESS: Driver application from [{$name}] <{$email}> ({$phone}) sent to <{$toEmail}>.", $config);
+if ($sheetSaved || $telegramSent) {
+    // The lead is already safe in the Google Sheet / Telegram: answer the visitor right away,
+    // then try the email after the answer so a slow or broken mail server never makes the form wait
+    logMessage("SUCCESS: Driver application from [{$name}] <{$email}> ({$phone}) saved (sheet: " . ($sheetSaved ? 'yes' : 'no') . ', telegram: ' . ($telegramSent ? 'yes' : 'no') . ').', $config);
     logMessage("CONSENT: phone {$phone} | CDL certification: YES | calls/SMS consent: {$smsConsentLabel}" . ($smsConsent ? " | text shown: {$smsConsentText}" : ''), $config);
+
+    respondNowAndContinue(['success' => true, 'message' => $successMessage]);
 
     // Also dispatch to WhatsApp Business if enabled
     if (!empty($config['whatsapp']['enabled'])) {
@@ -919,16 +942,24 @@ if ($mailSent || $sheetSaved || $telegramSent) {
         ], $config);
     }
 
-    jsonResponse([
-        'success' => true,
-        'message' => 'Thank you! Your application has been successfully submitted. Our team will review your info and get back to you shortly.',
-    ]);
-} else {
-    logMessage("MAIL ERROR: Failed to send email to <{$toEmail}>. Check server MTA / sendmail or SMTP configuration.", $config);
-
-    jsonResponse([
-        'success'    => false,
-        'error_code' => 'mail_send_failed',
-        'message'    => 'Unable to send notification email. Please call us directly at (445) 444-0204 or reach out via WhatsApp/Telegram.',
-    ], 500);
+    if ($sendMail()) {
+        logMessage("MAIL: lead email sent to <{$toEmail}>.", $config);
+    } else {
+        logMessage("MAIL ERROR (lead kept in Google Sheet / Telegram): failed to send email to <{$toEmail}>.", $config);
+    }
+    exit;
 }
+
+// Neither the Sheet nor Telegram took the lead: email is the last channel, so wait for it
+if ($sendMail()) {
+    logMessage("SUCCESS: Driver application from [{$name}] <{$email}> ({$phone}) sent to <{$toEmail}> (email only).", $config);
+    logMessage("CONSENT: phone {$phone} | CDL certification: YES | calls/SMS consent: {$smsConsentLabel}" . ($smsConsent ? " | text shown: {$smsConsentText}" : ''), $config);
+    jsonResponse(['success' => true, 'message' => $successMessage]);
+}
+
+logMessage("MAIL ERROR: Failed to send email to <{$toEmail}>, and the Sheet / Telegram did not take the lead either.", $config);
+jsonResponse([
+    'success'    => false,
+    'error_code' => 'mail_send_failed',
+    'message'    => 'Unable to send notification email. Please call us directly at (445) 444-0204 or reach out via WhatsApp/Telegram.',
+], 500);
