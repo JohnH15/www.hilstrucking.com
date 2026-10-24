@@ -197,7 +197,7 @@ def build(page, lang, errors):
     # 4. Paths: the page now lives one folder deeper
     out = re.sub(r'''(["'`(])assets/''', r'\1/assets/', out)
     out = re.sub(r'''(['"])send-mail\.php''', r'\1/send-mail.php', out)
-    out = re.sub(r'(href=\\?")privacy\.html', r'\1/privacy.html', out)
+    out = re.sub(r'(href=\\?")privacy\.html', rf'\1/{folder}/privacy.html', out)
     out = re.sub(r'(href=\\?")owner-operators\.html', rf'\1/{folder}/owner-operators.html', out)
     out = re.sub(r'(href=\\?")/#', rf'\1/{folder}/#', out)
 
@@ -220,6 +220,44 @@ def build(page, lang, errors):
     return dest, len(kept)
 
 
+PRIVACY_META = {
+    'uk': ('Політика конфіденційності | HILS TRUCKING LLC',
+           'Як HILS TRUCKING LLC збирає, використовує та захищає персональні дані з hilstrucking.com, форми заявки, дзвінків і повідомлень.'),
+    'ru': ('Политика конфиденциальности | HILS TRUCKING LLC',
+           'Как HILS TRUCKING LLC собирает, использует и защищает персональные данные с hilstrucking.com, формы заявки, звонков и сообщений.'),
+}
+
+
+def build_privacy(lang, errors):
+    """ua/privacy.html and ru/privacy.html: only that language's text, own title/description/canonical."""
+    folder, html_lang, _ = LANGS[lang]
+    out = (ROOT / 'privacy.html').read_text(encoding='utf-8')
+    title, desc = PRIVACY_META[lang]
+    url = f'{SITE}{folder}/privacy.html'
+    out = replace_once(out, r'<html lang="en" data-page-lang="en">', f'<html lang="{html_lang}" data-page-lang="{lang}">', 'privacy <html>')
+    out = replace_once(out, r'<title>[^<]*</title>', f'<title>{html.escape(title, quote=False)}</title>', 'privacy title')
+    out = replace_once(out, r'<meta name="description"[^>]*>', lambda m: set_attr(m.group(0), 'content', desc), 'privacy description')
+    out = replace_once(out, r'<link rel="canonical"[^>]*>', lambda m: set_attr(m.group(0), 'href', url), 'privacy canonical')
+    # keep only this language's article, visible
+    for other in ['en', 'uk', 'ru']:
+        if other == lang:
+            out, n = re.subn(rf'(<article class="doc" lang="{other}" data-lang="{other}") hidden>', r'\1>', out)
+        else:
+            out, n = re.subn(rf'\s*<article class="doc" lang="{other}" data-lang="{other}"( hidden)?>.*?</article>', '', out, flags=re.S)
+            if n != 1:
+                errors.append(f'privacy [{lang}]: article {other} not found')
+    out = re.sub(r'(["(])assets/', r'\1/assets/', out)
+    out = out.replace('href="/"', f'href="/{folder}/"')
+    if re.search(r'["(]assets/', out):
+        errors.append(f'privacy [{lang}]: relative asset path left')
+    if lang == 'ru' and re.search('[ёЁ]', out):
+        errors.append('privacy [ru]: letter ё')
+    dest = ROOT / folder / 'privacy.html'
+    dest.parent.mkdir(exist_ok=True)
+    dest.write_text(out, encoding='utf-8')
+    return dest
+
+
 def main():
     errors, built = [], []
     # Browsers only look for <meta charset> in the first 1024 bytes; later and Cyrillic turns into mojibake
@@ -231,6 +269,8 @@ def main():
         for lang in LANGS:
             dest, n = build(page, lang, errors)
             built.append(f'{dest.relative_to(ROOT)} ({n} texts)')
+    for lang in LANGS:
+        built.append(str(build_privacy(lang, errors).relative_to(ROOT)))
     print('build_i18n: ' + ', '.join(built))
     if errors:
         print('build_i18n errors:\n  ' + '\n  '.join(errors), file=sys.stderr)

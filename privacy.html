@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-page-lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Privacy Policy | HILS TRUCKING LLC</title>
   <meta name="description" content="How HILS TRUCKING LLC collects, uses and protects personal information from hilstrucking.com, the driver application form, calls and text messages." />
   <link rel="canonical" href="https://hilstrucking.com/privacy.html" />
+  <link rel="alternate" hreflang="en" href="https://hilstrucking.com/privacy.html" />
+  <link rel="alternate" hreflang="uk" href="https://hilstrucking.com/ua/privacy.html" />
+  <link rel="alternate" hreflang="ru" href="https://hilstrucking.com/ru/privacy.html" />
+  <link rel="alternate" hreflang="x-default" href="https://hilstrucking.com/privacy.html" />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -32,6 +36,7 @@
     ul.contact { list-style: none; padding: 0; }
     a { color: var(--blue); font-weight: 500; }
     .back { display: inline-flex; gap: 8px; align-items: center; margin-top: 22px; font-weight: 700; text-decoration: none; }
+    :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
     footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 0 20px 40px; }
   </style>
 </head>
@@ -287,18 +292,25 @@
   </main>
   <footer>&copy; 2026 HILS TRUCKING LLC &middot; USDOT 4454223 &middot; MC 1755680</footer>
   <script>
+    // Each language has its own address: /privacy.html, /ua/privacy.html, /ru/privacy.html
     (function () {
-      const back = { en: 'Back to the website', uk: 'Повернутися на сайт', ru: 'Вернуться на сайт' };
-      function set(l) {
-        if (!back[l]) l = 'en';
-        document.querySelectorAll('.doc').forEach(a => a.hidden = a.dataset.lang !== l);
-        document.querySelectorAll('.lang button').forEach(b => b.classList.toggle('active', b.dataset.l === l));
-        document.documentElement.lang = l; document.getElementById('backTxt').textContent = back[l];
-        try { localStorage.setItem('hils_lang', l); } catch (e) {}
-      }
-      let l = 'en'; try { l = localStorage.getItem('hils_lang') || 'en'; } catch (e) {}
-      document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => set(b.dataset.l)));
-      set(l);
+      var PAGE = document.documentElement.getAttribute('data-page-lang') || 'en';
+      var PREFIX = { en: '/', uk: '/ua/', ru: '/ru/' };
+      var BACK = { en: 'Back to the website', uk: 'Повернутися на сайт', ru: 'Вернуться на сайт' };
+      var saved = '';
+      try { saved = localStorage.getItem('hils_lang') || ''; } catch (e) {}
+      // the English page sends a visitor who chose UA/RU on the site to their language
+      if (PAGE === 'en' && (saved === 'uk' || saved === 'ru')) { location.replace(PREFIX[saved] + 'privacy.html' + location.hash); return; }
+      document.querySelectorAll('.doc').forEach(function (a) { a.hidden = a.dataset.lang !== PAGE; });
+      document.querySelectorAll('.lang button').forEach(function (b) {
+        b.classList.toggle('active', b.dataset.l === PAGE);
+        b.addEventListener('click', function () {
+          if (b.dataset.l === PAGE) return;
+          try { localStorage.setItem('hils_lang', b.dataset.l); } catch (e) {}
+          location.href = PREFIX[b.dataset.l] + 'privacy.html';
+        });
+      });
+      document.getElementById('backTxt').textContent = BACK[PAGE];
     })();
   </script>
 </body>

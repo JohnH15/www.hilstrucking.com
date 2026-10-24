@@ -2699,6 +2699,11 @@
     .mobile-floating-bar { display: none !important; }
     @media (max-width: 1024px) { body { padding-bottom: 0 !important; } }
 
+    /* keyboard navigation: clear focus ring (mouse and touch clicks do not show it) */
+    :focus-visible { outline: 3px solid var(--blue-primary); outline-offset: 3px; }
+    .apply-info-card :focus-visible, .site-footer :focus-visible, .mcb :focus-visible { outline-color: var(--green-primary); }
+    .pay-calc input[type=range]:focus-visible, .bk-track:focus-visible { outline: 3px solid var(--blue-primary); outline-offset: 4px; }
+
     /* narrow phones: single-column grids shrink to the screen instead of growing to the longest word */
     @media (max-width: 600px) {
       .hero-split, .drivers-perks-grid, .terminal-card, .apply-wrapper, .form-grid { grid-template-columns: minmax(0, 1fr); }
@@ -3769,7 +3774,7 @@
               height="100%" 
               style="border:0;" 
               allowfullscreen="" 
-              loading="eager" 
+              loading="lazy" 
               referrerpolicy="no-referrer-when-downgrade">
             </iframe>
           </div>

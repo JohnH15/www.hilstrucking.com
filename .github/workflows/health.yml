@@ -1,0 +1,26 @@
+name: Daily site and form check
+
+# Every day at 13:00 UTC (9:00 New York). A failed run makes GitHub email the repository owner;
+# health.php itself also warns the Telegram lead chat when a form check fails.
+on:
+  schedule:
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pages answer
+        run: |
+          for p in "" "ru/" "ua/" "owner-operators.html" "ru/owner-operators.html" "ua/owner-operators.html" "privacy.html"; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "https://hilstrucking.com/$p?health=$(date +%s)")
+            echo "/$p -> $code"
+            [ "$code" = "200" ] || exit 1
+          done
+
+      - name: Form backend (config, Google Sheets, Telegram)
+        run: |
+          body=$(curl -s "https://hilstrucking.com/health.php?notify=1")
+          echo "$body"
+          echo "$body" | python3 -c 'import json,sys; d=json.load(sys.stdin); sys.exit(0 if d.get("ok") else 1)'

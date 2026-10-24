@@ -16,7 +16,7 @@ jobs:
         run: python3 tools/build_i18n.py
 
       - name: Check PHP syntax (a broken send-mail.php would break the form)
-        run: for f in *.php; do php -l "$f"; done
+        run: for f in *.php; do php -l "$f" || exit 1; done   # stop on the first broken file
 
       - name: Upload via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
