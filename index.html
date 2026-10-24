@@ -2653,40 +2653,46 @@
       *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
                                transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
     }
-    /* ====================== mobile menu (card style) ====================== */
-    .mobile-menu-drawer { background: rgba(7, 30, 61, 0.28); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); overflow-y: auto; }
-    .mm-wrap { padding: calc(10px + env(safe-area-inset-top, 0px)) 12px calc(16px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 8px;
-               transform: translateY(-8px); transition: transform .35s cubic-bezier(.16,1,.3,1); }
-    .mobile-menu-drawer.active .mm-wrap { transform: none; }
-    .mm-card { background: #fff; border-radius: 20px; box-shadow: 0 10px 30px -12px rgba(7, 30, 61, 0.25); }
-    .mm-top { display: flex; align-items: center; justify-content: center; position: relative; padding: 10px 60px; min-height: 64px; }
-    .mm-top .mm-logo { margin: 0 auto !important; display: block; }
-    .mm-logo img { height: 40px; width: auto; display: block; }
-    .mm-top .mm-close { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); }
-    .mm-close { width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: none; color: var(--blue-deep); cursor: pointer; border-radius: 12px; }
-    .mm-close:active { background: var(--slate-100); }
-    .mm-body { padding: 8px 22px 18px; }
-    .mm-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0 16px; border-bottom: 1px solid var(--slate-200); }
-    .mm-lang { position: relative; }
-    .mm-lang-btn { display: inline-flex; align-items: center; gap: 8px; border: 0; background: none; padding: 6px 4px; cursor: pointer; color: var(--slate-600); font: 600 .95rem var(--font-body); }
-    .mm-flag { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 30px; line-height: 1; overflow: hidden; background: var(--slate-100); }
-    .mm-lang-code { color: var(--blue-deep); }
-    .mm-lang-menu { position: absolute; top: calc(100% + 6px); left: 0; min-width: 180px; background: #fff; border: 1px solid var(--slate-200); border-radius: 14px;
-                    box-shadow: 0 16px 32px -12px rgba(7, 30, 61, 0.3); padding: 6px; display: none; z-index: 5; }
-    .mm-lang.open .mm-lang-menu { display: block; }
-    .mm-lang-menu .top-lang-option { display: flex; width: 100%; gap: 10px; align-items: center; padding: 11px 12px; border: 0; background: none; border-radius: 10px;
-                                     font: 500 1rem var(--font-body); color: var(--blue-deep); cursor: pointer; }
-    .mm-lang-menu .top-lang-option.active { background: var(--blue-light); color: var(--blue-primary); }
-    .mm-phone { display: inline-flex; align-items: center; gap: 10px; color: var(--blue-deep); text-decoration: none; font: 700 1.08rem var(--font-heading); }
-    .mm-phone svg { color: var(--slate-500); }
-    .mm-links { list-style: none; margin: 0; padding: 10px 0; border-bottom: 1px solid var(--slate-200); text-align: center; }
-    .mm-links a { display: block; padding: 15px 0; color: var(--blue-deep); text-decoration: none; font: 600 1.2rem var(--font-heading); }
+    /* ====================== mobile menu: liquid-glass sheet ====================== */
+    .mobile-menu-drawer { background: rgba(7, 30, 61, 0.22); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); overflow: hidden; }
+    .mm-sheet { position: absolute; left: 12px; right: 12px; top: calc(12px + env(safe-area-inset-top, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+                max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding: 12px 14px 16px; box-sizing: border-box;
+                border-radius: 32px; background: rgba(255, 255, 255, 0.74); -webkit-backdrop-filter: blur(28px) saturate(1.8); backdrop-filter: blur(28px) saturate(1.8);
+                border: 1px solid rgba(255, 255, 255, 0.75);
+                box-shadow: 0 24px 60px -16px rgba(7, 30, 61, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+                overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+                transform: translateY(16px) scale(.98); opacity: 0; transition: transform .4s cubic-bezier(.16, 1, .3, 1), opacity .25s; }
+    .mobile-menu-drawer.active .mm-sheet { transform: none; opacity: 1; }
+    .mm-head { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; min-height: 52px; }
+    .mm-head .mm-logo { grid-column: 2; justify-self: center; margin: 0 !important; display: block; }
+    .mm-logo img { height: 38px; width: auto; display: block; }
+    .mm-round { width: 44px; height: 44px; border-radius: 999px; display: grid; place-items: center; border: 0; padding: 0; cursor: pointer;
+                background: rgba(255, 255, 255, 0.85); color: var(--blue-deep); box-shadow: inset 0 0 0 1px rgba(7, 30, 61, 0.08), 0 2px 8px -2px rgba(7, 30, 61, 0.12);
+                text-decoration: none; -webkit-tap-highlight-color: transparent; transition: transform .15s; }
+    .mm-round:active { transform: scale(.94); }
+    .mm-round svg { width: 22px; height: 22px; }
+    .mm-head .mm-close { grid-column: 3; }
+    /* language: segmented control */
+    .mm-seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 999px; background: rgba(7, 30, 61, 0.06); }
+    .mm-seg .lang-switch-btn { display: flex; align-items: center; justify-content: center; gap: 8px; height: 40px; border: 0; border-radius: 999px; background: none; cursor: pointer;
+                               font: 700 .92rem/1 var(--font-body); color: var(--slate-600); -webkit-tap-highlight-color: transparent; transition: background .2s, color .2s, box-shadow .2s; }
+    .mm-seg .lang-switch-btn.active { background: #fff; color: var(--blue-deep); box-shadow: 0 2px 8px -2px rgba(7, 30, 61, 0.2), inset 0 0 0 1px rgba(7, 30, 61, 0.05); }
+    .flag { flex: none; width: 21px; height: 14px; border-radius: 3px; box-shadow: 0 0 0 0.5px rgba(7, 30, 61, 0.25); }
+    /* links: grouped list */
+    .mm-links { list-style: none; margin: 0; padding: 4px 0; border-radius: 22px; background: rgba(255, 255, 255, 0.6); box-shadow: inset 0 0 0 1px rgba(7, 30, 61, 0.06); }
+    .mm-links li + li a { border-top: 1px solid rgba(7, 30, 61, 0.07); }
+    .mm-links a { display: flex; align-items: center; justify-content: space-between; min-height: 54px; margin: 0 18px; color: var(--blue-deep); text-decoration: none;
+                  font: 600 1.08rem/1.2 var(--font-heading); -webkit-tap-highlight-color: transparent; }
+    .mm-links a::after { content: ""; flex: none; width: 8px; height: 8px; border-right: 2px solid var(--slate-400, #94a3b8); border-top: 2px solid var(--slate-400, #94a3b8); transform: rotate(45deg); margin-right: 3px; }
     .mm-links a:active { color: var(--blue-primary); }
-    .mm-cta { padding: 18px 0; border-bottom: 1px solid var(--slate-200); }
-    .mm-cta .btn { width: 100%; padding: 16px; font-size: 1.05rem; }
-    .mm-social { display: flex; justify-content: space-around; padding: 18px 0 2px; }
-    .mm-social a { width: 46px; height: 46px; display: grid; place-items: center; color: var(--slate-500); border-radius: 12px; }
-    .mm-social a:active { background: var(--slate-100); color: var(--blue-primary); }
+    /* bottom: call + apply + social, pinned to the bottom of the sheet */
+    .mm-bottom { margin-top: auto; display: grid; gap: 12px; }
+    .mm-actions { display: flex; align-items: center; gap: 8px; }
+    .mm-actions .mm-round { width: 52px; height: 52px; flex: none; color: var(--blue-primary); }
+    .mm-actions .btn { flex: 1; min-width: 0; height: 52px; padding: 0 16px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 1.02rem; }
+    .mm-social { display: flex; justify-content: center; gap: 12px; }
+    .mm-social .mm-round { color: var(--slate-600); }
+    .mm-social .mm-round svg { width: 21px; height: 21px; }
     /* old bottom bar is gone */
     .mobile-floating-bar { display: none !important; }
     @media (max-width: 1024px) { body { padding-bottom: 0 !important; } }
@@ -3206,13 +3212,13 @@
           </button>
           <div class="top-lang-menu" id="topLangMenu">
             <button type="button" class="top-lang-option lang-switch-btn" data-lang="en">
-              <span>🇺🇸</span> EN
+              <svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#fff"/><g fill="#B22234"><rect width="30" height="1.54"/><rect y="3.08" width="30" height="1.54"/><rect y="6.15" width="30" height="1.54"/><rect y="9.23" width="30" height="1.54"/><rect y="12.31" width="30" height="1.54"/><rect y="15.38" width="30" height="1.54"/><rect y="18.46" width="30" height="1.54"/></g><rect width="13" height="10.77" fill="#3C3B6E"/><g fill="#fff"><circle cx="2.2" cy="2" r=".55"/><circle cx="5.2" cy="2" r=".55"/><circle cx="8.2" cy="2" r=".55"/><circle cx="11" cy="2" r=".55"/><circle cx="3.7" cy="4.4" r=".55"/><circle cx="6.7" cy="4.4" r=".55"/><circle cx="9.6" cy="4.4" r=".55"/><circle cx="2.2" cy="6.8" r=".55"/><circle cx="5.2" cy="6.8" r=".55"/><circle cx="8.2" cy="6.8" r=".55"/><circle cx="11" cy="6.8" r=".55"/><circle cx="3.7" cy="9.1" r=".55"/><circle cx="6.7" cy="9.1" r=".55"/><circle cx="9.6" cy="9.1" r=".55"/></g></svg> EN
             </button>
             <button type="button" class="top-lang-option lang-switch-btn" data-lang="uk">
-              <span>🇺🇦</span> UA
+              <svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="10" fill="#0057B7"/><rect y="10" width="30" height="10" fill="#FFD700"/></svg> UA
             </button>
             <button type="button" class="top-lang-option lang-switch-btn" data-lang="ru">
-              <span>🇷🇺</span> RU
+              <svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="6.67" fill="#fff"/><rect y="6.67" width="30" height="6.66" fill="#0039A6"/><rect y="13.33" width="30" height="6.67" fill="#D52B1E"/></svg> RU
             </button>
           </div>
         </div>
@@ -3281,35 +3287,21 @@
 
   <!-- Mobile Drawer Menu -->
   <div class="mobile-menu-drawer" id="mobileMenuDrawer" aria-hidden="true">
-    <div class="mm-wrap">
-      <div class="mm-card mm-top">
+    <div class="mm-sheet" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="mm-head">
         <a href="#hero" class="site-brand mm-logo" aria-label="HILS Trucking LLC">
           <img src="assets/logo.webp" width="568" height="211" alt="HILS Trucking LLC" />
         </a>
-        <button type="button" class="mm-close" id="mobileMenuClose" aria-label="Close menu">
-          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>
-        </button>
+        <button type="button" class="mm-round mm-close" id="mobileMenuClose" aria-label="Close menu"><svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
 
-      <div class="mm-card mm-body">
-        <div class="mm-row">
-          <div class="mob-lang-dropdown mm-lang" id="mobLangDropdown">
-            <button type="button" class="mob-lang-btn mm-lang-btn" id="mobLangBtn" aria-expanded="false" aria-label="Select language">
-              <span class="mm-flag" id="mobFlag">🇺🇸</span>
-              <span class="mm-lang-code" id="mobCurrentLangLabel">EN</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 8h14l-7 9z"/></svg>
-            </button>
-            <div class="mob-lang-menu mm-lang-menu" id="mobLangMenu">
-              <button type="button" class="top-lang-option lang-switch-btn" data-lang="en"><span>🇺🇸</span> English</button>
-              <button type="button" class="top-lang-option lang-switch-btn" data-lang="uk"><span>🇺🇦</span> Українська</button>
-              <button type="button" class="top-lang-option lang-switch-btn" data-lang="ru"><span>🇷🇺</span> Русский</button>
-            </div>
-          </div>
-          <a href="tel:+14454440204" class="mm-phone" aria-label="Call (445) 444-0204"><svg aria-hidden="true" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-<span>(445) 444-0204</span></a>
-        </div>
+      <div class="mm-seg" role="group" aria-label="Language">
+        <button type="button" class="lang-switch-btn" data-lang="en"><svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#fff"/><g fill="#B22234"><rect width="30" height="1.54"/><rect y="3.08" width="30" height="1.54"/><rect y="6.15" width="30" height="1.54"/><rect y="9.23" width="30" height="1.54"/><rect y="12.31" width="30" height="1.54"/><rect y="15.38" width="30" height="1.54"/><rect y="18.46" width="30" height="1.54"/></g><rect width="13" height="10.77" fill="#3C3B6E"/><g fill="#fff"><circle cx="2.2" cy="2" r=".55"/><circle cx="5.2" cy="2" r=".55"/><circle cx="8.2" cy="2" r=".55"/><circle cx="11" cy="2" r=".55"/><circle cx="3.7" cy="4.4" r=".55"/><circle cx="6.7" cy="4.4" r=".55"/><circle cx="9.6" cy="4.4" r=".55"/><circle cx="2.2" cy="6.8" r=".55"/><circle cx="5.2" cy="6.8" r=".55"/><circle cx="8.2" cy="6.8" r=".55"/><circle cx="11" cy="6.8" r=".55"/><circle cx="3.7" cy="9.1" r=".55"/><circle cx="6.7" cy="9.1" r=".55"/><circle cx="9.6" cy="9.1" r=".55"/></g></svg><span>EN</span></button>
+        <button type="button" class="lang-switch-btn" data-lang="uk"><svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="10" fill="#0057B7"/><rect y="10" width="30" height="10" fill="#FFD700"/></svg><span>UA</span></button>
+        <button type="button" class="lang-switch-btn" data-lang="ru"><svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="6.67" fill="#fff"/><rect y="6.67" width="30" height="6.66" fill="#0039A6"/><rect y="13.33" width="30" height="6.67" fill="#D52B1E"/></svg><span>RU</span></button>
+      </div>
 
-        <ul class="mm-links">
+      <ul class="mm-links">
           <li><a href="#company-drivers" class="mobile-nav-link" data-i18n="nav_company">Company Drivers</a></li>
           <li><a href="#owner-operators" class="mobile-nav-link" data-i18n="nav_owner">Owner-Operators</a></li>
           <li><a href="#requirements" class="mobile-nav-link" data-i18n="nav_requirements">Requirements</a></li>
@@ -3317,15 +3309,16 @@
           <li><a href="#terminal" class="mobile-nav-link" data-i18n="nav_terminal">Terminal</a></li>
         </ul>
 
-        <div class="mm-cta">
+      <div class="mm-bottom">
+        <div class="mm-actions">
+          <a href="tel:+14454440204" class="mm-round mm-phone" aria-label="Call (445) 444-0204"><svg aria-hidden="true" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></a>
           <a href="#apply" class="btn btn-primary mobile-nav-link" data-i18n="nav_apply">Apply Now</a>
         </div>
-
         <div class="mm-social">
-          <a href="https://www.facebook.com/profile.php?id=61594776546770" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg aria-hidden="true" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
-          <a href="https://www.instagram.com/hilstrucking/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg aria-hidden="true" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
-          <a href="https://t.me/IvanH15" target="_blank" rel="noopener noreferrer" aria-label="Telegram"><svg aria-hidden="true" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.458c.538-.196 1.006.128.832.943z"/></svg></a>
-          <a href="https://wa.me/14454440204" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><svg width="22" height="22" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2zm0 18.15c-1.49 0-2.95-.4-4.22-1.16l-.3-.18-3.13.82.84-3.05-.2-.31a8.13 8.13 0 01-1.25-4.36c0-4.5 3.66-8.16 8.16-8.16 2.18 0 4.23.85 5.77 2.39a8.107 8.107 0 012.39 5.77c0 4.5-3.66 8.16-8.16 8.16zm4.47-6.11c-.25-.12-1.45-.72-1.68-.8-.22-.08-.39-.12-.55.12-.16.25-.63.8-.77.96-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.24-.74-.66-1.24-1.47-1.39-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.55-1.33-.76-1.82-.2-.48-.41-.41-.56-.42h-.48c-.16 0-.43.06-.66.31-.22.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.57.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.45-.59 1.66-1.16.2-.58.2-1.07.14-1.17-.05-.1-.21-.17-.46-.29z"/></svg></a>
+          <a href="https://www.facebook.com/profile.php?id=61594776546770" target="_blank" rel="noopener noreferrer" class="mm-round" aria-label="Facebook"><svg aria-hidden="true" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+          <a href="https://www.instagram.com/hilstrucking/" target="_blank" rel="noopener noreferrer" class="mm-round" aria-label="Instagram"><svg aria-hidden="true" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+          <a href="https://t.me/IvanH15" target="_blank" rel="noopener noreferrer" class="mm-round" aria-label="Telegram"><svg aria-hidden="true" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.458c.538-.196 1.006.128.832.943z"/></svg></a>
+          <a href="https://wa.me/14454440204" target="_blank" rel="noopener noreferrer" class="mm-round" aria-label="WhatsApp"><svg width="22" height="22" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2zm0 18.15c-1.49 0-2.95-.4-4.22-1.16l-.3-.18-3.13.82.84-3.05-.2-.31a8.13 8.13 0 01-1.25-4.36c0-4.5 3.66-8.16 8.16-8.16 2.18 0 4.23.85 5.77 2.39a8.107 8.107 0 012.39 5.77c0 4.5-3.66 8.16-8.16 8.16zm4.47-6.11c-.25-.12-1.45-.72-1.68-.8-.22-.08-.39-.12-.55.12-.16.25-.63.8-.77.96-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.24-.74-.66-1.24-1.47-1.39-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.55-1.33-.76-1.82-.2-.48-.41-.41-.56-.42h-.48c-.16 0-.43.06-.66.31-.22.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.57.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.45-.59 1.66-1.16.2-.58.2-1.07.14-1.17-.05-.1-.21-.17-.46-.29z"/></svg></a>
         </div>
       </div>
     </div>
@@ -4257,6 +4250,10 @@
       }
     }
 
+    if (mobileMenuDrawer) {
+      mobileMenuDrawer.addEventListener('click', (e) => { if (e.target === mobileMenuDrawer) closeMobileMenu(); });
+    }
+
     if (mobileMenuToggle) {
       mobileMenuToggle.addEventListener('click', (e) => {
         e.preventDefault();
@@ -4592,13 +4589,6 @@
       document.addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
     })();
 
-    // Flag next to the language code in the mobile menu
-    (function () {
-      const flags = { en: '🇺🇸', uk: '🇺🇦', ru: '🇷🇺' };
-      const upd = () => { const f = document.getElementById('mobFlag'); if (f) f.textContent = flags[document.documentElement.lang] || flags.en; };
-      upd();
-      document.querySelectorAll('.lang-switch-btn').forEach(b => b.addEventListener('click', () => setTimeout(upd, 0)));
-    })();
     // Custom dropdowns for the application form (native <select> stays underneath for submit + phones)
     (function () {
       const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
