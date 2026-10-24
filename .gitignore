@@ -9,3 +9,6 @@ config.local.php
 # Log files
 *.log
 send-mail.log
+# Built by tools/build_i18n.py during deploy
+/ru/
+/ua/

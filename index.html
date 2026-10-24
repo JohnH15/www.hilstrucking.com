@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-page-lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18498459696"></script>
@@ -11,14 +11,45 @@
     gtag('config', 'AW-18498459696');
   </script>
   <meta charset="UTF-8" />
+  <script>
+    // Each language has its own URL: / (en), /ua/ (uk), /ru/ (ru). The page language is <html data-page-lang>.
+    var PAGE_LANG = document.documentElement.getAttribute('data-page-lang') || 'en';
+    var LANG_PREFIX = { en: '/', uk: '/ua/', ru: '/ru/' };
+    function langUrl(lang) {
+      var page = location.pathname.endsWith('owner-operators.html') ? 'owner-operators.html' : '';
+      return (LANG_PREFIX[lang] || '/') + page + location.search + location.hash;
+    }
+    // Saved choice first, then the browser / device language
+    function preferredLanguage() {
+      try {
+        var saved = localStorage.getItem('hils_lang');
+        if (saved === 'en' || saved === 'uk' || saved === 'ru') return saved;
+      } catch (e) {}
+      var langs = navigator.languages || [navigator.language || 'en'];
+      for (var i = 0; i < langs.length; i++) {
+        var l = (langs[i] || '').toLowerCase();
+        if (l.indexOf('uk') === 0) return 'uk';
+        if (l.indexOf('ru') === 0 || l.indexOf('be') === 0) return 'ru';
+        if (l.indexOf('en') === 0) return 'en';
+      }
+      return 'en';
+    }
+    // English pages send a visitor to their language version (search engines browse in English and stay here)
+    if (PAGE_LANG === 'en' && preferredLanguage() !== 'en') location.replace(langUrl(preferredLanguage()));
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HILS Trucking LLC (MC-1755680) | CDL-A Driver &amp; Owner-Operator Jobs, PA</title>
   <meta name="description" content="HILS TRUCKING LLC, USDOT 4454223, MC-1755680, Levittown, PA. Hiring CDL-A Company Drivers ($2,500/wk or 32% of gross) and Owner-Operators (dispatch from 6%). Original rate cons, open factoring." />
   <link rel="canonical" href="https://hilstrucking.com/" />
+  <link rel="alternate" hreflang="en" href="https://hilstrucking.com/" />
+  <link rel="alternate" hreflang="uk" href="https://hilstrucking.com/ua/" />
+  <link rel="alternate" hreflang="ru" href="https://hilstrucking.com/ru/" />
+  <link rel="alternate" hreflang="x-default" href="https://hilstrucking.com/" />
   <meta name="theme-color" content="#004aad" />
   <!-- Social preview (WhatsApp, Facebook, Telegram, iMessage) -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="HILS Trucking LLC" />
+  <meta property="og:locale" content="en_US" />
   <meta property="og:url" content="https://hilstrucking.com/" />
   <meta property="og:title" content="HILS Trucking LLC (MC-1755680): hiring CDL-A drivers &amp; Owner-Operators" />
   <meta property="og:description" content="$2,500/wk guarantee or 32% of gross. Original rate cons, open factoring, $0 escrow. Levittown, PA." />
@@ -4006,26 +4037,7 @@
     });
 
     function detectLanguage() {
-      try {
-        const saved = localStorage.getItem('hils_lang');
-        if (saved && (saved === 'en' || saved === 'uk' || saved === 'ru')) {
-          return saved;
-        }
-      } catch (e) {
-        console.warn('localStorage not accessible', e);
-      }
-
-      // Detect from browser / device settings
-      const browserLangs = navigator.languages || [navigator.language || navigator.userLanguage || 'en'];
-      for (let i = 0; i < browserLangs.length; i++) {
-        const l = browserLangs[i];
-        if (!l) continue;
-        const lower = l.toLowerCase();
-        if (lower.startsWith('uk')) return 'uk';
-        if (lower.startsWith('ru') || lower.startsWith('be')) return 'ru';
-        if (lower.startsWith('en')) return 'en';
-      }
-      return 'en';
+      return PAGE_LANG;
     }
 
     function applyLanguage(lang) {
@@ -4128,8 +4140,12 @@
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const targetLang = btn.getAttribute('data-lang');
+        if (targetLang && targetLang !== PAGE_LANG) {
+          try { localStorage.setItem('hils_lang', targetLang); } catch (err) {}
+          location.href = langUrl(targetLang);
+          return;
+        }
         if (targetLang) {
-          applyLanguage(targetLang);
           if (topLangDropdown) {
             topLangDropdown.classList.remove('open');
             if (topLangBtn) topLangBtn.setAttribute('aria-expanded', 'false');

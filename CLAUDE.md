@@ -17,6 +17,8 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
 | `index.html` | Главная. Один файл: HTML + CSS + JS + все тексты на 3 языках |
 | `owner-operators.html` | Отдельная страница для Owner-Operators. Сделана из `index.html`: без раздела Company Drivers, свой hero, свои 4 карточки, FAQ только General + Owner-Operators, в форме заранее выбран Owner-Operator, своя разметка JobPosting (CONTRACTOR) |
 | `owner-operators/index.html` | Переадресация `/owner-operators` → `/owner-operators.html` (адрес напечатан на буклете, не удалять) |
+| `ru/`, `ua/` | **Не править и не коммитить.** Русская и украинская версии `index.html` и `owner-operators.html` (`/ru/`, `/ua/`). Их собирает `tools/build_i18n.py` из исходников при каждой публикации (шаг в `deploy.yml`) |
+| `tools/build_i18n.py` | Сборка `/ru/` и `/ua/`: тексты из `i18nData` прямо в HTML, свои title/description/og (словарь `META` в скрипте), FAQPage на языке страницы, JobPosting только на EN. Падает с ошибкой, если что-то не так |
 | `privacy.html` | Политика конфиденциальности, EN/UA/RU (переключатель внутри страницы) |
 | `send-mail.php` | Обработчик формы: reCAPTCHA v3 → Google Sheets → бот Telegram (`telegram` в config.php) → письмо через Gmail SMTP → (WhatsApp выключен) → журнал. Перед публикацией GitHub проверяет синтаксис PHP |
 | `config.example.php` | Шаблон настроек (реальный `config.php` только на сервере) |
@@ -29,8 +31,12 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
 (шапка, подвал, форма, FAQ, стили, скрипты). Раздел Company Drivers и калькулятор есть только в `index.html`.
 
 ## Как устроены тексты (i18n)
-- Языки: `en`, `uk` (украинский, в интерфейсе «UA»), `ru`. Выбор сохраняется в `localStorage` (`hils_lang`),
-  по умолчанию язык браузера.
+- Языки: `en`, `uk` (украинский, в интерфейсе «UA»), `ru`. У каждого языка свой адрес: `/` и `/owner-operators.html` (EN),
+  `/ua/...` (UA), `/ru/...` (RU), связаны `hreflang` в `<head>` и в `sitemap.xml`. Язык страницы задает `<html data-page-lang>`.
+  Переключатель EN/UA/RU переходит на адрес языка. Английская страница при заходе отправляет на `/ua/` или `/ru/`, если так выбрано
+  раньше (`localStorage` `hils_lang`) или таков язык браузера.
+- Проверка локально: `python3 tools/build_i18n.py`, потом `python3 -m http.server` из корня репозитория.
+- Новый title/description для RU/UA менять в `META` в `tools/build_i18n.py`.
 - Все тексты лежат в JS-объекте `const i18nData = { en: {...}, uk: {...}, ru: {...} }` внизу страницы.
   Элемент получает текст по атрибуту `data-i18n="key"` (innerHTML, HTML разрешен), placeholder по `data-i18n-ph`.
 - Статичный английский текст в HTML тоже обновлять: его видят Google и посетители без JS.

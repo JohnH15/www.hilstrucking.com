@@ -1,16 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://hilstrucking.com/</loc>
-    <lastmod>2026-10-23</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://hilstrucking.com/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://hilstrucking.com/ua/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://hilstrucking.com/ru/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://hilstrucking.com/" />
+    <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://hilstrucking.com/owner-operators.html</loc>
-    <lastmod>2026-10-23</lastmod>
+    <loc>https://hilstrucking.com/ua/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://hilstrucking.com/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://hilstrucking.com/ua/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://hilstrucking.com/ru/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://hilstrucking.com/" />
+    <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://hilstrucking.com/ru/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://hilstrucking.com/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://hilstrucking.com/ua/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://hilstrucking.com/ru/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://hilstrucking.com/" />
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://hilstrucking.com/owner-operators.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://hilstrucking.com/owner-operators.html" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://hilstrucking.com/ua/owner-operators.html" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://hilstrucking.com/ru/owner-operators.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://hilstrucking.com/owner-operators.html" />
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://hilstrucking.com/ua/owner-operators.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://hilstrucking.com/owner-operators.html" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://hilstrucking.com/ua/owner-operators.html" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://hilstrucking.com/ru/owner-operators.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://hilstrucking.com/owner-operators.html" />
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://hilstrucking.com/ru/owner-operators.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://hilstrucking.com/owner-operators.html" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://hilstrucking.com/ua/owner-operators.html" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://hilstrucking.com/ru/owner-operators.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://hilstrucking.com/owner-operators.html" />
+    <lastmod>2026-10-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://hilstrucking.com/privacy.html</loc>

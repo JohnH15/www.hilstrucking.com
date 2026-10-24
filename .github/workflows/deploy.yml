@@ -12,6 +12,9 @@ jobs:
       - name: Get files
         uses: actions/checkout@v4
 
+      - name: Build Ukrainian and Russian pages (/ua/, /ru/)
+        run: python3 tools/build_i18n.py
+
       - name: Check PHP syntax (a broken send-mail.php would break the form)
         run: for f in *.php; do php -l "$f"; done
 
@@ -34,3 +37,4 @@ jobs:
             .claude/**
             docs/**
             **/*.gs
+            tools/**
