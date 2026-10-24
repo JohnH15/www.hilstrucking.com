@@ -105,6 +105,20 @@ return [
     ],
 
     // -------------------------------------------------------------------------
+    // 5c. Telegram bot notification (optional)
+    // -------------------------------------------------------------------------
+    // Sends every application to Telegram right after it is saved to the Google Sheet.
+    // bot_token = token from @BotFather. chat_id = your chat with the bot (or a group id,
+    // starts with -100...); several ids can be separated by commas.
+    // Open the bot and press Start first, otherwise Telegram will not let it write to you.
+    'telegram' => [
+        'enabled'   => false,
+        'bot_token' => '',
+        'chat_id'   => '',
+        'sheet_url' => 'https://docs.google.com/spreadsheets/d/1oykBd8c4BSNdIz4d3K3_67nIVlis49JbzIHRvFN3Aec/edit',
+    ],
+
+    // -------------------------------------------------------------------------
     // 5. Logging
     // -------------------------------------------------------------------------
     'logging' => [

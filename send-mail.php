@@ -775,6 +775,91 @@ function sendToGoogleSheet(array $row, array $config): bool
 }
 
 // -----------------------------------------------------------------------------
+// 8c. Telegram bot notification (optional, configured in config.php -> telegram)
+// -----------------------------------------------------------------------------
+function sendToTelegram(array $lead, bool $sheetSaved, array $config): bool
+{
+    $c = $config['telegram'] ?? [];
+    $token = trim((string)($c['bot_token'] ?? ''));
+    $chatIds = $c['chat_id'] ?? '';
+    $chatIds = is_array($chatIds) ? $chatIds : explode(',', (string) $chatIds);
+    $chatIds = array_values(array_filter(array_map('trim', $chatIds), 'strlen'));
+    if (empty($c['enabled']) || $token === '' || empty($chatIds)) {
+        return false;
+    }
+    if (!function_exists('curl_init')) {
+        logMessage('TELEGRAM ERROR: cURL is not available on this server.', $config);
+        return false;
+    }
+
+    $h = static function ($v): string {
+        $v = trim((string) $v);
+        return $v === '' ? '-' : htmlspecialchars($v, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    };
+    $langNames = ['en' => 'EN', 'uk' => 'UA', 'ru' => 'RU'];
+
+    $lines = [
+        '🚛 <b>Новая заявка с hilstrucking.com</b>',
+        '',
+        '<b>' . $h($lead['name']) . '</b>',
+        '📞 ' . $h($lead['phone']),
+        '✉️ ' . $h($lead['email']),
+        '',
+        'Формат: <b>' . $h($lead['role']) . '</b>',
+        'Опыт CDL-A OTR: ' . $h($lead['exp']),
+        'Штат CDL: ' . $h($lead['state']),
+        'Согласие на звонки/SMS: ' . $h($lead['sms_consent']),
+        'Язык сайта: ' . $h($langNames[$lead['lang']] ?? $lead['lang']),
+        'Источник: ' . $h($lead['source']),
+    ];
+    if (trim((string) $lead['notes']) !== '') {
+        $lines[] = '';
+        $lines[] = 'Комментарий: ' . $h(mb_substr($lead['notes'], 0, 1500, 'UTF-8'));
+    }
+    $lines[] = '';
+    if (!empty($lead['wa_digits'])) {
+        $lines[] = '<a href="https://wa.me/' . $h($lead['wa_digits']) . '">Написать в WhatsApp</a>';
+    }
+    if (!empty($c['sheet_url'])) {
+        $lines[] = '<a href="' . $h($c['sheet_url']) . '">Таблица HILS Leads</a>';
+    }
+    if (!$sheetSaved) {
+        $lines[] = '⚠️ В таблицу HILS Leads заявка НЕ записалась, проверьте send-mail.log.';
+    }
+    $text = implode("\n", $lines);
+
+    $allOk = true;
+    foreach ($chatIds as $chatId) {
+        $ch = curl_init('https://api.telegram.org/bot' . $token . '/sendMessage');
+        curl_setopt_array($ch, [
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => json_encode([
+                'chat_id'                  => $chatId,
+                'text'                     => $text,
+                'parse_mode'               => 'HTML',
+                'disable_web_page_preview' => true,
+            ], JSON_UNESCAPED_UNICODE),
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 10,
+        ]);
+        $resp = curl_exec($ch);
+        $err  = curl_error($ch);
+        $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        $ok = !$err && $code === 200 && strpos((string) $resp, '"ok":true') !== false;
+        if ($ok) {
+            logMessage("TELEGRAM: lead sent to chat {$chatId} ({$lead['phone']}).", $config);
+        } else {
+            // Never log the bot token: the URL is not logged, only the API answer
+            logMessage("TELEGRAM ERROR ({$code}) chat {$chatId}: {$err} " . substr((string) $resp, 0, 300), $config);
+            $allOk = false;
+        }
+    }
+    return $allOk;
+}
+
+// -----------------------------------------------------------------------------
 // 9. Dispatch Email & Notifications
 // -----------------------------------------------------------------------------
 $sheetSaved = sendToGoogleSheet([
@@ -790,6 +875,20 @@ $sheetSaved = sendToGoogleSheet([
     'source'      => $leadSource,
 ], $config);
 
+$telegramSent = sendToTelegram([
+    'name'        => $name,
+    'phone'       => $phone,
+    'email'       => $email,
+    'role'        => $role,
+    'exp'         => $exp,
+    'state'       => $state,
+    'notes'       => $notes,
+    'sms_consent' => $smsConsentLabel,
+    'lang'        => $leadLang,
+    'source'      => $leadSource,
+    'wa_digits'   => $waDigits,
+], $sheetSaved, $config);
+
 $mailSent = false;
 
 if (!empty($config['smtp']['enabled'])) {
@@ -799,11 +898,11 @@ if (!empty($config['smtp']['enabled'])) {
     $mailSent = @mail($toEmail, $encodedSubject, $mimeMessage, $headersString);
 }
 
-if (!$mailSent && $sheetSaved) {
-    logMessage("MAIL ERROR (lead kept in Google Sheet): failed to send email to <{$toEmail}>.", $config);
+if (!$mailSent && ($sheetSaved || $telegramSent)) {
+    logMessage("MAIL ERROR (lead kept in Google Sheet / Telegram): failed to send email to <{$toEmail}>.", $config);
 }
 
-if ($mailSent || $sheetSaved) {
+if ($mailSent || $sheetSaved || $telegramSent) {
     logMessage("SUCCESS: Driver application from [{$name}] <{$email}> ({$phone}) sent to <{$toEmail}>.", $config);
     logMessage("CONSENT: phone {$phone} | CDL certification: YES | calls/SMS consent: {$smsConsentLabel}" . ($smsConsent ? " | text shown: {$smsConsentText}" : ''), $config);
 
