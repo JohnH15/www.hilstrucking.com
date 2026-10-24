@@ -27,3 +27,6 @@ jobs:
             **/.git*/**
             .github/**
             README.md
+            CLAUDE.md
+            .claude/**
+            docs/**
