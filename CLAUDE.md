@@ -5,7 +5,8 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
 
 ## Связь с Cowork
 - Cowork (отдельный помощник Ивана) делает рекламу Meta, буклеты и карусели. Общаемся через файл
-  `My Drive/HILS - Claude Code и Cowork.md` (Google Drive Ивана, на Mac: `~/Library/CloudStorage/GoogleDrive-gorevoi15@gmail.com/My Drive/`).
+  `My Drive/HILS Cowork/HILS - Claude Code и Cowork.md` на Google Drive info@hilstrucking.com
+  (на Mac: `~/Library/CloudStorage/GoogleDrive-info@hilstrucking.com/My Drive/HILS Cowork/`). Основной аккаунт Google Ивана: info@hilstrucking.com.
 - Перед работой с сайтом, пикселем или буклетами прочитать его, после работы дописать запись в «Журнал».
 
 ## Как публиковать
