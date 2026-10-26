@@ -87,6 +87,11 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
 - **SEO:** Search Console подтвержден через DNS TXT (запись `google-site-verification=F1rVg3…` в Namecheap не удалять). JobPosting на главной
   (Company Driver, CONTRACTOR (1099), с зарплатой) и на OO-странице (CONTRACTOR, **без baseSalary намеренно**: предупреждение в Search Console игнорируем).
   Organization с MC и USDOT, FAQPage, часы в contactPoint. Title и description содержат MC-1755680.
+- **Meta Pixel** «HILS Website» `2040876643281119` (портфель 2106528696904129, кабинет 1048868538174693) в `<head>` обеих страниц и политики:
+  PageView; ViewContent (`content_name` Company Drivers / Owner Operators, один раз за посещение); Contact (call / whatsapp / telegram);
+  Lead только после ответа сервера «success». Передаются только название, язык страницы и тип связи: ни имени, ни телефона, ни email,
+  ни возраста, пола, здоровья (кампании Employment). Тег `facebook-domain-verification` статично в `<head>` главной, не удалять.
+  Второй пиксель не ставить, иначе события задвоятся. Код пикселя ставит только Claude Code, не Cowork.
 - **Буклеты:** карусель из 10 слайдов в разделах Company Drivers и Owner-Operators, слайды и PDF меняются по языку сайта, кнопка «Поделиться»
   (на телефоне системное меню, на компьютере WhatsApp / Telegram / Facebook / копировать ссылку; ссылка с `utm_source=share&utm_medium=booklet`).
 - **Прочее:** калькулятор оплаты Company Driver (max(32%, $2,500)), карта Google на языке сайта (`hl=`), кнопки WhatsApp с готовым текстом
