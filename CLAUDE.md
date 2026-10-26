@@ -8,6 +8,11 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
   `My Drive/HILS Cowork/HILS - Claude Code и Cowork.md` на Google Drive info@hilstrucking.com
   (на Mac: `~/Library/CloudStorage/GoogleDrive-info@hilstrucking.com/My Drive/HILS Cowork/`). Основной аккаунт Google Ивана: info@hilstrucking.com.
 - Перед работой с сайтом, пикселем или буклетами прочитать его, после работы дописать запись в «Журнал».
+- Вся работа идет через бизнес-аккаунт Google info@hilstrucking.com: рабочие файлы, выгрузки и документы класть только
+  на Drive info@ (`My Drive/HILS Trucking/...`, файлы для Cowork в `My Drive/HILS Cowork/`), сервисы Google вести под info@.
+  В Claude Иван входит под личным gorevoi15@gmail.com: это только вход, на его Drive рабочих файлов не создавать.
+- Роли: Claude Code ставит код на сайт (пиксель Meta, GA4, Google Ads); Cowork ведет аккаунты Meta Ads, GA4, Google Ads
+  (кампании, ключевые события, связи) и код сайта не трогает.
 
 ## Как публиковать
 - Ветка `main`. Каждый push в `main` запускает `.github/workflows/deploy.yml`
@@ -119,4 +124,8 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
 - WhatsApp: подключить номер Verizon к WhatsApp Cloud API, шаблон `new_lead_alert` (Utility, 4 параметра: имя, телефон, роль, штат),
   новый постоянный токен, включить `whatsapp` в config.php. Позже агент в WhatsApp для ответов Водителям.
 - Google Business Profile: подтверждение по видео (делает Иван).
+- Google Ads: когда запустят рекламу, Cowork создает конверсию «Отправка формы» и пишет метку в общий файл; поставить
+  `gtag('event', 'conversion', {send_to: 'AW-18498459696/<метка>'})` рядом с `generate_lead` (только после «success»).
+- Search Console: заново отправить `sitemap.xml` и запросить индексацию `/ru/` и `/ua/` (делает Иван).
+- Лиды из мгновенных форм Meta видны только в Leads Center, в Telegram и таблицу не попадают. Подключать ли их, решает Иван.
 - Письма о заявках на info@ не приходят с 13.10.2026. Решение Ивана (24.10.2026): не чинить, заявки приходят в Telegram @HilsLeadsBot и в таблицу HILS Leads.
