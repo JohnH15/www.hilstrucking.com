@@ -10,6 +10,8 @@
     gtag('js', new Date());
 
     gtag('config', 'AW-18498459696');
+    // Google Analytics 4 "HILS Trucking Website" on the same tag; Google Signals and ad personalization off (Employment)
+    gtag('config', 'G-Q3T1RLJQR0', { allow_google_signals: false, allow_ad_personalization_signals: false });
   </script>
   <!-- Meta Pixel ("HILS Website"): PageView, ViewContent, Lead on a submitted application, Contact on call / WhatsApp / Telegram taps -->
   <script>
@@ -24,7 +26,9 @@
       var a = e.target.closest && e.target.closest('a[href^="tel:"], a[href*="wa.me/"], a[href*="t.me/"]');
       if (!a) return;
       var href = a.getAttribute('href');
-      fbq('track', 'Contact', { content_name: href.indexOf('tel:') === 0 ? 'call' : href.indexOf('wa.me') > -1 ? 'whatsapp' : 'telegram' });
+      var method = href.indexOf('tel:') === 0 ? 'call' : href.indexOf('wa.me') > -1 ? 'whatsapp' : 'telegram';
+      fbq('track', 'Contact', { content_name: method });
+      gtag('event', 'contact', { method: method, page_language: document.documentElement.lang || 'en' });
     }, true);
     // ViewContent once per page view: the Owner-Operators page itself, or the Company Drivers /
     // Owner Operators section of the main page coming on screen. Only the offer name and page language are sent.
@@ -34,6 +38,7 @@
         if (sent[id]) return;
         sent[id] = true;
         fbq('track', 'ViewContent', { content_name: NAMES[id], content_category: document.documentElement.lang || 'en' });
+        gtag('event', 'view_item', { items: [{ item_name: NAMES[id] }], page_language: document.documentElement.lang || 'en' });
       }
       function check() {
         for (var id in NAMES) {
@@ -4249,10 +4254,14 @@
       })
       .then(result => {
         if (result.ok && result.data && result.data.success) {
-          // Meta Pixel: a submitted application (no personal data is sent)
+          // Meta Pixel and GA4: a submitted application (no personal data is sent)
+          const leadRole = new FormData(driverApplyForm).get('role') || 'application';
+          const leadLang = document.documentElement.lang || 'en';
           if (typeof window.fbq === 'function') {
-            const fd = new FormData(driverApplyForm);
-            fbq('track', 'Lead', { content_name: fd.get('role') || 'application', content_category: document.documentElement.lang || 'en' });
+            fbq('track', 'Lead', { content_name: leadRole, content_category: leadLang });
+          }
+          if (typeof window.gtag === 'function') {
+            gtag('event', 'generate_lead', { role: leadRole, page_language: leadLang });
           }
           if (formSuccessAlert) {
             formSuccessAlert.style.display = 'block';
