@@ -92,6 +92,10 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
   Lead только после ответа сервера «success». Передаются только название, язык страницы и тип связи: ни имени, ни телефона, ни email,
   ни возраста, пола, здоровья (кампании Employment). Тег `facebook-domain-verification` статично в `<head>` главной, не удалять.
   Второй пиксель не ставить, иначе события задвоятся. Код пикселя ставит только Claude Code, не Cowork.
+- **Google Analytics 4** «HILS Trucking Website» `G-Q3T1RLJQR0`: `gtag('config')` на том же gtag.js, что и Google Ads `AW-18498459696`
+  (второй gtag.js не грузить), Google Signals и персонализация рекламы выключены. События рядом с пиксельными: `view_item`
+  (items[].item_name = Company Drivers / Owner Operators), `contact` (`method` call / whatsapp / telegram), `generate_lead` (`role`)
+  только после «success»; во всех `page_language`. На политике конфиденциальности GA4 нет.
 - **Буклеты:** карусель из 10 слайдов в разделах Company Drivers и Owner-Operators, слайды и PDF меняются по языку сайта, кнопка «Поделиться»
   (на телефоне системное меню, на компьютере WhatsApp / Telegram / Facebook / копировать ссылку; ссылка с `utm_source=share&utm_medium=booklet`).
 - **Прочее:** калькулятор оплаты Company Driver (max(32%, $2,500)), карта Google на языке сайта (`hl=`), кнопки WhatsApp с готовым текстом
