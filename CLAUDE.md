@@ -102,6 +102,11 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
   (второй gtag.js не грузить), Google Signals и персонализация рекламы выключены. События рядом с пиксельными: `view_item`
   (items[].item_name = Company Drivers / Owner Operators), `contact` (`method` call / whatsapp / telegram), `generate_lead` (`role`)
   только после «success»; во всех `page_language`. На политике конфиденциальности GA4 нет.
+- **Логотип HT** (бриф от 28.10.2026, файлы на Drive info@: 08 Logo / 2026-10-28 Design System / HT FINAL / Сайт): в шапке, меню и на
+  политике/404 `assets/logo-horizontal.svg`, в подвале `assets/logo-horizontal-white.svg`, везде высотой 48px (по брифу горизонтальный не уже
+  140px на экране). Иконки в корне: `favicon.ico`, `icon.svg`, `apple-touch-icon.png`, `android-chrome-*.png`, `site.webmanifest`.
+  Логотип в разметке для Google `assets/logo-vertical.png`. Превью ссылки `assets/og-image-ht.jpg` (прежняя картинка с траком, логотип заменен).
+  Старый логотип (дуга и дорога: `assets/logo*.webp`, `logo.png`, `og-image.jpg`) в новых материалах не использовать.
 - **Буклеты:** карусель из 10 слайдов в разделах Company Drivers и Owner-Operators, слайды и PDF меняются по языку сайта, кнопка «Поделиться»
   (на телефоне системное меню, на компьютере WhatsApp / Telegram / Facebook / копировать ссылку; ссылка с `utm_source=share&utm_medium=booklet`).
 - **Прочее:** калькулятор оплаты Company Driver (max(32%, $2,500)), карта Google на языке сайта (`hl=`), кнопки WhatsApp с готовым текстом

@@ -100,7 +100,7 @@
   <meta property="og:url" content="https://hilstrucking.com/owner-operators.html" />
   <meta property="og:title" content="HILS Trucking LLC: Owner-Operators, dispatch from 6% (Smooth Start)" />
   <meta property="og:description" content="Smooth Start dispatch 6% → 12%, original rate cons, open factoring, full TA/Petro fuel discount. MC-1755680." />
-  <meta property="og:image" content="https://hilstrucking.com/assets/og-image.jpg" />
+  <meta property="og:image" content="https://hilstrucking.com/assets/og-image-ht.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -114,7 +114,7 @@
       "@id": "https://hilstrucking.com/#org",
       "name": "HILS Trucking LLC",
       "url": "https://hilstrucking.com/",
-      "logo": "https://hilstrucking.com/assets/logo.png",
+      "logo": "https://hilstrucking.com/assets/logo-vertical.png",
       "telephone": "+1-445-444-0204",
       "email": "info@hilstrucking.com",
       "address": {
@@ -208,8 +208,10 @@
   </script>
   
   <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
-  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
 
   <!-- Typography: Google Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -2682,7 +2684,7 @@
     .mobile-menu-drawer.active .mm-sheet { transform: none; opacity: 1; }
     .mm-head { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; min-height: 52px; }
     .mm-head .mm-logo { grid-column: 2; justify-self: center; margin: 0 !important; display: block; }
-    .mm-logo img { height: 38px; width: auto; display: block; }
+    .mm-logo img { height: 48px; width: auto; display: block; } /* horizontal logo min 140px wide */
     .mm-round { width: 44px; height: 44px; border-radius: 999px; display: grid; place-items: center; border: 0; padding: 0; cursor: pointer;
                 background: rgba(255, 255, 255, 0.85); color: var(--blue-deep); box-shadow: inset 0 0 0 1px rgba(7, 30, 61, 0.08), 0 2px 8px -2px rgba(7, 30, 61, 0.12);
                 text-decoration: none; -webkit-tap-highlight-color: transparent; transition: transform .15s; }
@@ -2987,9 +2989,9 @@
     .bk-toast.show { opacity: 1; }
     /* ====================== footer layout ====================== */
     .site-footer .footer-grid { grid-template-columns: 1.25fr .9fr 1.05fr 1.4fr; gap: 40px 40px; align-items: start; }
-    .site-footer .footer-logo-link { display: flex; align-items: center; height: 40px; margin-bottom: 22px; }
-    .site-footer .footer-logo-wrap img { height: 40px; display: block; }
-    .site-footer .footer-col h4 { height: 40px; display: flex; align-items: center; margin: 0 0 22px; line-height: 1.2; }
+    .site-footer .footer-logo-link { display: flex; align-items: center; height: 48px; margin-bottom: 22px; }
+    .site-footer .footer-logo-wrap img { height: 48px; display: block; }
+    .site-footer .footer-col h4 { height: 48px; display: flex; align-items: center; margin: 0 0 22px; line-height: 1.2; }
     .site-footer .footer-brand p { margin: 0 0 20px; font-size: .92rem; line-height: 1.6; max-width: 40ch; }
     .site-footer .footer-links { gap: 14px; }
     .site-footer .footer-links a, .site-footer .footer-contact-details li { font-size: .92rem; line-height: 1.45; }
@@ -3216,7 +3218,7 @@
       <div class="nav-inner">
         <!-- Logo -->
         <a href="#hero" class="site-brand" title="HILS Trucking LLC">
-          <img src="assets/logo.webp" width="568" height="211" alt="HILS Trucking LLC" class="brand-logo-img" />
+          <img src="assets/logo-horizontal.svg" width="340" height="113" alt="HILS Trucking LLC" class="brand-logo-img" />
         </a>
 
         <!-- Desktop Navigation -->
@@ -3257,7 +3259,7 @@
     <div class="mm-sheet" role="dialog" aria-modal="true" aria-label="Menu">
       <div class="mm-head">
         <a href="#hero" class="site-brand mm-logo" aria-label="HILS Trucking LLC">
-          <img src="assets/logo.webp" width="568" height="211" alt="HILS Trucking LLC" />
+          <img src="assets/logo-horizontal.svg" width="340" height="113" alt="HILS Trucking LLC" />
         </a>
         <button type="button" class="mm-round mm-close" id="mobileMenuClose" aria-label="Close menu"><svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
@@ -3771,7 +3773,7 @@
         <div class="footer-brand">
           <a href="#hero" class="site-brand footer-logo-link" title="HILS Trucking LLC">
             <div class="footer-logo-wrap">
-            <img src="assets/logo-white.webp" width="568" height="211" alt="HILS Trucking LLC" loading="lazy" />
+            <img src="assets/logo-horizontal-white.svg" width="340" height="113" alt="HILS Trucking LLC" loading="lazy" />
           </div>
           </a>
           <p data-i18n="footer_desc">Licensed motor carrier based in Pennsylvania. We work with CDL&#8209;A Drivers and Owner&#8209;Operators across the US. Dispatch 24/7 in English, Ukrainian and Russian.</p>

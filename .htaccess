@@ -23,3 +23,6 @@ RewriteRule ^ https://hilstrucking.com%{REQUEST_URI} [L,R=301]
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 </IfModule>
+
+# Android home-screen icons (site.webmanifest)
+AddType application/manifest+json .webmanifest
