@@ -102,10 +102,15 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
   (второй gtag.js не грузить), Google Signals и персонализация рекламы выключены. События рядом с пиксельными: `view_item`
   (items[].item_name = Company Drivers / Owner Operators), `contact` (`method` call / whatsapp / telegram), `generate_lead` (`role`)
   только после «success»; во всех `page_language`. На политике конфиденциальности GA4 нет.
-- **Логотип HT** (бриф от 28.10.2026, файлы на Drive info@: 08 Logo / 2026-10-28 Design System / HT FINAL / Сайт): в шапке, меню и на
-  политике/404 `assets/logo-horizontal.svg`, в подвале `assets/logo-horizontal-white.svg`, везде высотой 48px (по брифу горизонтальный не уже
-  140px на экране). Иконки в корне: `favicon.ico`, `icon.svg`, `apple-touch-icon.png`, `android-chrome-*.png`, `site.webmanifest`.
-  Логотип в разметке для Google `assets/logo-vertical.png`. Превью ссылки `assets/og-image-ht.jpg` (прежняя картинка с траком, логотип заменен).
+- **Логотип HT** (бриф от 28.10.2026, файлы на Drive info@: 08 Logo / 2026-10-28 Design System / HT FINAL / Сайт). С 29.10.2026 на сайте
+  «вариант 2» по решению Ивана: тот же знак HT, справа крупно «HILS» и под ним «trucking» той же ширины (на светлом фоне #00803f).
+  Файлы `assets/logo-lockup.svg` (шапка, меню, политика, 404) и `assets/logo-lockup-white.svg` (подвал), 392 × 119, высота 48px везде
+  (ширина ~159px; по брифу горизонтальный не уже 140px). Превью ссылки `assets/og-image-hils.jpg`. Сборка: контуры из файла Cowork,
+  только сдвинуты и увеличены (генератор в истории сессии; повторять так же, без перерисовки).
+  **Откат к исходному варианту Cowork по просьбе Ивана:** `git revert` коммита с «logo variant 2» (исходное состояние помечено тегом
+  `logo-ht-v1`), файлы `logo-horizontal*.svg` и `og-image-ht.jpg` оставлены в `assets/` специально для этого.
+  Иконки в корне: `favicon.ico`, `icon.svg`, `apple-touch-icon.png`, `android-chrome-*.png`, `site.webmanifest`.
+  Логотип в разметке для Google `assets/logo-vertical.png`.
   Старый логотип (дуга и дорога: `assets/logo*.webp`, `logo.png`, `og-image.jpg`) в новых материалах не использовать.
 - **Буклеты:** карусель из 10 слайдов в разделах Company Drivers и Owner-Operators, слайды и PDF меняются по языку сайта, кнопка «Поделиться»
   (на телефоне системное меню, на компьютере WhatsApp / Telegram / Facebook / копировать ссылку; ссылка с `utm_source=share&utm_medium=booklet`).
