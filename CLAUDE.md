@@ -103,12 +103,14 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
   (items[].item_name = Company Drivers / Owner Operators), `contact` (`method` call / whatsapp / telegram), `generate_lead` (`role`)
   только после «success»; во всех `page_language`. На политике конфиденциальности GA4 нет.
 - **Логотип HT** (бриф от 28.10.2026, файлы на Drive info@: 08 Logo / 2026-10-28 Design System / HT FINAL / Сайт). С 29.10.2026 на сайте
-  «вариант 2» по решению Ивана: тот же знак HT, справа крупно «HILS» и под ним «trucking» той же ширины (на светлом фоне #00803f).
-  «HILS» обычным Google Sans Bold, без обводки (с 29.10, обводка из файлов Cowork делала его слишком толстым).
-  Файлы `assets/logo-hils.svg` (шапка, меню, политика, 404) и `assets/logo-hils-white.svg` (подвал), 398 × 119, высота 48px везде
-  (ширина ~160px; по брифу горизонтальный не уже 140px). Превью ссылки `assets/og-image-hils2.jpg`.
-  Предыдущая версия с обводкой: `assets/logo-lockup*.svg`, `og-image-hils.jpg` (коммит c882862). Сборка: контуры из файла Cowork,
-  только сдвинуты и увеличены (генератор в истории сессии; повторять так же, без перерисовки).
+  горизонтальный вариант Ивана: знак HT, справа «HILS trucking» одной строкой, низ надписи вровень с низом HT, левый край H в «HILS»
+  строго на вертикали внутреннего (нижнего правого) угла перекладины T; заглавные HILS = 34% высоты знака, «trucking» (строчные,
+  #00803f на светлом) = 80% высоты HILS; «HILS» обычным Google Sans Bold без обводки (обводка из файлов Cowork — слишком толсто).
+  Файлы `assets/logo-hils-arm.svg` (шапка, меню, политика, 404) и `assets/logo-hils-arm-white.svg` (подвал), 472 × 117.
+  Высота: 48px (~194px), на 993–1099px 36px, 1100–1199px 40px, телефоны ≤360px 40px, ≤340px 36px — чтобы не упираться в меню.
+  Превью ссылки `assets/og-image-hils4.jpg`. Сборка: контуры из файла Cowork, только сдвинуты и увеличены, без перерисовки.
+  Промежуточные версии (в `assets/`, на страницах не используются): `logo-hils*.svg` / `og-image-hils2.jpg` (две строки без обводки,
+  коммит 6092b21), `logo-lockup*.svg` / `og-image-hils.jpg` (две строки с обводкой, c882862).
   **Откат к исходному варианту Cowork по просьбе Ивана:** `git revert` коммита с «logo variant 2» (исходное состояние помечено тегом
   `logo-ht-v1`), файлы `logo-horizontal*.svg` и `og-image-ht.jpg` оставлены в `assets/` специально для этого.
   Иконки в корне: `favicon.ico`, `icon.svg`, `apple-touch-icon.png`, `android-chrome-*.png`, `site.webmanifest`.
