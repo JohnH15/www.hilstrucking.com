@@ -102,7 +102,17 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
   (второй gtag.js не грузить), Google Signals и персонализация рекламы выключены. События рядом с пиксельными: `view_item`
   (items[].item_name = Company Drivers / Owner Operators), `contact` (`method` call / whatsapp / telegram), `generate_lead` (`role`)
   только после «success»; во всех `page_language`. На политике конфиденциальности GA4 нет.
-- **Логотип HT** (бриф от 28.10.2026, файлы на Drive info@: 08 Logo / 2026-10-28 Design System / HT FINAL / Сайт). С 29.10.2026 на сайте
+- **Логотип: брендбук HILS v1.0** (Cowork, 30.10.2026; Drive info@: 08 Logo / HILS Brand 2026-10-30, PDF «HILS - Брендбук v1.0»). С 30.10.2026
+  на сайте главный логотип брендбука: знак HT в круге + «HILS trucking». Файлы из папки «02 Сайт» без изменений:
+  `assets/logo-brand.svg` (синий круг; шапка, меню, политика, 404) и `assets/logo-brand-white.svg` (белый круг; подвал), 381,79 × 100.
+  Высота по брендбуку 44px (~168px), ниже 36px нельзя: телефоны ≤340px 40px, десктоп 1100–1199px 40px, 993–1099px 36px (иначе меню
+  наезжает). Охранное поле 0,25 высоты круга. Превью ссылки `assets/og-image-brand.jpg` (грузовик + белый логотип; у Cowork есть
+  альтернатива og-image.png — логотип на темно-синем). Логотип для Google `assets/logo-brand-mark.png`. Иконки в корне из «02 Сайт»
+  (+ `favicon-16x16.png`, `favicon-32x32.png`), прежние иконки HT в `assets/icons-ht/`. Чужие или самодельные логотипы не ставить.
+  Кнопки: брендбук просит белый текст на #00BF63, но это 2,4:1 — на сайте темно-синий текст на зеленом, так и оставлять.
+  **Откат к варианту 3** (до 30.10): `git revert` коммита «Brandbook v1.0 logo», файлы `logo-hils-v3*.svg`, `og-image-hils5.jpg`,
+  `logo-vertical.png`, иконки из `assets/icons-ht/` оставлены.
+- **Логотип HT, вариант 3** (до 30.10.2026; бриф от 28.10.2026, файлы на Drive info@: 08 Logo / 2026-10-28 Design System / HT FINAL / Сайт). С 29.10.2026 был на сайте
   горизонтальный вариант Ивана: знак HT, справа «HILS trucking» одной строкой, низ надписи вровень с низом HT, левый край H в «HILS»
   строго на вертикали внутреннего (нижнего правого) угла перекладины T; заглавные HILS = 34% высоты знака, «trucking» (строчные,
   #00803f на светлом) = 80% высоты HILS; «HILS» Google Sans Bold + обводка 51 ед. шрифта (= +1px в шапке, просьба Ивана; края H
@@ -114,8 +124,6 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
   коммит 6092b21), `logo-lockup*.svg` / `og-image-hils.jpg` (две строки с обводкой, c882862).
   **Откат к исходному варианту Cowork по просьбе Ивана:** `git revert` коммита с «logo variant 2» (исходное состояние помечено тегом
   `logo-ht-v1`), файлы `logo-horizontal*.svg` и `og-image-ht.jpg` оставлены в `assets/` специально для этого.
-  Иконки в корне: `favicon.ico`, `icon.svg`, `apple-touch-icon.png`, `android-chrome-*.png`, `site.webmanifest`.
-  Логотип в разметке для Google `assets/logo-vertical.png`.
   Старый логотип (дуга и дорога: `assets/logo*.webp`, `logo.png`, `og-image.jpg`) в новых материалах не использовать.
 - **Буклеты:** при замене слайдов или PDF поменять метку `?v=` у всех адресов `assets/booklets/` в index.html и owner-operators.html
   (в HTML и в JS), иначе браузеры покажут старые файлы из кэша. Сейчас `?v=20261029` (слайды со знаком HT от 28.10).
