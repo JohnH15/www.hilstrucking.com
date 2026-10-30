@@ -139,7 +139,7 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
   `assets/truck-night.webp` (Nano Banana, Иван, 30.10) и белый логотип подставляются через `<picture><source media=...>`.
   Новые светлые фоны писать через эти переменные. Политика, 404 и карта Google остаются светлыми.
 - **Буклеты:** при замене слайдов или PDF поменять метку `?v=` у всех адресов `assets/booklets/` в index.html и owner-operators.html
-  (в HTML и в JS), иначе браузеры покажут старые файлы из кэша. Сейчас `?v=20261029` (слайды со знаком HT от 28.10).
+  (в HTML и в JS), иначе браузеры покажут старые файлы из кэша. Сейчас `?v=20261030b` (ребрендинг слайдов от Cowork 30.10).
   Карусель из 10 слайдов в разделах Company Drivers и Owner-Operators, слайды и PDF меняются по языку сайта, кнопка «Поделиться»
   (на телефоне системное меню, на компьютере WhatsApp / Telegram / Facebook / копировать ссылку; ссылка с `utm_source=share&utm_medium=booklet`).
 - **Прочее:** калькулятор оплаты Company Driver (max(32%, $2,500)), карта Google на языке сайта (`hl=`), кнопки WhatsApp с готовым текстом
