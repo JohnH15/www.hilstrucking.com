@@ -93,7 +93,8 @@
   <link rel="alternate" hreflang="uk" href="https://hilstrucking.com/ua/" />
   <link rel="alternate" hreflang="ru" href="https://hilstrucking.com/ru/" />
   <link rel="alternate" hreflang="x-default" href="https://hilstrucking.com/" />
-  <meta name="theme-color" content="#004aad" />
+  <meta name="theme-color" content="#004aad" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#050f1f" media="(prefers-color-scheme: dark)" />
   <!-- Social preview (WhatsApp, Facebook, Telegram, iMessage) -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="HILS Trucking LLC" />
@@ -105,7 +106,8 @@
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <link rel="preload" as="image" href="assets/truck-full.webp" type="image/webp" />
+  <link rel="preload" as="image" href="assets/truck-full.webp" type="image/webp" media="(prefers-color-scheme: light)" />
+  <link rel="preload" as="image" href="assets/truck-night.webp" type="image/webp" media="(prefers-color-scheme: dark)" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -264,6 +266,8 @@
       --slate-100: #f1f5f9;
       --slate-50: #f8fafc;
       --white: #ffffff;
+      --navy: #071e3d; --link: #004aad; /* constant navy for dark bars; link = blue text (lighter in dark) */
+      --surface: #ffffff; --surface-muted: #f1f5f9; --page-bg: #f8fafc; --surface-line: #e2e8f0; /* light surfaces; html.dark redefines them */
 
       --font-heading: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       --font-body: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -295,7 +299,7 @@
     }
 
     html {
-      background-color: var(--blue-deep); /* overscroll above the top bar and below the footer stays dark */
+      background-color: var(--navy); /* overscroll above the top bar and below the footer stays dark */
       scroll-behavior: smooth;
       font-size: 16px;
       -webkit-font-smoothing: antialiased;
@@ -305,7 +309,7 @@
     body {
       font-family: var(--font-body);
       color: var(--slate-800);
-      background-color: var(--slate-50);
+      background-color: var(--page-bg);
       line-height: 1.6;
       overflow-x: hidden;
     }
@@ -340,7 +344,7 @@
        HEADER & NAVIGATION
        ========================================================================== */
     .top-bar {
-      background: var(--blue-deep);
+      background: var(--navy);
       color: rgba(255, 255, 255, 0.9);
       font-size: 0.82rem;
       padding: 8px 0;
@@ -433,7 +437,7 @@
     .lang-switch-group {
       display: inline-flex;
       align-items: center;
-      background: var(--slate-100);
+      background: var(--surface-muted);
       border: 1px solid var(--slate-200);
       border-radius: var(--radius-pill);
       padding: 2px;
@@ -519,7 +523,7 @@
       right: 0;
       z-index: 1100;
       min-width: 130px;
-      background: var(--white);
+      background: var(--surface);
       border: 1px solid var(--slate-200);
       border-radius: 10px;
       box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.18), 0 4px 8px -2px rgba(0, 0, 0, 0.08);
@@ -564,13 +568,13 @@
     }
 
     .top-lang-option:hover {
-      background: var(--slate-100);
-      color: var(--blue-primary);
+      background: var(--surface-muted);
+      color: var(--link);
     }
 
     .top-lang-option.active {
       background: var(--blue-light);
-      color: var(--blue-primary);
+      color: var(--link);
       font-weight: 700;
     }
 
@@ -592,7 +596,7 @@
       align-items: center;
       gap: 7px;
       padding: 6px 14px;
-      background: var(--slate-100);
+      background: var(--surface-muted);
       border: 1px solid var(--slate-200);
       border-radius: var(--radius-pill);
       color: var(--slate-800);
@@ -607,9 +611,9 @@
     .mob-lang-btn:hover,
     .mob-lang-btn:active,
     .mob-lang-dropdown.open .mob-lang-btn {
-      background: var(--slate-200);
+      background: var(--surface-line);
       border-color: var(--blue-primary);
-      color: var(--blue-primary);
+      color: var(--link);
     }
 
     .mob-lang-btn .lang-globe-icon {
@@ -631,7 +635,7 @@
       left: 0;
       z-index: 2100;
       min-width: 130px;
-      background: var(--white);
+      background: var(--surface);
       border: 1px solid var(--slate-200);
       border-radius: 10px;
       box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.18), 0 4px 8px -2px rgba(0, 0, 0, 0.08);
@@ -715,7 +719,7 @@
     }
 
     .nav-link:hover {
-      color: var(--blue-primary);
+      color: var(--link);
     }
 
     .nav-link::after {
@@ -748,7 +752,7 @@
       gap: 8px;
       padding: 8px 16px;
       background: var(--blue-light);
-      color: var(--blue-primary);
+      color: var(--link);
       font-weight: 700;
       font-size: 0.92rem;
       border-radius: var(--radius-pill);
@@ -810,7 +814,7 @@
 
     .btn-outline {
       background: transparent;
-      color: var(--blue-primary);
+      color: var(--link);
       border: 2px solid var(--blue-primary);
     }
 
@@ -828,7 +832,7 @@
     }
 
     .btn-outline-white:hover {
-      background: var(--white);
+      background: var(--surface);
       color: var(--blue-deep);
       border-color: var(--white);
       transform: translateY(-2px);
@@ -850,7 +854,7 @@
 
     .mobile-menu-toggle:hover,
     .mobile-menu-toggle:active {
-      background: var(--slate-100);
+      background: var(--surface-muted);
     }
 
     body.menu-open {
@@ -886,7 +890,7 @@
       width: 85%;
       max-width: 340px;
       height: 100%;
-      background: var(--white);
+      background: var(--surface);
       box-shadow: -6px 0 28px rgba(0, 0, 0, 0.2);
       padding: 24px 20px;
       display: flex;
@@ -921,7 +925,7 @@
     .mobile-menu-close:hover,
     .mobile-menu-close:active {
       color: var(--slate-900);
-      background: var(--slate-100);
+      background: var(--surface-muted);
     }
 
     .mobile-menu-links {
@@ -940,7 +944,7 @@
     }
 
     .mobile-menu-links a:hover {
-      color: var(--blue-primary);
+      color: var(--link);
     }
 
     /* ==========================================================================
@@ -986,7 +990,7 @@
       align-items: center;
       gap: 8px;
       background: var(--blue-light);
-      color: var(--blue-primary);
+      color: var(--link);
       border: 1px solid rgba(0, 74, 173, 0.2);
       padding: 6px 18px;
       border-radius: var(--radius-pill);
@@ -1008,7 +1012,7 @@
     }
 
     .hero-title .highlight-blue {
-      color: var(--blue-primary);
+      color: var(--link);
     }
 
     .hero-title .highlight-green {
@@ -1039,7 +1043,7 @@
       border-radius: var(--radius-xl);
       overflow: hidden;
       box-shadow: 0 20px 40px -10px rgba(7, 30, 61, 0.2), 0 0 0 1px rgba(226, 232, 240, 0.8);
-      background: var(--white);
+      background: var(--surface);
     }
 
     .hero-banner-img {
@@ -1062,7 +1066,7 @@
     }
 
     .highlight-card {
-      background: var(--white);
+      background: var(--surface);
       border-radius: var(--radius-lg);
       padding: 22px 24px;
       display: flex;
@@ -1112,7 +1116,7 @@
 
     .highlight-card:nth-child(2) .highlight-icon-box {
       background: var(--blue-light);
-      color: var(--blue-primary);
+      color: var(--link);
     }
 
     .highlight-card:nth-child(3) .highlight-icon-box {
@@ -1177,7 +1181,7 @@
 
     .section-tag.tag-blue {
       background: var(--blue-light);
-      color: var(--blue-primary);
+      color: var(--link);
       border: 1px solid rgba(0, 74, 173, 0.15);
     }
 
@@ -1207,7 +1211,7 @@
        COMPANY DRIVERS SECTION (CDL-A DRY VAN)
        ========================================================================== */
     #company-drivers {
-      background: var(--white);
+      background: var(--surface);
       position: relative;
     }
 
@@ -1218,7 +1222,7 @@
     }
 
     .perk-card {
-      background: var(--slate-50);
+      background: var(--page-bg);
       border: 1px solid var(--slate-200);
       border-radius: var(--radius-lg);
       padding: 32px 28px;
@@ -1229,7 +1233,7 @@
     }
 
     .perk-card:hover {
-      background: var(--white);
+      background: var(--surface);
       transform: translateY(-4px);
       box-shadow: var(--shadow-xl);
       border-color: var(--blue-primary);
@@ -1260,7 +1264,7 @@
       height: 52px;
       border-radius: 14px;
       background: var(--blue-light);
-      color: var(--blue-primary);
+      color: var(--link);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1304,7 +1308,7 @@
     /* Equipment Spotlight Box */
     .equipment-box {
       margin-top: 48px;
-      background: linear-gradient(135deg, var(--blue-deep) 0%, #0d284f 100%);
+      background: linear-gradient(135deg, var(--navy) 0%, #0d284f 100%);
       border-radius: var(--radius-xl);
       color: var(--white);
       padding: 44px 40px;
@@ -1380,7 +1384,7 @@
     }
 
     .owner-lead-card {
-      background: var(--white);
+      background: var(--surface);
       border-radius: var(--radius-xl);
       border: 1px solid var(--slate-200);
       padding: 44px 40px;
@@ -1439,7 +1443,7 @@
     }
 
     .owner-checklist-card {
-      background: var(--blue-deep);
+      background: var(--navy);
       color: var(--white);
       border-radius: var(--radius-lg);
       padding: 36px 32px;
@@ -1486,7 +1490,7 @@
     }
 
     .owner-feature-box {
-      background: var(--white);
+      background: var(--surface);
       border: 1px solid var(--slate-200);
       border-radius: var(--radius-lg);
       padding: 28px 24px;
@@ -1531,7 +1535,7 @@
        SMOOTH START (DISPATCH SERVICES) PROGRAM
        ========================================================================== */
     .smooth-start-showcase {
-      background: var(--white);
+      background: var(--surface);
       border: 1px solid var(--slate-200);
       border-radius: var(--radius-xl);
       padding: 38px 34px;
@@ -1592,7 +1596,7 @@
     }
 
     .smooth-step-card {
-      background: var(--white);
+      background: var(--surface);
       border: 1px solid var(--slate-200);
       border-radius: var(--radius-lg);
       padding: 24px 20px;
@@ -1677,7 +1681,7 @@
       font-weight: 700;
       padding: 4px 12px;
       border-radius: var(--radius-pill);
-      background: var(--slate-100);
+      background: var(--surface-muted);
       color: var(--slate-700);
       letter-spacing: 0.02em;
       transition: all 0.3s ease;
@@ -1690,7 +1694,7 @@
     }
 
     .smooth-start-footer {
-      background: var(--white);
+      background: var(--surface);
       border: 1px solid var(--slate-200);
       border-radius: var(--radius-md);
       padding: 18px 24px;
@@ -1752,7 +1756,7 @@
        TRANSPARENCY COMPARISON TABLE
        ========================================================================== */
     .comparison-section {
-      background: var(--white);
+      background: var(--surface);
       border-top: 1px solid var(--slate-200);
       border-bottom: 1px solid var(--slate-200);
     }
@@ -1762,7 +1766,7 @@
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-md);
       border: 1px solid var(--slate-200);
-      background: var(--white);
+      background: var(--surface);
     }
 
     .comparison-table {
@@ -1781,13 +1785,13 @@
       font-family: var(--font-heading);
       font-size: 1rem;
       font-weight: 700;
-      background: var(--slate-100);
+      background: var(--surface-muted);
       color: var(--slate-700);
     }
 
     .comparison-table th.col-hils {
       background: var(--blue-light);
-      color: var(--blue-primary);
+      color: var(--link);
       font-size: 1.15rem;
     }
 
@@ -1813,7 +1817,7 @@
        DRIVER REQUIREMENTS SECTION
        ========================================================================== */
     #requirements {
-      background: var(--slate-50);
+      background: var(--page-bg);
     }
 
     .req-grid {
@@ -1823,7 +1827,7 @@
     }
 
     .req-card {
-      background: var(--white);
+      background: var(--surface);
       border-radius: var(--radius-lg);
       padding: 36px 32px;
       border: 1px solid var(--slate-200);
@@ -1876,7 +1880,7 @@
        TERMINAL / YARD SECTION
        ========================================================================== */
     .terminal-section {
-      background: var(--white);
+      background: var(--surface);
     }
 
     .terminal-card {
@@ -1905,7 +1909,7 @@
       gap: 8px;
       font-size: 1.1rem;
       font-weight: 700;
-      color: var(--blue-primary);
+      color: var(--link);
       margin-bottom: 20px;
     }
 
@@ -1929,7 +1933,7 @@
     .terminal-features li svg { flex: none; margin-top: 3.25px; }
 
     .map-preview-box {
-      background: var(--white);
+      background: var(--surface);
       border-radius: var(--radius-lg);
       border: 1px solid var(--slate-200);
       box-shadow: var(--shadow-md);
@@ -1980,7 +1984,7 @@
       height: 38px;
       border-radius: 50%;
       background: var(--blue-light);
-      color: var(--blue-primary);
+      color: var(--link);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -2033,12 +2037,12 @@
     }
 
     .apply-info-card {
-      background: var(--blue-deep);
+      background: var(--navy);
       color: var(--white);
       border-radius: var(--radius-xl);
       padding: 44px 36px;
       box-shadow: var(--shadow-xl);
-      border: 1px solid var(--blue-deep); /* same 1px frame as the form card, so inner spacing matches */
+      border: 1px solid var(--navy); /* same 1px frame as the form card, so inner spacing matches */
       display: flex;
       flex-direction: column;
     }
@@ -2170,7 +2174,7 @@
 
     /* Application Form Card */
     .apply-form-card {
-      background: var(--white);
+      background: var(--surface);
       border-radius: var(--radius-xl);
       padding: 44px 40px;
       box-shadow: var(--shadow-xl);
@@ -2219,7 +2223,7 @@
       padding: 12px 16px;
       border: 1.5px solid var(--slate-200);
       border-radius: var(--radius-md);
-      background: var(--slate-50);
+      background: var(--page-bg);
       color: var(--slate-800);
       font-size: 0.95rem;
       transition: all var(--transition-fast);
@@ -2228,7 +2232,7 @@
     .form-input:focus, .form-select:focus, .form-textarea:focus {
       outline: none;
       border-color: var(--blue-primary);
-      background: var(--white);
+      background: var(--surface);
       box-shadow: 0 0 0 4px var(--blue-light);
     }
 
@@ -2290,7 +2294,7 @@
        FOOTER
        ========================================================================== */
     footer.site-footer {
-      background: var(--blue-deep);
+      background: var(--navy);
       color: rgba(255, 255, 255, 0.8);
       padding: 68px 0 28px 0;
       border-top: 3px solid var(--green-primary);
@@ -2629,7 +2633,7 @@
       }
       .hero-visual-caption-bar {
         position: static;
-        background: var(--blue-deep);
+        background: var(--navy);
         padding: 18px 20px;
       }
       .equipment-box {
@@ -2720,11 +2724,11 @@
     .mm-links a { display: flex; align-items: center; justify-content: space-between; min-height: 54px; margin: 0 18px; color: var(--blue-deep); text-decoration: none;
                   font: 600 1.08rem/1.2 var(--font-heading); -webkit-tap-highlight-color: transparent; }
     .mm-links a::after { content: ""; flex: none; width: 8px; height: 8px; border-right: 2px solid var(--slate-400, #94a3b8); border-top: 2px solid var(--slate-400, #94a3b8); transform: rotate(45deg); margin-right: 3px; }
-    .mm-links a:active { color: var(--blue-primary); }
+    .mm-links a:active { color: var(--link); }
     /* bottom: call + apply + social, pinned to the bottom of the sheet */
     .mm-bottom { margin-top: auto; display: grid; gap: 12px; }
     .mm-actions { display: flex; align-items: center; gap: 8px; }
-    .mm-actions .mm-round { width: 52px; height: 52px; flex: none; color: var(--blue-primary); }
+    .mm-actions .mm-round { width: 52px; height: 52px; flex: none; color: var(--link); }
     .mm-actions .btn { flex: 1; min-width: 0; height: 52px; padding: 0 16px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 1.02rem; }
     /* four equal columns across the sheet: big, well-spaced targets (same 52px as the call button) */
     .mm-social { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); justify-items: center; padding-top: 2px; }
@@ -2770,7 +2774,7 @@
       .mcb a:active { transform: scale(.95); }
       .mcb a.mcb-ico { width: 48px; background: #fff; box-shadow: inset 0 0 0 1px var(--blue-light); }
       .mcb a.mcb-ico svg { width: 22px; height: 22px; }
-      .mcb a.mcb-call { color: var(--blue-primary); }
+      .mcb a.mcb-call { color: var(--link); }
       .mcb a.mcb-wa { color: #25D366; }
       .mcb a.mcb-cta { flex: 1; min-width: 0; gap: 8px; padding: 0 14px; background: var(--green-primary); color: var(--blue-deep);
                        font: 700 clamp(0.9rem, 4vw, 1rem)/1 var(--font-body); white-space: nowrap; }
@@ -2810,7 +2814,7 @@
     .cw-tg { background: #229ed9; }
     .cw-wa { background: #25d366; }
     .cw-ph { background: var(--blue-primary); }
-    .cw-tip { position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%); white-space: nowrap; background: var(--blue-deep); color: #fff;
+    .cw-tip { position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%); white-space: nowrap; background: var(--navy); color: #fff;
               font: 600 .85rem var(--font-body); padding: 7px 12px; border-radius: 8px; opacity: 0; pointer-events: none; transition: opacity .2s; }
     .cw-item:hover .cw-tip, .cw-item:focus-visible .cw-tip { opacity: 1; }
     @media (hover: none) { .cw-tip { display: none; } }
@@ -2832,7 +2836,7 @@
               font-family: inherit; line-height: 1.4; }
     .dd-btn .dd-val { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .dd-btn svg { flex: none; color: var(--slate-500); transition: transform .2s; }
-    .dd.open .dd-btn { border-color: var(--blue-primary); background: var(--white); box-shadow: 0 0 0 4px var(--blue-light); }
+    .dd.open .dd-btn { border-color: var(--blue-primary); background: var(--surface); box-shadow: 0 0 0 4px var(--blue-light); }
     .dd.open .dd-btn svg { transform: rotate(180deg); }
     .dd-list { position: absolute; left: -4px; right: -4px; top: -4px; z-index: 60; list-style: none; margin: 0; padding: 5px;
                background: rgba(236, 238, 242, 0.94); -webkit-backdrop-filter: blur(18px) saturate(1.6); backdrop-filter: blur(18px) saturate(1.6);
@@ -2849,17 +2853,17 @@
       .dd-native { position: static !important; opacity: 1; pointer-events: auto; }
     }
     /* ====================== FAQ (Apple-style accordion) ====================== */
-    .faq-section { background: var(--white); }
+    .faq-section { background: var(--surface); }
     .faq-wrap { max-width: 860px; margin: 0 auto; }
-    .faq-section .section-desc a { color: var(--blue-primary); font-weight: 600; text-decoration: none; }
+    .faq-section .section-desc a { color: var(--link); font-weight: 600; text-decoration: none; }
     .faq-section .section-desc a:hover { text-decoration: underline; }
     .faq-tabs { position: relative; display: flex; gap: 2px; width: max-content; max-width: 100%; margin: 0 auto 36px; padding: 4px;
-                background: var(--slate-100); border-radius: 999px; overflow-x: auto; scrollbar-width: none; }
+                background: var(--surface-muted); border-radius: 999px; overflow-x: auto; scrollbar-width: none; }
     .faq-tabs::-webkit-scrollbar { display: none; }
     .faq-tab { position: relative; z-index: 1; border: 0; background: none; cursor: pointer; white-space: nowrap; padding: 9px 18px; border-radius: 999px;
                font: 600 .92rem var(--font-body); color: var(--slate-600); transition: color .3s ease; }
     .faq-tab.is-active { color: var(--blue-deep); }
-    .faq-tab-pill { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px; background: var(--white);
+    .faq-tab-pill { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px; background: var(--surface);
                     box-shadow: 0 1px 2px rgba(7, 30, 61, .08), 0 4px 12px -4px rgba(7, 30, 61, .18);
                     transition: transform .45s cubic-bezier(.32, .72, 0, 1), width .45s cubic-bezier(.32, .72, 0, 1); }
     .faq-list { border-top: 1px solid var(--slate-200); }
@@ -2869,10 +2873,10 @@
     .faq-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 26px 4px; border: 0; background: none;
                cursor: pointer; text-align: left; font: 600 clamp(1.05rem, .98rem + .35vw, 1.25rem)/1.35 var(--font-heading); color: var(--blue-deep);
                letter-spacing: -0.01em; transition: color .25s ease; }
-    .faq-btn:hover { color: var(--blue-primary); }
+    .faq-btn:hover { color: var(--link); }
     .faq-icon { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: var(--blue-deep);
-                background: var(--slate-100); transition: transform .5s cubic-bezier(.32, .72, 0, 1), background .3s ease, color .3s ease; }
-    .faq-btn:hover .faq-icon { background: var(--blue-light); color: var(--blue-primary); }
+                background: var(--surface-muted); transition: transform .5s cubic-bezier(.32, .72, 0, 1), background .3s ease, color .3s ease; }
+    .faq-btn:hover .faq-icon { background: var(--blue-light); color: var(--link); }
     .faq-item.is-open .faq-icon { transform: rotate(45deg); background: var(--blue-primary); color: #fff; }
     .faq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .55s cubic-bezier(.32, .72, 0, 1); }
     .faq-item.is-open .faq-a { grid-template-rows: 1fr; }
@@ -2887,8 +2891,8 @@
     .faq-a-body li::before { content: ""; position: absolute; left: 4px; top: .68em; width: 7px; height: 7px; border-radius: 50%; background: var(--green-primary); }
     .faq-a-body .faq-flow { display: inline-block; padding: 10px 14px; border-radius: 10px; background: var(--blue-subtle); color: var(--blue-deep); font-weight: 600; }
     .faq-a-body b { color: var(--blue-deep); }
-    .faq-a-body .faq-total { display: inline-block; margin-top: -4px; padding: 8px 12px; border-radius: 10px; background: var(--slate-100); color: var(--blue-deep); font-weight: 700; }
-    .faq-a a { color: var(--blue-primary); font-weight: 600; text-decoration: none; }
+    .faq-a-body .faq-total { display: inline-block; margin-top: -4px; padding: 8px 12px; border-radius: 10px; background: var(--surface-muted); color: var(--blue-deep); font-weight: 700; }
+    .faq-a a { color: var(--link); font-weight: 600; text-decoration: none; }
     .faq-a a:hover { text-decoration: underline; }
     .faq-item.flash .faq-btn { animation: faqFlash 1.6s ease; }
     @keyframes faqFlash { 0%, 100% { background: transparent; } 20% { background: var(--blue-subtle); } }
@@ -2896,7 +2900,7 @@
       .faq-tabs { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; border-radius: 18px; overflow: visible; }
       .faq-tab-pill { display: none; }
       .faq-tab { padding: 10px 8px; font-size: .9rem; border-radius: 14px; transition: background .3s ease, color .3s ease, box-shadow .3s ease; }
-      .faq-tab.is-active { background: var(--white); box-shadow: 0 1px 2px rgba(7, 30, 61, .08), 0 4px 12px -4px rgba(7, 30, 61, .18); }
+      .faq-tab.is-active { background: var(--surface); box-shadow: 0 1px 2px rgba(7, 30, 61, .08), 0 4px 12px -4px rgba(7, 30, 61, .18); }
       .faq-btn { padding: 22px 0; gap: 16px; }
       .faq-a-body { padding: 0 0 24px; font-size: 1rem; }
     }
@@ -2904,8 +2908,8 @@
       .faq-a, .faq-a-body, .faq-icon, .faq-tab-pill { transition: none !important; }
     }
     /* ====================== Why HILS (owner-operators) ====================== */
-    .hero-h1 .hl-blue { color: var(--blue-primary); }
-    .why-hils { margin-top: 40px; background: var(--white); border: 1px solid var(--slate-200); border-radius: var(--radius-xl);
+    .hero-h1 .hl-blue { color: var(--link); }
+    .why-hils { margin-top: 40px; background: var(--surface); border: 1px solid var(--slate-200); border-radius: var(--radius-xl);
                 padding: clamp(24px, 3vw, 44px); box-shadow: 0 18px 40px -28px rgba(7, 30, 61, .25); }
     .why-hils h3 { font-family: var(--font-heading); font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem); letter-spacing: -0.02em; color: var(--blue-deep); margin: 0 0 28px; }
     .why-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 36px; }
@@ -2913,7 +2917,7 @@
     .why-ic { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--green-light); color: var(--green-ink); margin-top: 2px; }
     .why-item h4 { margin: 0 0 6px; font: 700 1.05rem/1.35 var(--font-heading); color: var(--blue-deep); }
     .why-item p { margin: 0; color: var(--slate-600); font-size: .95rem; line-height: 1.6; }
-    .why-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 30px; color: var(--blue-primary); font-weight: 700; text-decoration: none; }
+    .why-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 30px; color: var(--link); font-weight: 700; text-decoration: none; }
     .why-link:hover { text-decoration: underline; }
     .why-link svg { transition: transform .25s ease; }
     .why-link:hover svg { transform: translateX(3px); }
@@ -2928,12 +2932,12 @@
     .form-checkbox-row + .form-checkbox-row { margin-bottom: 22px; }
     .form-checkbox-row .sms-consent { font-size: .78rem; line-height: 1.5; }
     .form-checkbox-row:has(.sms-consent) input { margin-top: 0.25px; } /* smaller text: box center = first line center */
-    .form-checkbox-row a, .form-privacy a { color: var(--blue-primary); text-decoration: underline; }
+    .form-checkbox-row a, .form-privacy a { color: var(--link); text-decoration: underline; }
     .form-privacy { margin: 6px 0 0; text-align: center; font-size: .78rem; color: var(--slate-500); }
     .footer-privacy { color: inherit; text-decoration: underline; }
     /* ====================== weekly pay calculator ====================== */
     .pay-calc { max-width: 960px; margin: 0 auto 48px; display: grid; grid-template-columns: 1.25fr 1fr; gap: 0;
-                background: var(--blue-deep); color: #fff; border-radius: var(--radius-xl); overflow: hidden;
+                background: var(--navy); color: #fff; border-radius: var(--radius-xl); overflow: hidden;
                 box-shadow: 0 24px 48px -28px rgba(7, 30, 61, .55); }
     .pay-calc-in { padding: clamp(24px, 3vw, 40px); }
     .pay-calc h3 { margin: 0 0 22px; font: 700 clamp(1.25rem, 1.05rem + .8vw, 1.6rem)/1.2 var(--font-heading); color: #fff; letter-spacing: -.01em; }
@@ -2972,16 +2976,16 @@
     .bk-head p { margin: 0; color: var(--slate-600); font-size: .98rem; }
     .bk-ctrl { display: flex; align-items: center; gap: 10px; flex: none; }
     .bk-count { font: 600 .9rem var(--font-body); color: var(--slate-600); min-width: 54px; text-align: right; font-variant-numeric: tabular-nums; }
-    .bk-btn { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--slate-200); background: var(--white); color: var(--blue-deep);
+    .bk-btn { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--slate-200); background: var(--surface); color: var(--blue-deep);
               display: grid; place-items: center; cursor: pointer; transition: background .2s, border-color .2s, opacity .2s; }
-    .bk-btn:hover { border-color: var(--blue-primary); color: var(--blue-primary); }
+    .bk-btn:hover { border-color: var(--blue-primary); color: var(--link); }
     .bk-btn:disabled { opacity: .35; cursor: default; }
     .bk-track { list-style: none; margin: 0; padding: 4px 2px 14px; display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 40px) / 3);
                 gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: thin; outline: none; }
     .bk-slide { scroll-snap-align: start; border-radius: 18px; overflow: hidden; background: #fff;
                 box-shadow: 0 1px 2px rgba(7,30,61,.06), 0 14px 30px -18px rgba(7,30,61,.35); }
     .bk-slide img { display: block; width: 100%; height: auto; }
-    .bk-pdf { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; font-weight: 700; line-height: 1.6; white-space: nowrap; color: var(--blue-primary); text-decoration: none; }
+    .bk-pdf { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; font-weight: 700; line-height: 1.6; white-space: nowrap; color: var(--link); text-decoration: none; }
     .bk-pdf:hover { text-decoration: underline; }
     @media (max-width: 900px) { .bk-track { grid-auto-columns: calc((100% - 16px) / 2); gap: 16px; } }
     @media (max-width: 600px) {
@@ -3038,6 +3042,53 @@
                                                                      box-shadow: 0 8px 18px -8px rgba(214,36,159,.7); }
     .site-footer .footer-social-btn[aria-label="Telegram"]:hover { background: #26a5e4; box-shadow: 0 8px 18px -8px rgba(38,165,228,.7); }
     .site-footer .footer-social-btn[aria-label="WhatsApp"]:hover { background: #25d366; box-shadow: 0 8px 18px -8px rgba(37,211,102,.7); }
+    /* ====================== DARK THEME (follows the device setting) ====================== */
+    .site-brand picture, .mm-logo picture, .hero-media picture { display: contents; } /* dark logo / night truck sources */
+    .site-brand picture source, .mm-logo picture source, .hero-media picture source { display: none; } /* no flex gap for <source> */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --page-bg: #050f1f; --surface: #0a1d36; --surface-muted: #0f2747; --surface-line: #1c3557;
+        --slate-900: #f8fafc; --slate-800: #e2e8f0; --slate-700: #c5d0de; --slate-600: #a7b4c6; --slate-500: #8a9ab0; --slate-400: #6b7c93;
+        --slate-200: #1c3557; --slate-100: #0f2747; --slate-50: #050f1f;
+        --blue-deep: #f1f6ff; /* headings; bars and buttons use --navy */
+        --link: #7db3ff;
+        --blue-light: #12305a; --blue-subtle: #0b2140; --green-light: #08311f; --green-subtle: #072818;
+        --green-ink: #00bf63;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4); --shadow-md: 0 4px 10px -2px rgba(0, 0, 0, 0.45);
+        --shadow-lg: 0 12px 24px -6px rgba(0, 0, 0, 0.5); --shadow-xl: 0 20px 34px -8px rgba(0, 0, 0, 0.55);
+        --shadow-brand: 0 12px 30px -8px rgba(0, 0, 0, 0.55);
+      }
+      /* navy text stays navy on green and white buttons */
+      .btn-whatsapp, .hero-btn-wa, .hero-btn-wa svg, .hero-btn-wa:hover, .mcb a.mcb-cta, .btn-primary, .btn-primary:hover,
+      .direct-contact-item:hover .contact-item-icon { color: var(--navy) !important; }
+      header.site-header { background: rgba(5, 15, 31, 0.92); border-bottom-color: rgba(255, 255, 255, 0.06); }
+      .lang-switch-btn:hover { background: rgba(255, 255, 255, 0.08); }
+      .hero-section { background: linear-gradient(180deg, #050f1f 0%, #071a33 100%); }
+      .hero-split { background: #031225; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 18px 40px -18px rgba(0, 0, 0, 0.6); }
+      .hero-h1 .hl-blue { color: var(--link); }
+      .highlight-card:nth-child(3) .highlight-icon-box { background: #3a2c05; }
+      .highlight-card:nth-child(4) .highlight-icon-box { background: #0c3550; color: #38bdf8; }
+      #apply { background: linear-gradient(180deg, #071a33 0%, #050f1f 100%); }
+      .perk-card.featured { background: linear-gradient(145deg, #0a1d36 0%, #0f2a52 100%); }
+      #owner-operators { background: linear-gradient(180deg, #050f1f 0%, #071a33 100%); }
+      .smooth-step-card:hover { background: linear-gradient(180deg, #08311f 0%, #0a1d36 100%); }
+      .terminal-card { background: linear-gradient(135deg, #0f2a52 0%, #0a1d36 100%); }
+      .terminal-map-action-bar { background: var(--surface); }
+      .form-alert.error { background: #3b0d12; }
+      .form-input::placeholder, .form-textarea::placeholder { color: var(--slate-500); }
+      .dd-list { background: rgba(15, 39, 71, 0.96); border-color: rgba(255, 255, 255, 0.1); box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.7); }
+      .mobile-floating-bar { background: rgba(5, 15, 31, 0.96); }
+      .mcb { background: rgba(10, 29, 54, 0.78); border-color: rgba(255, 255, 255, 0.08); }
+      .mcb a.mcb-ico { background: var(--surface-muted); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+      .mm-sheet { background: rgba(10, 29, 54, 0.82); box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.7); }
+      .mm-round { background: rgba(255, 255, 255, 0.1); }
+      .mm-seg .lang-switch-btn.active { background: var(--surface-line); }
+      .mm-links { background: rgba(255, 255, 255, 0.05); }
+      .bk-slide { background: var(--surface); }
+      .bk-menu { background: var(--surface-muted); }
+      .bk-menu a:hover, .bk-menu button:hover { background: var(--surface-line); }
+    }
   </style>
   <script type="application/ld+json">
 {
@@ -3290,7 +3341,7 @@
       <div class="nav-inner">
         <!-- Logo -->
         <a href="#hero" class="site-brand" title="HILS Trucking LLC">
-          <img src="assets/logo-brand.svg" width="168" height="44" alt="HILS Trucking LLC" class="brand-logo-img" />
+          <picture><source media="(prefers-color-scheme: dark)" srcset="assets/logo-brand-white.svg" /><img src="assets/logo-brand.svg" width="168" height="44" alt="HILS Trucking LLC" class="brand-logo-img" /></picture>
         </a>
 
         <!-- Desktop Navigation -->
@@ -3331,7 +3382,7 @@
     <div class="mm-sheet" role="dialog" aria-modal="true" aria-label="Menu">
       <div class="mm-head">
         <a href="#hero" class="site-brand mm-logo" aria-label="HILS Trucking LLC">
-          <img src="assets/logo-brand.svg" width="168" height="44" alt="HILS Trucking LLC" />
+          <picture><source media="(prefers-color-scheme: dark)" srcset="assets/logo-brand-white.svg" /><img src="assets/logo-brand.svg" width="168" height="44" alt="HILS Trucking LLC" /></picture>
         </a>
         <button type="button" class="mm-round mm-close" id="mobileMenuClose" aria-label="Close menu"><svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
@@ -3384,8 +3435,9 @@
           <p class="hero-trust"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg><span data-i18n="hero_trust">Licensed motor carrier · USDOT 4454223 · MC-1755680</span></p>
         </div>
         <div class="hero-media">
+          <picture><source media="(prefers-color-scheme: dark)" srcset="assets/truck-night.webp" width="1312" height="816" />
           <img src="assets/truck-full.webp" width="1058" height="680" fetchpriority="high"
-               alt="White Freightliner Cascadia with a 53-foot Utility dry van trailer" />
+               alt="White Freightliner Cascadia with a 53-foot Utility dry van trailer" /></picture>
         </div>
       </div>
 
