@@ -2536,6 +2536,12 @@
       }
     }
 
+    /* header: phone and Apply buttons share one height (centres were equal, heights were 41.5 / 49px) */
+    .nav-actions .nav-phone-btn, .nav-actions .btn-primary { box-sizing: border-box; height: 48px; padding-top: 0; padding-bottom: 0; display: inline-flex; align-items: center; justify-content: center; }
+    @media (max-width: 1200px) and (min-width: 993px) {
+      .nav-actions .nav-phone-btn, .nav-actions .btn-primary { height: 40px; }
+    }
+
     @media (max-width: 1024px) {
       .footer-grid {
         grid-template-columns: 1fr 1fr;
