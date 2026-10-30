@@ -95,6 +95,38 @@
   <link rel="alternate" hreflang="x-default" href="https://hilstrucking.com/" />
   <meta name="theme-color" content="#004aad" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#050f1f" media="(prefers-color-scheme: dark)" />
+  <script>
+    // Theme: follows the device setting; the switch in the top bar saves a manual choice (hils_theme)
+    (function () {
+      var root = document.documentElement, dark = window.matchMedia('(prefers-color-scheme: dark)');
+      var LABEL = { en: ['Switch to dark theme', 'Switch to light theme'], uk: ['Увімкнути темну тему', 'Увімкнути світлу тему'], ru: ['Включить темную тему', 'Включить светлую тему'] };
+      function saved() { try { var t = localStorage.getItem('hils_theme'); return t === 'dark' || t === 'light' ? t : null; } catch (e) { return null; } }
+      function apply() {
+        var t = saved() || (dark.matches ? 'dark' : 'light'), isDark = t === 'dark';
+        root.setAttribute('data-theme', t);
+        document.querySelectorAll('source[data-dark]').forEach(function (s) { s.media = isDark ? 'all' : 'not all'; });
+        document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.content = isDark ? '#050f1f' : '#004aad'; });
+        var btn = document.getElementById('themeToggle');
+        if (btn) {
+          btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+          btn.setAttribute('aria-label', (LABEL[root.getAttribute('data-page-lang')] || LABEL.en)[isDark ? 1 : 0]);
+        }
+      }
+      // A choice equal to the device setting is not saved, so the site keeps following the device
+      window.setTheme = function (t) {
+        try { if (t === (dark.matches ? 'dark' : 'light')) localStorage.removeItem('hils_theme'); else localStorage.setItem('hils_theme', t); } catch (e) {}
+        apply();
+      };
+      apply();
+      if (dark.addEventListener) dark.addEventListener('change', apply); else dark.addListener(apply);
+      document.addEventListener('DOMContentLoaded', function () {
+        apply();
+        document.getElementById('themeToggle').addEventListener('click', function () {
+          window.setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        });
+      });
+    })();
+  </script>
   <!-- Social preview (WhatsApp, Facebook, Telegram, iMessage) -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="HILS Trucking LLC" />
@@ -432,6 +464,43 @@
       background: var(--blue-primary);
       transform: translateY(-2px);
     }
+
+    /* Theme switch in the top bar (same 26px circle as the social icons, knob slides to the moon) */
+    .theme-toggle {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      width: 48px;
+      height: 26px;
+      padding: 0 6px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.75);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background var(--transition-fast), border-color var(--transition-fast);
+    }
+    .theme-toggle:hover { background: rgba(255, 255, 255, 0.22); border-color: rgba(255, 255, 255, 0.45); }
+    .theme-toggle:focus-visible { outline: 2px solid #7dd3fc; outline-offset: 2px; }
+    .theme-toggle svg { position: relative; z-index: 1; width: 12px; height: 12px; }
+    .theme-toggle-knob {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--white);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s ease;
+    }
+    .theme-toggle .ic-sun { color: var(--navy); }
+    [data-theme="dark"] .theme-toggle-knob { transform: translateX(22px); }
+    [data-theme="dark"] .theme-toggle .ic-sun { color: rgba(255, 255, 255, 0.75); }
+    [data-theme="dark"] .theme-toggle .ic-moon { color: var(--navy); }
 
     /* Language Switcher */
     .lang-switch-group {
@@ -2610,6 +2679,12 @@
       .top-bar-badge {
         display: none;
       }
+      .top-bar-left {
+        display: none; /* badge hidden: no empty item, so the switches sit centered on one line */
+      }
+      .top-bar .container {
+        justify-content: center;
+      }
     }
 
     @media (max-width: 640px) {
@@ -3051,53 +3126,52 @@
                                                                      box-shadow: 0 8px 18px -8px rgba(214,36,159,.7); }
     .site-footer .footer-social-btn[aria-label="Telegram"]:hover { background: #26a5e4; box-shadow: 0 8px 18px -8px rgba(38,165,228,.7); }
     .site-footer .footer-social-btn[aria-label="WhatsApp"]:hover { background: #25d366; box-shadow: 0 8px 18px -8px rgba(37,211,102,.7); }
-    /* ====================== DARK THEME (follows the device setting) ====================== */
+    /* ====================== DARK THEME (html[data-theme="dark"], set by the theme script in <head>) ====================== */
     .site-brand picture, .mm-logo picture, .hero-media picture { display: contents; } /* dark logo / night truck sources */
     .site-brand picture source, .mm-logo picture source, .hero-media picture source { display: none; } /* no flex gap for <source> */
-    @media (prefers-color-scheme: dark) {
-      :root {
-        color-scheme: dark;
-        --page-bg: #050f1f; --surface: #0a1d36; --surface-muted: #0f2747; --surface-line: #1c3557;
-        --slate-900: #f8fafc; --slate-800: #e2e8f0; --slate-700: #c5d0de; --slate-600: #a7b4c6; --slate-500: #8a9ab0; --slate-400: #6b7c93;
-        --slate-200: #1c3557; --slate-100: #0f2747; --slate-50: #050f1f;
-        --blue-deep: #f1f6ff; /* headings; bars and buttons use --navy */
-        --link: #7db3ff;
-        --blue-light: #12305a; --blue-subtle: #0b2140; --green-light: #08311f; --green-subtle: #072818;
-        --green-ink: #00bf63;
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4); --shadow-md: 0 4px 10px -2px rgba(0, 0, 0, 0.45);
-        --shadow-lg: 0 12px 24px -6px rgba(0, 0, 0, 0.5); --shadow-xl: 0 20px 34px -8px rgba(0, 0, 0, 0.55);
-        --shadow-brand: 0 12px 30px -8px rgba(0, 0, 0, 0.55);
-      }
-      /* navy text stays navy on green and white buttons */
-      .btn-whatsapp, .hero-btn-wa, .hero-btn-wa svg, .hero-btn-wa:hover, .mcb a.mcb-cta, .btn-primary, .btn-primary:hover,
-      .direct-contact-item:hover .contact-item-icon { color: var(--navy) !important; }
-      header.site-header { background: rgba(5, 15, 31, 0.92); border-bottom-color: rgba(255, 255, 255, 0.06); }
-      .lang-switch-btn:hover { background: rgba(255, 255, 255, 0.08); }
-      .hero-section { background: linear-gradient(180deg, #050f1f 0%, #071a33 100%); }
-      .hero-split { background: #031225; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 18px 40px -18px rgba(0, 0, 0, 0.6); }
-      .hero-h1 .hl-blue { color: var(--link); }
-      .highlight-card:nth-child(3) .highlight-icon-box { background: #3a2c05; }
-      .highlight-card:nth-child(4) .highlight-icon-box { background: #0c3550; color: #38bdf8; }
-      #apply { background: linear-gradient(180deg, #071a33 0%, #050f1f 100%); }
-      .perk-card.featured { background: linear-gradient(145deg, #0a1d36 0%, #0f2a52 100%); }
-      #owner-operators { background: linear-gradient(180deg, #050f1f 0%, #071a33 100%); }
-      .smooth-step-card:hover { background: linear-gradient(180deg, #08311f 0%, #0a1d36 100%); }
-      .terminal-card { background: linear-gradient(135deg, #0f2a52 0%, #0a1d36 100%); }
-      .terminal-map-action-bar { background: var(--surface); }
-      .form-alert.error { background: #3b0d12; }
-      .form-input::placeholder, .form-textarea::placeholder { color: var(--slate-500); }
-      .dd-list { background: rgba(15, 39, 71, 0.96); border-color: rgba(255, 255, 255, 0.1); box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.7); }
-      .mobile-floating-bar { background: rgba(5, 15, 31, 0.96); }
-      .mcb { background: rgba(10, 29, 54, 0.78); border-color: rgba(255, 255, 255, 0.08); }
-      .mcb a.mcb-ico { background: var(--surface-muted); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
-      .mm-sheet { background: rgba(10, 29, 54, 0.82); box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.7); }
-      .mm-round { background: rgba(255, 255, 255, 0.1); }
-      .mm-seg .lang-switch-btn.active { background: var(--surface-line); }
-      .mm-links { background: rgba(255, 255, 255, 0.05); }
-      .bk-slide { background: var(--surface); }
-      .bk-menu { background: var(--surface-muted); }
-      .bk-menu a:hover, .bk-menu button:hover { background: var(--surface-line); }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --page-bg: #050f1f; --surface: #0a1d36; --surface-muted: #0f2747; --surface-line: #1c3557;
+      --slate-900: #f8fafc; --slate-800: #e2e8f0; --slate-700: #c5d0de; --slate-600: #a7b4c6; --slate-500: #8a9ab0; --slate-400: #6b7c93;
+      --slate-200: #1c3557; --slate-100: #0f2747; --slate-50: #050f1f;
+      --blue-deep: #f1f6ff; /* headings; bars and buttons use --navy */
+      --link: #7db3ff;
+      --blue-light: #12305a; --blue-subtle: #0b2140; --green-light: #08311f; --green-subtle: #072818;
+      --green-ink: #00bf63;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4); --shadow-md: 0 4px 10px -2px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 12px 24px -6px rgba(0, 0, 0, 0.5); --shadow-xl: 0 20px 34px -8px rgba(0, 0, 0, 0.55);
+      --shadow-brand: 0 12px 30px -8px rgba(0, 0, 0, 0.55);
     }
+    /* navy text stays navy on green and white buttons */
+    [data-theme="dark"] .btn-whatsapp, [data-theme="dark"] .hero-btn-wa, [data-theme="dark"] .hero-btn-wa svg, [data-theme="dark"] .hero-btn-wa:hover,
+    [data-theme="dark"] .mcb a.mcb-cta, [data-theme="dark"] .btn-primary, [data-theme="dark"] .btn-primary:hover,
+    [data-theme="dark"] .direct-contact-item:hover .contact-item-icon { color: var(--navy) !important; }
+    [data-theme="dark"] header.site-header { background: rgba(5, 15, 31, 0.92); border-bottom-color: rgba(255, 255, 255, 0.06); }
+    [data-theme="dark"] .lang-switch-btn:hover { background: rgba(255, 255, 255, 0.08); }
+    [data-theme="dark"] .hero-section { background: linear-gradient(180deg, #050f1f 0%, #071a33 100%); }
+    [data-theme="dark"] .hero-split { background: #031225; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 18px 40px -18px rgba(0, 0, 0, 0.6); }
+    [data-theme="dark"] .hero-h1 .hl-blue { color: var(--link); }
+    [data-theme="dark"] .highlight-card:nth-child(3) .highlight-icon-box { background: #3a2c05; }
+    [data-theme="dark"] .highlight-card:nth-child(4) .highlight-icon-box { background: #0c3550; color: #38bdf8; }
+    [data-theme="dark"] #apply { background: linear-gradient(180deg, #071a33 0%, #050f1f 100%); }
+    [data-theme="dark"] .perk-card.featured { background: linear-gradient(145deg, #0a1d36 0%, #0f2a52 100%); }
+    [data-theme="dark"] #owner-operators { background: linear-gradient(180deg, #050f1f 0%, #071a33 100%); }
+    [data-theme="dark"] .smooth-step-card:hover { background: linear-gradient(180deg, #08311f 0%, #0a1d36 100%); }
+    [data-theme="dark"] .terminal-card { background: linear-gradient(135deg, #0f2a52 0%, #0a1d36 100%); }
+    [data-theme="dark"] .terminal-map-action-bar { background: var(--surface); }
+    [data-theme="dark"] .form-alert.error { background: #3b0d12; }
+    [data-theme="dark"] .form-input::placeholder, [data-theme="dark"] .form-textarea::placeholder { color: var(--slate-500); }
+    [data-theme="dark"] .dd-list { background: rgba(15, 39, 71, 0.96); border-color: rgba(255, 255, 255, 0.1); box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.7); }
+    [data-theme="dark"] .mobile-floating-bar { background: rgba(5, 15, 31, 0.96); }
+    [data-theme="dark"] .mcb { background: rgba(10, 29, 54, 0.78); border-color: rgba(255, 255, 255, 0.08); }
+    [data-theme="dark"] .mcb a.mcb-ico { background: var(--surface-muted); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); }
+    [data-theme="dark"] .mm-sheet { background: rgba(10, 29, 54, 0.82); box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.7); }
+    [data-theme="dark"] .mm-round { background: rgba(255, 255, 255, 0.1); }
+    [data-theme="dark"] .mm-seg .lang-switch-btn.active { background: var(--surface-line); }
+    [data-theme="dark"] .mm-links { background: rgba(255, 255, 255, 0.05); }
+    [data-theme="dark"] .bk-slide { background: var(--surface); }
+    [data-theme="dark"] .bk-menu { background: var(--surface-muted); }
+    [data-theme="dark"] .bk-menu a:hover, [data-theme="dark"] .bk-menu button:hover { background: var(--surface-line); }
   </style>
   <script type="application/ld+json">
 {
@@ -3324,6 +3398,12 @@
           </div>
         </div>
 
+        <button type="button" class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Switch to dark theme">
+          <span class="theme-toggle-knob" aria-hidden="true"></span>
+          <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M1.5 12h2.5M20 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>
+          <svg class="ic-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+
         <div class="top-social-links">
           <!-- Facebook -->
           <a href="https://www.facebook.com/profile.php?id=61594776546770" target="_blank" rel="noopener noreferrer" class="top-social-link" title="Follow us on Facebook" aria-label="Facebook">
@@ -3350,7 +3430,7 @@
       <div class="nav-inner">
         <!-- Logo -->
         <a href="#hero" class="site-brand" title="HILS Trucking LLC">
-          <picture><source media="(prefers-color-scheme: dark)" srcset="assets/logo-brand-white.svg" /><img src="assets/logo-brand.svg" width="168" height="44" alt="HILS Trucking LLC" class="brand-logo-img" /></picture>
+          <picture><source data-dark media="(prefers-color-scheme: dark)" srcset="assets/logo-brand-white.svg" /><img src="assets/logo-brand.svg" width="168" height="44" alt="HILS Trucking LLC" class="brand-logo-img" /></picture>
         </a>
 
         <!-- Desktop Navigation -->
@@ -3391,7 +3471,7 @@
     <div class="mm-sheet" role="dialog" aria-modal="true" aria-label="Menu">
       <div class="mm-head">
         <a href="#hero" class="site-brand mm-logo" aria-label="HILS Trucking LLC">
-          <picture><source media="(prefers-color-scheme: dark)" srcset="assets/logo-brand-white.svg" /><img src="assets/logo-brand.svg" width="168" height="44" alt="HILS Trucking LLC" /></picture>
+          <picture><source data-dark media="(prefers-color-scheme: dark)" srcset="assets/logo-brand-white.svg" /><img src="assets/logo-brand.svg" width="168" height="44" alt="HILS Trucking LLC" /></picture>
         </a>
         <button type="button" class="mm-round mm-close" id="mobileMenuClose" aria-label="Close menu"><svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
@@ -3444,7 +3524,7 @@
           <p class="hero-trust"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg><span data-i18n="hero_trust">Licensed motor carrier · USDOT 4454223 · MC-1755680</span></p>
         </div>
         <div class="hero-media">
-          <picture><source media="(prefers-color-scheme: dark)" srcset="assets/truck-night.webp" width="1312" height="816" />
+          <picture><source data-dark media="(prefers-color-scheme: dark)" srcset="assets/truck-night.webp" width="1312" height="816" />
           <img src="assets/truck-full.webp" width="1058" height="680" fetchpriority="high"
                alt="White Freightliner Cascadia with a 53-foot Utility dry van trailer" /></picture>
         </div>
