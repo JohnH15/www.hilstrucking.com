@@ -136,7 +136,7 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
   `<style>` index.html и owner-operators.html (блок одинаковый в обеих страницах, менять в обеих). Цвета через переменные: фоны
   `--page-bg`, `--surface`, `--surface-muted`, `--surface-line`; синий текст `--link`; постоянный темно-синий для полос и текста на
   зеленых кнопках `--navy`; `--blue-deep` в темной теме светлый (заголовки), поэтому для фона его не использовать. Ночной трак
-  `assets/truck-night.webp` (Nano Banana, Иван, 30.10) и белый логотип подставляются через `<picture><source media=...>`.
+  `assets/truck-night-white.webp` (белая кабина, Nano Banana, Иван, 30.10; синий вариант `truck-night.webp` оставлен для отката) и белый логотип подставляются через `<picture><source media=...>`.
   Новые светлые фоны писать через эти переменные. Политика, 404 и карта Google остаются светлыми.
 - **Буклеты:** при замене слайдов или PDF поменять метку `?v=` у всех адресов `assets/booklets/` в index.html и owner-operators.html
   (в HTML и в JS), иначе браузеры покажут старые файлы из кэша. Сейчас `?v=20261030b` (ребрендинг слайдов от Cowork 30.10).
