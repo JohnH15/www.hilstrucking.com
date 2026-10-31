@@ -2759,7 +2759,10 @@
     .site-footer .ft-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto; gap: 0 24px; }
     @media (min-width: 1100px) {
       .site-footer .ft-top { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-      .site-footer .ft-brand { grid-column: span 2; padding: 26px 24px 0 0; } /* logo centre on the card figure line */
+      /* brand block and the two cards share one top and one bottom: cards stretch to the brand height, the extra space goes above the hairline */
+      .site-footer .ft-top { align-items: stretch; }
+      .site-footer .ft-brand { grid-column: span 2; padding: 0 24px 0 0; }
+      .site-footer .ft-cards { grid-template-rows: 1fr auto; }
       .site-footer .ft-cards { grid-column: span 2; }
     }
     /* brand */
