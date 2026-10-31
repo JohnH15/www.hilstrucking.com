@@ -2790,7 +2790,8 @@
     .mm-seg .lang-switch-btn { display: flex; align-items: center; justify-content: center; gap: 8px; height: 40px; border: 0; border-radius: 999px; background: none; cursor: pointer;
                                font: 700 .92rem/1 var(--font-body); color: var(--slate-600); -webkit-tap-highlight-color: transparent; transition: background .2s, color .2s, box-shadow .2s; }
     .mm-seg .lang-switch-btn.active { background: #fff; color: var(--blue-deep); box-shadow: 0 2px 8px -2px rgba(7, 30, 61, 0.2), inset 0 0 0 1px rgba(7, 30, 61, 0.05); }
-    .flag { flex: none; width: 21px; height: 14px; border-radius: 3px; box-shadow: 0 0 0 0.5px rgba(7, 30, 61, 0.25); }
+    /* full language names: at phone widths size segments to their text so every label gets equal side room */
+    @media (max-width: 360px) { .mm-seg { display: flex; } .mm-seg .lang-switch-btn { flex: 1 1 auto; padding: 0; font-size: .86rem; } }
     /* links: grouped list */
     .mm-links { list-style: none; margin: 0; padding: 4px 0; border-radius: 22px; background: rgba(255, 255, 255, 0.6); box-shadow: inset 0 0 0 1px rgba(7, 30, 61, 0.06); }
     .mm-links li + li a { border-top: 1px solid rgba(7, 30, 61, 0.07); }
@@ -3321,13 +3322,13 @@
           </button>
           <div class="top-lang-menu" id="topLangMenu">
             <button type="button" class="top-lang-option lang-switch-btn" data-lang="en">
-              <svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#fff"/><g fill="#B22234"><rect width="30" height="1.54"/><rect y="3.08" width="30" height="1.54"/><rect y="6.15" width="30" height="1.54"/><rect y="9.23" width="30" height="1.54"/><rect y="12.31" width="30" height="1.54"/><rect y="15.38" width="30" height="1.54"/><rect y="18.46" width="30" height="1.54"/></g><rect width="13" height="10.77" fill="#3C3B6E"/><g fill="#fff"><circle cx="2.2" cy="2" r=".55"/><circle cx="5.2" cy="2" r=".55"/><circle cx="8.2" cy="2" r=".55"/><circle cx="11" cy="2" r=".55"/><circle cx="3.7" cy="4.4" r=".55"/><circle cx="6.7" cy="4.4" r=".55"/><circle cx="9.6" cy="4.4" r=".55"/><circle cx="2.2" cy="6.8" r=".55"/><circle cx="5.2" cy="6.8" r=".55"/><circle cx="8.2" cy="6.8" r=".55"/><circle cx="11" cy="6.8" r=".55"/><circle cx="3.7" cy="9.1" r=".55"/><circle cx="6.7" cy="9.1" r=".55"/><circle cx="9.6" cy="9.1" r=".55"/></g></svg> EN
+              <span lang="en">English</span>
             </button>
             <button type="button" class="top-lang-option lang-switch-btn" data-lang="uk">
-              <svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="10" fill="#0057B7"/><rect y="10" width="30" height="10" fill="#FFD700"/></svg> UA
+              <span lang="uk">Українська</span>
             </button>
             <button type="button" class="top-lang-option lang-switch-btn" data-lang="ru">
-              <svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="6.67" fill="#fff"/><rect y="6.67" width="30" height="6.66" fill="#0039A6"/><rect y="13.33" width="30" height="6.67" fill="#D52B1E"/></svg> RU
+              <span lang="ru">Русский</span>
             </button>
           </div>
         </div>
@@ -3411,9 +3412,9 @@
       </div>
 
       <div class="mm-seg" role="group" aria-label="Language">
-        <button type="button" class="lang-switch-btn" data-lang="en"><svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#fff"/><g fill="#B22234"><rect width="30" height="1.54"/><rect y="3.08" width="30" height="1.54"/><rect y="6.15" width="30" height="1.54"/><rect y="9.23" width="30" height="1.54"/><rect y="12.31" width="30" height="1.54"/><rect y="15.38" width="30" height="1.54"/><rect y="18.46" width="30" height="1.54"/></g><rect width="13" height="10.77" fill="#3C3B6E"/><g fill="#fff"><circle cx="2.2" cy="2" r=".55"/><circle cx="5.2" cy="2" r=".55"/><circle cx="8.2" cy="2" r=".55"/><circle cx="11" cy="2" r=".55"/><circle cx="3.7" cy="4.4" r=".55"/><circle cx="6.7" cy="4.4" r=".55"/><circle cx="9.6" cy="4.4" r=".55"/><circle cx="2.2" cy="6.8" r=".55"/><circle cx="5.2" cy="6.8" r=".55"/><circle cx="8.2" cy="6.8" r=".55"/><circle cx="11" cy="6.8" r=".55"/><circle cx="3.7" cy="9.1" r=".55"/><circle cx="6.7" cy="9.1" r=".55"/><circle cx="9.6" cy="9.1" r=".55"/></g></svg><span>EN</span></button>
-        <button type="button" class="lang-switch-btn" data-lang="uk"><svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="10" fill="#0057B7"/><rect y="10" width="30" height="10" fill="#FFD700"/></svg><span>UA</span></button>
-        <button type="button" class="lang-switch-btn" data-lang="ru"><svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="6.67" fill="#fff"/><rect y="6.67" width="30" height="6.66" fill="#0039A6"/><rect y="13.33" width="30" height="6.67" fill="#D52B1E"/></svg><span>RU</span></button>
+        <button type="button" class="lang-switch-btn" data-lang="en"><span lang="en">English</span></button>
+        <button type="button" class="lang-switch-btn" data-lang="uk"><span lang="uk">Українська</span></button>
+        <button type="button" class="lang-switch-btn" data-lang="ru"><span lang="ru">Русский</span></button>
       </div>
 
       <ul class="mm-links">
