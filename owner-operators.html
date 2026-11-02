@@ -2992,6 +2992,11 @@
       .site-footer .ft-links a.ft-dl { position: relative; } /* centred text stays on the axis; the download icon hangs after it */
       .site-footer .ft-links a.ft-dl svg { position: absolute; left: calc(100% + 8px); top: 50%; transform: translateY(-50%); }
     }
+    /* OO hero: three-truck studio photo; its edges fade into the hero card on all four sides */
+    .hero-media img.hero-img-trio { -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 96%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%);
+      -webkit-mask-composite: source-in; mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 96%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%); mask-composite: intersect; }
+    @media (max-width: 900px) { .hero-media img.hero-img-trio { -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%); } } /* phones: the blue truck's nose stays solid */
     /* == QA FIXES END == */
 </style>
   <script type="application/ld+json">
@@ -3294,8 +3299,8 @@
         </div>
         <div class="hero-media">
           <picture><source data-dark media="(prefers-color-scheme: dark)" srcset="assets/truck-night-white.webp" width="1312" height="816" />
-          <img src="assets/truck-full.webp" width="1058" height="680" fetchpriority="high"
-               alt="White Freightliner Cascadia with a 53-foot Utility dry van trailer" /></picture>
+          <img class="hero-img-trio" src="assets/trucks-oo.webp" width="1400" height="524" fetchpriority="high"
+               alt="Three trucks: a blue Freightliner Cascadia with a dry van, a white Volvo with a flatbed and a green Kenworth with a step deck" /></picture>
         </div>
       </div>
 
