@@ -4855,11 +4855,11 @@
       document.addEventListener('focusout', () => { typing = false; sync(); });
       sync();
     })();
-    // back-to-top button: appears only from the middle of the page down (nothing to go back to near the top)
+    // back-to-top button: appears from the Owner-Operators section down (its top in the upper half of the screen)
     (function () {
-      const b = document.getElementById('toTop');
-      if (!b) return;
-      const sync = () => b.classList.toggle('is-shown', window.scrollY > (document.documentElement.scrollHeight - window.innerHeight) / 2);
+      const b = document.getElementById('toTop'), from = document.getElementById('owner-operators');
+      if (!b || !from) return;
+      const sync = () => b.classList.toggle('is-shown', from.getBoundingClientRect().top < window.innerHeight / 2);
       window.addEventListener('scroll', sync, { passive: true });
       window.addEventListener('resize', sync);
       b.addEventListener('click', () => {
