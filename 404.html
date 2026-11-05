@@ -34,6 +34,8 @@
     .primary { background: var(--green); color: var(--navy); }
     .ghost { background: #fff; color: var(--blue); box-shadow: inset 0 0 0 1px #e5edf8; }
     a:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+    h1 { text-wrap: balance; }
+    p { text-wrap: pretty; }
   </style>
 </head>
 <body>
@@ -43,16 +45,16 @@
     <h1 id="t">This page does not exist</h1>
     <p id="d">The link may be old or mistyped. Everything about driving with HILS is on the main page.</p>
     <div class="btns">
-      <a class="primary" id="apply" href="/#apply">Apply now</a>
+      <a class="primary" id="apply" href="/#apply">Apply Now</a>
       <a class="ghost" id="home" href="/">Main page</a>
     </div>
   </main>
   <script>
     (function () {
       var T = {
-        en: { t: 'This page does not exist', d: 'The link may be old or mistyped. Everything about driving with HILS is on the main page.', apply: 'Apply now', home: 'Main page', p: '/' },
-        uk: { t: 'Такої сторінки немає', d: 'Можливо, посилання застаріло або в ньому помилка. Усе про роботу з HILS на головній сторінці.', apply: 'Надіслати заявку', home: 'Головна сторінка', p: '/ua/' },
-        ru: { t: 'Такой страницы нет', d: 'Возможно, ссылка устарела или в ней ошибка. Все о работе с HILS на главной странице.', apply: 'Подать заявку', home: 'Главная страница', p: '/ru/' }
+        en: { t: 'This page does not exist', d: 'The link may be old or mistyped. Everything about driving with HILS is on the main page.', apply: 'Apply Now', home: 'Main page', p: '/', title: 'Page not found | HILS TRUCKING LLC' },
+        uk: { t: 'Такої сторінки немає', d: 'Можливо, посилання застаріло або в ньому помилка. Усе про роботу з HILS на головній сторінці.', apply: 'Надіслати заявку', home: 'Головна сторінка', p: '/ua/', title: 'Сторінку не знайдено | HILS TRUCKING LLC' },
+        ru: { t: 'Такой страницы нет', d: 'Возможно, ссылка устарела или в ней ошибка. Все о работе с HILS на главной странице.', apply: 'Подать заявку', home: 'Главная страница', p: '/ru/', title: 'Страница не найдена | HILS TRUCKING LLC' }
       };
       var l = 'en';
       try { l = localStorage.getItem('hils_lang') || ''; } catch (e) {}
@@ -62,6 +64,7 @@
       }
       var x = T[l];
       document.documentElement.lang = l;
+      document.title = x.title;
       document.getElementById('t').textContent = x.t;
       document.getElementById('d').textContent = x.d;
       document.getElementById('apply').textContent = x.apply;

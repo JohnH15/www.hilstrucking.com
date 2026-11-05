@@ -73,7 +73,8 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
 - Проверка локально: `python3 tools/build_i18n.py`, потом `python3 -m http.server` из корня репозитория.
 - Новый title/description для RU/UA менять в `META` в `tools/build_i18n.py`.
 - Все тексты лежат в JS-объекте `const i18nData = { en: {...}, uk: {...}, ru: {...} }` внизу страницы.
-  Элемент получает текст по атрибуту `data-i18n="key"` (innerHTML, HTML разрешен), placeholder по `data-i18n-ph`.
+  Элемент получает текст по атрибуту `data-i18n="key"` (innerHTML, HTML разрешен), placeholder по `data-i18n-ph`,
+  другие атрибуты по `data-i18n-attr="aria-label:key;title:key2"` (скрытые подписи, title, alt; ключи `a_*`). Сообщения проверки формы `v_*`.
 - Статичный английский текст в HTML тоже обновлять: его видят Google и посетители без JS.
 - Новый текст = новый ключ во **всех трех** языках.
 - FAQ: элементы `.faq-item#faq-<id>` с `data-group="general|cd|oo"` (или `"cd oo"`), тексты `faq_<id>_q` / `faq_<id>_a`.
@@ -86,7 +87,11 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
 - С заглавной на всех языках: **Owner-Operator(s)**, **Company Driver(s)**. В RU/UA с заглавной **Водитель / Водій** во всех формах
   (кроме «водіння»). В английском обычное «drivers» посреди фразы строчное. URL и якоря (`owner-operators.html`, `#owner-operators`) строчные.
 - В рекрутинге «Приглашаем», не «нанимаем».
-- Ни Company Driver, ни Owner-Operator не «сотрудник» (оба по 1099): не писать «сотрудник», «трудоустройство», «работодатель», W-2. В форме «Формат сотрудничества», варианты «Company Driver (трак компании)» / «Owner-Operator (свой трак)».
+- Ни Company Driver, ни Owner-Operator не «сотрудник» (оба по 1099): не писать «сотрудник», «трудоустройство», «работодатель», W-2. В форме «Формат сотрудничества», варианты «Company Driver» / «Owner-Operator» (без пояснений в скобках, решение Ивана 03.11.2026).
+- Решения Ивана 04.11.2026: в подвале нет «Equal Opportunity Employer»; кнопка формы «Submit Quick Application» (как заголовок «Quick application»);
+  поле «Опыт CDL-A OTR» по умолчанию пустое («Select / Оберіть / Выберите», ключ `opt_exp_ph`), варианты по возрастанию; требование к траку OO везде
+  «good working condition / хорошому робочому стані / хорошем рабочем состоянии»; JobPosting baseSalary 2500-4480 в неделю (32% от $14,000, верх ползунка);
+  слово «Hiring» оставляем (не «Wanted»).
 - Чтобы термины не переносились: `Owner&#8209;Operators`, `CDL&#8209;A`, `OTR&nbsp;CDL&#8209;A` там, где это важно.
 
 ## Факты, которые нельзя менять без Ивана

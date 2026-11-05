@@ -73,6 +73,7 @@ class I18nScanner(HTMLParser):
         self.open = []
         self.ranges = []
         self.placeholders = []
+        self.attrs = []
         self.feed(text)
         self.close()
 
@@ -86,6 +87,8 @@ class I18nScanner(HTMLParser):
         a = dict(attrs)
         if 'data-i18n-ph' in a:
             self.placeholders.append((start, end, a['data-i18n-ph']))
+        if 'data-i18n-attr' in a:
+            self.attrs.append((start, end, a['data-i18n-attr']))
         if self_closing or tag in VOID:
             return
         for o in self.open:
@@ -116,7 +119,8 @@ def plain(text):
     text = re.sub(r'</(p|li|ul)>|<br\s*/?>', ' ', text)
     text = html.unescape(re.sub(r'<[^>]+>', ' ', text))
     text = re.sub(r'\s+', ' ', text).strip()
-    return re.sub(r'\s+([.,;:!?])', r'\1', text)
+    text = re.sub(r'\(\s+', '(', text)
+    return re.sub(r'\s+([.,;:!?)])', r'\1', text)
 
 
 def set_attr(tag_text, name, value):
@@ -149,9 +153,19 @@ def build(page, lang, errors):
             edits.append((start, end, data[key]))
         else:
             errors.append(f'{page} [{lang}]: no text for data-i18n="{key}"')
+    # start tags: placeholder (data-i18n-ph) and other attributes (data-i18n-attr="aria-label:key;title:key2")
+    tags = {}
     for start, end, key in scan.placeholders:
         if key in data:
-            edits.append((start, end, set_attr(src[start:end], 'placeholder', data[key])))
+            tags[(start, end)] = set_attr(tags.get((start, end), src[start:end]), 'placeholder', data[key])
+    for start, end, spec in scan.attrs:
+        for pair in spec.split(';'):
+            name, _, key = pair.partition(':')
+            if key in data:
+                tags[(start, end)] = set_attr(tags.get((start, end), src[start:end]), name.strip(), data[key])
+            else:
+                errors.append(f'{page} [{lang}]: no text for data-i18n-attr key "{key}"')
+    edits += [(start, end, text) for (start, end), text in tags.items()]
     edits.sort(key=lambda e: (e[0], -e[1]))
     kept, last_end = [], -1
     for e in edits:
