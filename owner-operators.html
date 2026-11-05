@@ -2055,6 +2055,8 @@
     .contact-widget { position: fixed; right: max(20px, env(safe-area-inset-right, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 1500;
                       display: flex; flex-direction: column; align-items: center; gap: 12px; }
     body.menu-open .contact-widget { display: none; }
+    /* closed: only the orange button catches the pointer (the invisible list area used to cover the back-to-top button and open the menu on hover) */
+    .contact-widget { pointer-events: none; } .contact-widget.open, .cw-toggle { pointer-events: auto; }
     .cw-toggle { width: 62px; height: 62px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center; position: relative;
                  background: #ff9f0a; color: #fff; box-shadow: 0 10px 26px -8px rgba(255, 140, 0, 0.7); transition: transform .25s cubic-bezier(.16,1,.3,1), background .2s; }
     .cw-toggle:hover { background: #f59100; transform: scale(1.06); }
