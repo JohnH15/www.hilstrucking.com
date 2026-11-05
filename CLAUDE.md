@@ -110,7 +110,7 @@ CDL-A Company Drivers и Owner-Operators. Владелец: Ivan Horevoi. Общ
   Аренда трейлера Utility 53' 2023+, варианты страховки. Без принудительного диспетча.
 - **Контакты:** (445) 444-0204 (звонок, WhatsApp, Telegram), info@hilstrucking.com. Офис: 3103 Philmont Avenue, Suite 362,
   Huntingdon Valley, PA 19006. Ярд и мастерская: 7800 Bristol Pike, Levittown, PA 19057. Часы офиса: Пн-Пт 8:00-18:00, Сб 10:00-15:00,
-  Вс выходной; диспетч 24/7 на EN/UA/RU. Facebook profile.php?id=61594776546770, Instagram @hilstrucking, Telegram t.me/IvanH15, WhatsApp wa.me/14454440204.
+  Вс выходной; диспетч 24/7 на EN/UA/RU. Facebook facebook.com/hilstrucking (username с 04.11.2026), Instagram @hilstrucking, Telegram t.me/IvanH15, WhatsApp wa.me/14454440204.
 
 ## Что уже сделано и как работает
 - **Форма заявки** → `send-mail.php`: reCAPTCHA v3; строка в Google Sheet «HILS Leads» (Apps Script webhook, `google_sheets` в config.php);
