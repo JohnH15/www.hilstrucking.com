@@ -1963,6 +1963,9 @@
                   font: 600 1.08rem/1.2 var(--font-heading); -webkit-tap-highlight-color: transparent; }
     .mm-links a::after { content: ""; flex: none; width: 8px; height: 8px; border-right: 2px solid var(--slate-400, #94a3b8); border-top: 2px solid var(--slate-400, #94a3b8); transform: rotate(45deg); margin-right: 3px; }
     .mm-links a:active { color: var(--link); }
+    /* booklet downloads: same grouped rows, a download arrow in place of the chevron */
+    .mm-dl a::after { content: none; }
+    .mm-dl a svg { flex: none; width: 18px; height: 18px; margin-right: -2px; color: var(--slate-400, #94a3b8); }
     /* bottom: call + apply + social, pinned to the bottom of the sheet */
     .mm-bottom { margin-top: auto; display: grid; gap: 12px; }
     .mm-actions { display: flex; align-items: center; gap: 8px; }
@@ -3285,6 +3288,11 @@
           <li><a href="#requirements" class="mobile-nav-link" data-i18n="nav_requirements">Requirements</a></li>
           <li><a href="#faq" class="mobile-nav-link" data-i18n="nav_transparency">FAQ</a></li>
           <li><a href="#terminal" class="mobile-nav-link" data-i18n="nav_terminal">Terminal</a></li>
+        </ul>
+
+      <ul class="mm-links mm-dl">
+          <li><a href="assets/booklets/hils-company-drivers-booklet-en.pdf?v=20261030d" data-bk-pdf="company-drivers" download><span data-i18n="foot_bk_cd">Company Driver booklet</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg></a></li>
+          <li><a href="assets/booklets/hils-owner-operators-booklet-en.pdf?v=20261030d" data-bk-pdf="owner-operators" download><span data-i18n="foot_bk_oo">Owner-Operator booklet</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg></a></li>
         </ul>
 
       <div class="mm-bottom">
