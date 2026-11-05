@@ -118,6 +118,7 @@ class I18nScanner(HTMLParser):
 def plain(text):
     text = re.sub(r'</(p|li|ul)>|<br\s*/?>', ' ', text)
     text = html.unescape(re.sub(r'<[^>]+>', ' ', text))
+    text = text.replace('\u2011', '-')  # non-breaking hyphens are for wrapping on the page; Google gets a plain hyphen
     text = re.sub(r'\s+', ' ', text).strip()
     text = re.sub(r'\(\s+', '(', text)
     return re.sub(r'\s+([.,;:!?)])', r'\1', text)
